@@ -1,9 +1,62 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-         xmlns:l="/lib/layout">
-    <l:layout title="trendlayout" css="/plugin/jenkins-deployment-dashboard-plugin/css/style.css">
-        <!--<st:include it="${it.project}" page="sidepanel.jelly"/>-->
-        <l:main-panel>
-            <h1>Deployment Main Panel</h1>
-        </l:main-panel>
-    </l:layout>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+
+    <h1>Deployment Panel</h1>
+    
+    <h2>Artefact Repository Versions</h2>
+
+    <table border='0' cellpadding='10' style='background-color:lightgreen' width='100%'>
+        <tr>
+          <td>
+            <form name='form' target='_blank' action='http://localhost:8080/job/PROD-Deploy/buildWithParameters' method='GET'>
+              <div align='center'><h3>Available Releases</h3> Deploy VERSION <select name='version'>
+                <option value='1.4.416'>Version 1.4.416</option>
+                <option value='1.4.415'>Version 1.4.415</option>
+                </select> to ENVIRONMENT <select name='environment'>
+                <option value='PRODUCTION-BLUE'>PRODUCTION-BLUE</option>
+                <option value='PRODUCTION-GREEN'>PRODUCTION-GREEN</option>
+                <option value='UAT-ENVIRONMENT'>UAT-ENVIRONMENT</option>
+                </select>
+                <input type='submit' value='Submit' />
+              </div>
+            </form>
+          </td>
+        </tr>
+    </table>
+    
+        
+    <h2>EC2 Environments</h2>
+
+    <table border='0' cellpadding='10' style='background-color:#FFFFFF' width='100%'>
+        <tr>
+          <th bgcolor='orange'>Acceptance/Performance Test</th> 
+          <th bgcolor='yellow'>UAT Environment</th>
+          <th bgcolor='lightgreen'>Production Green</th>
+          <th bgcolor='lightblue'>Production Blue</th>
+        </tr>
+        <tr>
+          <td bgcolor='orange'>Version: 1.4.416</td>
+          <td bgcolor='yellow'>Version: 1.4.416</td>
+          <td bgcolor='lightgreen'>Version: 1.4.414</td>
+          <td bgcolor='lightblue'>Version: 1.4.403</td>
+        </tr>
+        <tr>
+          <td bgcolor='orange'>Go to <a href='http://localhost:8080/worblehat-web/' target='_blank'>ACCEPTANCE-1</a></td>
+          <td bgcolor='yellow'>not running</td>
+          <td bgcolor='lightgreen'>not running</td>
+          <td bgcolor='lightblue'>not running</td>
+        </tr>
+        <tr>
+          <td bgcolor='orange'>Status: running <br/>AWS Instance ID:  i-44b9bc20 <br/>Instance-Type:  m1.small <br/>Time started: 2012-04-12T10:25:14+0000<br/>AWS-TAG: ACCEPTANCE-1 </td>
+          <td bgcolor='yellow'>Status: not running <br/>AWS Instance ID:  i-abd722cc <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: UAT-ENVIRONMENT </td>
+          <td bgcolor='lightgreen'>Status: not running <br/>AWS Instance ID:  i-375eab50 <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: PRODUCTION-GREEN </td>
+          <td bgcolor='lightblue'>Status: not running <br/>AWS Instance ID:  i-40181224 <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: PRODUCTION-BLUE </td>
+        </tr>
+        <tr align='center'>
+          <td bgcolor='orange'><img src='server-up.png' /></td>
+          <td bgcolor='yellow'><img src='server-down.png' /></td>
+          <td bgcolor='lightgreen'><img src='server-down.png' />  </td>
+          <td bgcolor='lightblue'><img src='server-down.png' />   <img src='live.png' />  </td>
+        </tr>
+    </table>
+
 </j:jelly>
