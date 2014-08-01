@@ -1,6 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
 
-    <h1>Deployment Panel</h1>
+    <h1>Infrastructure Dashboard</h1>
     
     <h2>Artefact Repository Versions</h2>
 
@@ -22,7 +22,6 @@
           </td>
         </tr>
     </table>
-    
         
     <h2>EC2 Environments</h2>
 
@@ -50,12 +49,6 @@
           <td bgcolor='yellow'>Status: not running <br/>AWS Instance ID:  i-abd722cc <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: UAT-ENVIRONMENT </td>
           <td bgcolor='lightgreen'>Status: not running <br/>AWS Instance ID:  i-375eab50 <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: PRODUCTION-GREEN </td>
           <td bgcolor='lightblue'>Status: not running <br/>AWS Instance ID:  i-40181224 <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: PRODUCTION-BLUE </td>
-        </tr>
-        <tr align='center'>
-          <td bgcolor='orange'><img src='server-up.png' /></td>
-          <td bgcolor='yellow'><img src='server-down.png' /></td>
-          <td bgcolor='lightgreen'><img src='server-down.png' />  </td>
-          <td bgcolor='lightblue'><img src='server-down.png' />   <img src='live.png' />  </td>
         </tr>
     </table>
 
