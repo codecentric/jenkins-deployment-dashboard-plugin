@@ -44,6 +44,9 @@ com_crashlytics_export_strings.xml
 
 
 ### Eclipse ###
+.project
+.classpath
+.DS_Store
 *.pydevproject
 .metadata
 .gradle
