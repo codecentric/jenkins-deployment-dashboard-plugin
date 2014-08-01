@@ -1,0 +1,9 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+         xmlns:l="/lib/layout">
+    <l:layout title="trendlayout" css="/plugin/jenkins-deployment-dashboard-plugin/css/style.css">
+        <!--<st:include it="${it.project}" page="sidepanel.jelly"/>-->
+        <l:main-panel>
+            <h1>Deployment Main Panel</h1>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
