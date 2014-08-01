@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+
+<!--
+  The MIT License
+
+  Copyright (c) 2012, codecentric
+  Miel Donkers
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.570</version><!-- which version of Jenkins is this plugin built against? -->
+  </parent>
+
+  <artifactId>jenkins-deployment-dashboard</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>hpi</packaging>
+
+  <name>Deployment Dashboard Plugin for Jenkins</name>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/TODO/</url>
+
+  <licenses>
+    <license>
+      <name>The MIT license</name>
+      <url>https://github.com/codecentric/jenkins-deployment-dashboard-plugin/raw/master/LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>mdonkers</id>
+      <name>Miel Donkers</name>
+      <email>miel.donkers@codecentric.nl</email>
+    </developer>
+    <developer>
+      <id>marcelbirkner</id>
+      <name>Marcel Birkner</name>
+      <email>marcel.birkner@codecentric.de</email>
+    </developer>
+    <developer>
+      <id>guysbert</id>
+      <name>Andreas Houben</name>
+      <email>andreas.houben@codecentric.de</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:ssh://github.com/codecentric/jenkins-deployment-dashboard-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/codecentric/jenkins-deployment-dashboard-plugin.git</developerConnection>
+    <url>https://github.com/codecentric/jenkins-deployment-dashboard-plugin</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <properties>
+    <!-- http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <compileSource>1.7</compileSource>
+    <compileTarget>1.7</compileTarget>
+
+    <jersey.client.version>2.11</jersey.client.version>
+    <joda.time.version>2.1</joda.time.version>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${maven-clean-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>${compileSource}</source>
+            <target>${compileTarget}</target>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.4.2</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-provider-gitexe</artifactId>
+            <version>1.8.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>${jersey.client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-jackson</artifactId>
+      <version>${jersey.client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.connectors</groupId>
+      <artifactId>jersey-apache-connector</artifactId>
+      <version>${jersey.client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>${joda.time.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>
