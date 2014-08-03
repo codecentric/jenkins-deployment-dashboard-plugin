@@ -15,27 +15,30 @@ import org.slf4j.LoggerFactory;
 import de.codecentric.jenkins.dashboard.repositoryapi.Artifact;
 import de.codecentric.jenkins.dashboard.repositoryapi.RepositoryInterface;
 
-public class ArtifactoryConnector implements RepositoryInterface{
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(ArtifactoryConnector.class);
+public class ArtifactoryConnector implements RepositoryInterface {
+
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(ArtifactoryConnector.class);
 
 	private String userName;
 	private String password;
 	private URI repositoryURI;
 
-	public ArtifactoryConnector(String userName, String password, URI repositoryURI){
+	public ArtifactoryConnector(String userName, String password,
+			URI repositoryURI) {
 		this.userName = userName;
 		this.password = password;
 		this.repositoryURI = repositoryURI;
 	}
-	
+
 	public boolean canConnect() {
 		Response response = getResponse();
 		int status = response.getStatus();
-		if (status == 200){
+		if (status == 200) {
 			return true;
 		}
-		LOGGER.warn("Could not connect to %s. ResponseCode: %s", repositoryURI, status);
+		LOGGER.warn("Could not connect to {}. ResponseCode: {}", repositoryURI,
+				status);
 		return false;
 	}
 
@@ -43,20 +46,45 @@ public class ArtifactoryConnector implements RepositoryInterface{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	private Response getResponse() {
 		Client client = buildClient();
-		Invocation.Builder invocationBuilder =
-				client.target(repositoryURI).request();
+		Invocation.Builder invocationBuilder = client.target(repositoryURI)
+				.request();
 		return invocationBuilder.get();
 	}
+
 	private Client buildClient() {
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(userName, password);
+		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(
+				userName, password);
 		Client client = ClientBuilder.newClient();
 		client.register(feature);
 		return client;
 	}
 
-	
+	private class Results {
+		private List<Result> results;
+
+		public List<Result> getResults() {
+			return results;
+		}
+
+		public void setResults(List<Result> results) {
+			this.results = results;
+		}
+
+	}
+
+	private class Result {
+		private String uri;
+
+		public String getUri() {
+			return uri;
+		}
+
+		public void setUri(String uri) {
+			this.uri = uri;
+		}
+	}
 
 }

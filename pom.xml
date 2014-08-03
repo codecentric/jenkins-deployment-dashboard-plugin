@@ -142,6 +142,11 @@
 			<artifactId>slf4j-simple</artifactId>
 			<version>${org.slf4j.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.xebialabs.restito</groupId>
+			<artifactId>restito</artifactId>
+			<version>0.4-beta-3</version>
+		</dependency>
 	</dependencies>
 
 </project>
