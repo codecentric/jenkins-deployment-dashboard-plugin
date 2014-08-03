@@ -147,6 +147,13 @@
 			<artifactId>restito</artifactId>
 			<version>0.4-beta-3</version>
 		</dependency>
+        
+        <dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.8.7</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
