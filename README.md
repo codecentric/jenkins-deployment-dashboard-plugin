@@ -1,6 +1,4 @@
-#jenkins-deployment-dashboard-plugin
-
-Jenkins plugin for a deployment dashboard
+# Jenkins plugin for a deployment dashboard
 
 ## What's this about?
 
