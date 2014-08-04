@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -23,6 +24,7 @@ import de.codecentric.jenkins.dashboard.environmentapi.Environment;
  * @author marcel.birkner
  * 
  */
+@Ignore
 public class EC2ConnectorTest {
 	
 	@Test
