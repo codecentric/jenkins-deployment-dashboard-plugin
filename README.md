@@ -1,4 +1,6 @@
-# Jenkins plugin for a deployment dashboard
+# Jenkins Deployment Dashboard
+
+[![Build Status](https://travis-ci.org/codecentric/jenkins-deployment-dashboard-plugin.svg?branch=master)](https://travis-ci.org/codecentric/jenkins-deployment-dashboard-plugin)
 
 ## What's this about?
 
@@ -23,39 +25,8 @@ aws_secret_access_key = <ACCESS_KEY>
 The plugin was constructed with the maven goal hpi:create, which generats a basic jenkins plugin skeleton. If you check out this repository you don't need to do this anymore. All you have to do is the following:
 
 1. Check out the repo (like, duh...)
-2. Edit your maven settings.xml. It needs to contain the following lines:
- ```xml
-<settings>
-  <pluginGroups>
-    <pluginGroup>org.jenkins-ci.tools</pluginGroup>
-  </pluginGroups>
-  <profiles>
-    <profile>
-      <id>jenkins</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <repositories>
-        <repository>
-          <id>repo.jenkins-ci.org</id>
-          <url>http://repo.jenkins-ci.org/public/</url>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>repo.jenkins-ci.org</id>
-          <url>http://repo.jenkins-ci.org/public/</url>
-        </pluginRepository>
-      </pluginRepositories>
-    </profile>
-  </profiles>
-</settings>
-```
-
- This of course implies that you have a maven set up and running.
-
-3. Run _mvn hpi:run_. This will start a jenkins with the plugin already installed and ready to use.
-4. Locate http://localhost:8080/jenkins and enjoy...
+2. Run _mvn hpi:run_. This will start a jenkins with the plugin already installed and ready to use.
+3. Locate http://localhost:8080/jenkins and enjoy...
 
 
 ## Developers
