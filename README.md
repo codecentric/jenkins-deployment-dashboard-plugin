@@ -8,9 +8,17 @@ The jenkins-deployment-dashboard-plugin is about deploying your stuff easily. Yo
 
 At first we'll support amazon ec2 instances but our goal is, to make this plugin flexible enough to support all kinds of server instances.
 
-## Prerequisites
+## What do you need to make this work?
 
-Please add your AWS credentials to your user home to successfully run the EC2 unit tests 
+The plugin was constructed with the maven goal hpi:create, which generats a basic jenkins plugin skeleton. If you check out this repository you don't need to do this anymore. All you have to do is the following:
+
+1. Check out the repo (like, duh...)
+2. Run _mvn hpi:run_. This will start a jenkins with the plugin already installed and ready to use.
+3. Locate http://localhost:8080/jenkins and enjoy...
+
+## Integration Tests
+
+Please add your AWS credentials to your user home to successfully run the EC2 integration tests.
 
 ```bash
 # File: $USER_HOME/.aws/credentials 
@@ -19,14 +27,6 @@ Please add your AWS credentials to your user home to successfully run the EC2 un
 aws_access_key_id = <KEY_ID>
 aws_secret_access_key = <ACCESS_KEY>
 ```
-
-## What do you need to make this work?
-
-The plugin was constructed with the maven goal hpi:create, which generats a basic jenkins plugin skeleton. If you check out this repository you don't need to do this anymore. All you have to do is the following:
-
-1. Check out the repo (like, duh...)
-2. Run _mvn hpi:run_. This will start a jenkins with the plugin already installed and ready to use.
-3. Locate http://localhost:8080/jenkins and enjoy...
 
 ## Developers
 
