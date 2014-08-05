@@ -28,7 +28,6 @@ The plugin was constructed with the maven goal hpi:create, which generats a basi
 2. Run _mvn hpi:run_. This will start a jenkins with the plugin already installed and ready to use.
 3. Locate http://localhost:8080/jenkins and enjoy...
 
-
 ## Developers
 
 * Miel Donkers
