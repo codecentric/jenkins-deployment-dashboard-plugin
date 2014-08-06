@@ -12,24 +12,30 @@ import hudson.model.ViewDescriptor;
 import hudson.util.FormValidation;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.client.ClientBuilder;
 
 import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
 
-import org.apache.log4j.Logger;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.springframework.util.StringUtils;
+
+import de.codecentric.jenkins.dashboard.artifactory.ArtifactoryConnector;
 
 public class DashboardView extends View {
 
-	private final static Logger LOG = Logger.getLogger(DashboardView.class.getName());
+	private final static Logger LOG = Logger.getLogger(DashboardView.class
+			.getName());
 
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
@@ -53,6 +59,7 @@ public class DashboardView extends View {
 		setArtifactoryRestUri(artifactoryRestUri);
 		setUsername(username);
 		setPassword(password);
+		LOG.info("DataBoundConstructor " + artifactoryRestUri);
 	}
 
 	@Override
@@ -86,9 +93,14 @@ public class DashboardView extends View {
 	 * @param req
 	 */
 	@Override
-	protected void submit(final StaplerRequest req) throws IOException,
-			ServletException, Descriptor.FormException {
-		LOG.info("submit");
+	protected synchronized void submit(final StaplerRequest req)
+			throws IOException, ServletException, Descriptor.FormException {
+
+		LOG.info("DashboardView submitted configuration");
+		JSONObject json = req.getSubmittedForm();
+		this.artifactoryRestUri = (String) json.get("artifactoryRestUri");
+		this.username = (String) json.get("username");
+		this.password = (String) json.get("password");
 	}
 
 	/**
@@ -147,46 +159,17 @@ public class DashboardView extends View {
 
 		public FormValidation doCheckArtifactoryRestUri(
 				@QueryParameter final String artifactoryRestUri) {
-			FormValidation validationResult;
-
-			// if (RestConnection.validateRestUri(artifactoryRestUri)) {
-			validationResult = FormValidation.ok();
-			// } else {
-			// validationResult =
-			// FormValidation.error("Artifactory REST uri is not valid, cannot be empty and has to "
-			// +
-			// "start with 'http://' or 'https://'");
-			// }
-
-			return validationResult;
+			return FormValidation.ok();
 		}
 
 		public FormValidation doCheckUsername(
 				@QueryParameter final String username) {
-			FormValidation validationResult;
-
-			// if (RestConnection.validateUsername(username)) {
-			validationResult = FormValidation.ok();
-			// } else {
-			// validationResult =
-			// FormValidation.error("Username for REST interface cannot be empty");
-			// }
-
-			return validationResult;
+			return FormValidation.ok();
 		}
 
 		public FormValidation doCheckPassword(
 				@QueryParameter final String password) {
-			FormValidation validationResult;
-
-			// if (RestConnection.validatePassword(password)) {
-			validationResult = FormValidation.ok();
-			// } else {
-			// validationResult =
-			// FormValidation.error("Password for REST interface cannot be empty");
-			// }
-
-			return validationResult;
+			return FormValidation.ok();
 		}
 
 		public FormValidation doTestArtifactoryConnection(
@@ -194,29 +177,29 @@ public class DashboardView extends View {
 				@QueryParameter("username") final String username,
 				@QueryParameter("password") final String password) {
 
-			// http://23.21.157.166:8081/artifactory
-			LOG.info("Verify Artifactory Connection for URI " + artifactoryRestUri);
+			LOG.info("Verify Artifactory Connection for URI "
+					+ artifactoryRestUri);
 
 			FormValidation validationResult;
+			try {
+				URI repositoryURI = new URI(artifactoryRestUri);
+				ArtifactoryConnector repository = new ArtifactoryConnector(
+						username, password, repositoryURI);
+				LOG.info("Artifactory config valid? " + repository.canConnect());
+				if (repository.canConnect()) {
+					validationResult = FormValidation
+							.ok("Connection with Artifactory successful.");
+				} else {
+					validationResult = FormValidation
+							.warning("Connection with Artifactory could not be established. Please check your credentials and URL "
+									+ artifactoryRestUri);
+				}
 
-			if (!isValidUri(artifactoryRestUri)) {
+			} catch (Exception e) {
+				LOG.severe(e.getMessage());
 				validationResult = FormValidation
-						.warning("Url is invalid. Please check your URL "
-								+ artifactoryRestUri);
-				return validationResult;
-			}
-
-			String status = ClientBuilder.newClient()
-					.target(artifactoryRestUri.trim()).request().get()
-					.getStatusInfo().getReasonPhrase();
-
-			if (status.equalsIgnoreCase("OK")) {
-				validationResult = FormValidation
-						.ok("Connection successful - HTTP 200 " + status);
-			} else {
-				validationResult = FormValidation
-						.warning("Connection with Artifactory RESTful interface could not be established. Please check your URL "
-								+ artifactoryRestUri);
+						.error("A critical error occured when checking your configuration settings."
+								+ e.getMessage());
 			}
 
 			return validationResult;
