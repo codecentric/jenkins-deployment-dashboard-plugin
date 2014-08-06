@@ -16,4 +16,11 @@
       title="${%artifactory.connection.test.title}" progress="${%artifactory.connection.test.progress}"
       method="testArtifactoryConnection" with="artifactoryRestUri,username,password,applicationName"/>
 
+  <f:entry title="${%artifactory.rest.artefactId.title}" description="${%artifactory.rest.artefactId.description}">
+    <f:textbox field="artefactId"/>
+  </f:entry>
+
+  <f:entry title="${%artifactory.rest.deployJobUri.title}" description="${%artifactory.rest.deployJobUri.description}">
+    <f:textbox field="deployJobUri"/>
+  </f:entry>
 </j:jelly>

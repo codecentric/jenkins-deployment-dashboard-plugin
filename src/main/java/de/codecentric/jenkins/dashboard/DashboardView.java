@@ -15,27 +15,30 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.ws.rs.client.ClientBuilder;
 
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
+import org.jfrog.artifactory.client.Artifactory;
+import org.jfrog.artifactory.client.ArtifactoryClient;
+import org.jfrog.artifactory.client.model.RepoPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.bind.JavaScriptMethod;
-import org.springframework.util.StringUtils;
 
 import de.codecentric.jenkins.dashboard.artifactory.ArtifactoryConnector;
 
 public class DashboardView extends View {
 
-	private final static Logger LOG = Logger.getLogger(DashboardView.class
-			.getName());
+	private final static Logger LOG = Logger.getLogger(DashboardView.class.getName());
 
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
@@ -43,7 +46,9 @@ public class DashboardView extends View {
 	private String artifactoryRestUri = "";
 	private String username = "";
 	private String password = "";
-
+	private String artefactId = "";
+	private String deployJobUri = "";
+	
 	public DashboardView(final String name) {
 		super(name);
 	}
@@ -53,13 +58,17 @@ public class DashboardView extends View {
 	}
 
 	@DataBoundConstructor
-	public DashboardView(final String name, final String artifactoryRestUri,
-			final String username, final String password) {
+	public DashboardView(
+			final String name, final String artifactoryRestUri,
+			final String username, final String password, 
+			final String artefactId, final String deployJobUri) {
 		this(name);
 		setArtifactoryRestUri(artifactoryRestUri);
 		setUsername(username);
 		setPassword(password);
-		LOG.info("DataBoundConstructor " + artifactoryRestUri);
+		setArtefactId(artefactId);
+		setDeployJobUri(deployJobUri);
+		LOG.info("DataBoundConstructor");
 	}
 
 	@Override
@@ -101,6 +110,8 @@ public class DashboardView extends View {
 		this.artifactoryRestUri = (String) json.get("artifactoryRestUri");
 		this.username = (String) json.get("username");
 		this.password = (String) json.get("password");
+		this.artefactId = (String) json.get("artefactId");
+		this.deployJobUri = (String) json.get("deployJobUri");
 	}
 
 	/**
@@ -143,6 +154,41 @@ public class DashboardView extends View {
 
 	public void setPassword(final String password) {
 		this.password = password;
+	}
+
+	public String getArtefactId() {
+		return artefactId;
+	}
+
+	public void setArtefactId(String artefactId) {
+		this.artefactId = artefactId;
+	}
+
+	public String getDeployJobUri() {
+		return deployJobUri;
+	}
+
+	public void setDeployJobUri(String deployJobUri) {
+		this.deployJobUri = deployJobUri;
+	}
+
+	public List<String> getVersions() {
+		LOG.info("getting all versions from artefact repository");
+
+		List<String> versions = new ArrayList<String>();
+		Set<String> versionsSet = new TreeSet<String>();
+		Artifactory artifactory = ArtifactoryClient.create(artifactoryRestUri, username, password);		
+		List<RepoPath> results = artifactory.searches().artifactsByName(artefactId).doSearch();
+		LOG.info("Found " + results.size() + " matching artefacts");
+		for (int i = 0; i < results.size(); i++) {
+			String itemPath = results.get(i).getItemPath();
+			String[] split = itemPath.split(artefactId);
+			String version = split[1].replaceAll("/", "");
+			versionsSet.add(version);
+		}
+		versions.addAll(versionsSet);
+		Collections.sort(versions);
+		return versions;
 	}
 
 	public static class DescriptorImpl extends ViewDescriptor {
@@ -205,24 +251,6 @@ public class DashboardView extends View {
 			return validationResult;
 		}
 
-	}
-
-	/**
-	 * Simple URI Validation
-	 * 
-	 * @param restUri
-	 * @return
-	 */
-	private static boolean isValidUri(final String restUri) {
-		if (!StringUtils.hasText(restUri)) {
-			return false;
-		}
-
-		if (restUri.startsWith("http://") || restUri.startsWith("https://")) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 }

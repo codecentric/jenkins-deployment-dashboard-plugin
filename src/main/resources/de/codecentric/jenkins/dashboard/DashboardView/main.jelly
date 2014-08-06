@@ -1,20 +1,34 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:f="/lib/form">
 
     <h1>Infrastructure Dashboard</h1>
+    
+    <b>Current configuration</b><br/>
+    Username ${it.username}<br/>
+    Artifactory URI <a href="${it.artifactoryRestUri}">${it.artifactoryRestUri}</a><br/>
+    ArtefactId ${it.artefactId}<br/>
+    DeployJobUri <a href="${it.deployJobUri}">${it.deployJobUri}</a><br/>
     
     <h2>Artefact Repository Versions</h2>
 
     <table border='0' cellpadding='10' style='background-color:lightgreen' width='100%'>
         <tr>
           <td>
-            <form name='form' target='_blank' action='http://localhost:8080/job/PROD-Deploy/buildWithParameters' method='GET'>
-              <div align='center'><h3>Available Releases</h3> Deploy VERSION <select name='version'>
-                <option value='1.4.416'>Version 1.4.416</option>
-                <option value='1.4.415'>Version 1.4.415</option>
-                </select> to ENVIRONMENT <select name='environment'>
-                <option value='PRODUCTION-BLUE'>PRODUCTION-BLUE</option>
-                <option value='PRODUCTION-GREEN'>PRODUCTION-GREEN</option>
-                <option value='UAT-ENVIRONMENT'>UAT-ENVIRONMENT</option>
+            <form name='form' target='_blank' action='${it.deployJobUri}/buildWithParameters' method='GET'>
+              <div align='center'>
+                <h3>Available Releases</h3> 
+                Deploy VERSION
+                <select name='VERSION'>
+                    <j:set var="versions" value="${it.getVersions()}"/>
+                    <j:forEach var="v" items="${versions}">
+                      <center>
+                            <option value='${v}'>Version ${v}</option>
+                      </center>
+                      <br />
+                    </j:forEach>
+                    </select> to ENVIRONMENT <select name='SERVER'>
+                    <option value='PRODUCTION-BLUE'>PRODUCTION-BLUE</option>
+                    <option value='PRODUCTION-GREEN'>PRODUCTION-GREEN</option>
+                    <option value='UAT-ENVIRONMENT'>UAT-ENVIRONMENT</option>
                 </select>
                 <input type='submit' value='Submit' />
               </div>

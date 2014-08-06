@@ -147,26 +147,35 @@
 			<artifactId>restito</artifactId>
 			<version>0.4-beta-3</version>
 		</dependency>
-        
-        <dependency>
+
+		<!-- Used for AWS Integration -->
+		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
 			<version>1.8.7</version>
 		</dependency>
 
+		<!-- Used for Artifactory Integration -->
+		<dependency>
+			<groupId>org.jfrog.artifactory.client</groupId>
+			<artifactId>artifactory-java-client-services</artifactId>
+			<version>0.14</version>
+		</dependency>
+
 	</dependencies>
 
-    <repositories>
-      <repository>
-        <id>repo.jenkins-ci.org</id>
-        <url>http://repo.jenkins-ci.org/public/</url>
-      </repository>
-    </repositories>
-    <pluginRepositories>
-      <pluginRepository>
-        <id>repo.jenkins-ci.org</id>
-        <url>http://repo.jenkins-ci.org/public/</url>
-      </pluginRepository>
-    </pluginRepositories>
+	<!-- Added Repositories to be able to build project on TravisCI -->
+	<repositories>
+		<repository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>
