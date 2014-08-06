@@ -25,10 +25,13 @@
                       </center>
                       <br />
                     </j:forEach>
-                    </select> to ENVIRONMENT <select name='SERVER'>
-                    <option value='PRODUCTION-BLUE'>PRODUCTION-BLUE</option>
-                    <option value='PRODUCTION-GREEN'>PRODUCTION-GREEN</option>
-                    <option value='UAT-ENVIRONMENT'>UAT-ENVIRONMENT</option>
+                </select>
+                to ENVIRONMENT 
+                <select name='SERVER'>
+                    <j:set var="environments" value="${it.getEnvironments()}"/>
+                    <j:forEach var="env" items="${environments}">
+                        <option value='${env}'>${env}</option>
+                    </j:forEach>
                 </select>
                 <input type='submit' value='Submit' />
               </div>

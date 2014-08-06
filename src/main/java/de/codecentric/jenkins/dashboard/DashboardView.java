@@ -5,6 +5,7 @@ import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.TopLevelItem;
 import hudson.model.ViewGroup;
+import hudson.model.ChoiceParameterDefinition;
 import hudson.model.Descriptor;
 import hudson.model.ModifiableItemGroup;
 import hudson.model.View;
@@ -14,6 +15,7 @@ import hudson.util.FormValidation;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +50,8 @@ public class DashboardView extends View {
 	private String password = "";
 	private String artefactId = "";
 	private String deployJobUri = "";
+	private String environmentConfig = "";
+	private List<String> environments = new ArrayList<String>();
 	
 	public DashboardView(final String name) {
 		super(name);
@@ -61,13 +65,15 @@ public class DashboardView extends View {
 	public DashboardView(
 			final String name, final String artifactoryRestUri,
 			final String username, final String password, 
-			final String artefactId, final String deployJobUri) {
+			final String artefactId, final String deployJobUri,
+			final String environmentConfig) {
 		this(name);
 		setArtifactoryRestUri(artifactoryRestUri);
 		setUsername(username);
 		setPassword(password);
 		setArtefactId(artefactId);
 		setDeployJobUri(deployJobUri);
+		setEnvironmentConfig(environmentConfig);
 		LOG.info("DataBoundConstructor");
 	}
 
@@ -104,14 +110,18 @@ public class DashboardView extends View {
 	@Override
 	protected synchronized void submit(final StaplerRequest req)
 			throws IOException, ServletException, Descriptor.FormException {
-
 		LOG.info("DashboardView submitted configuration");
+
 		JSONObject json = req.getSubmittedForm();
 		this.artifactoryRestUri = (String) json.get("artifactoryRestUri");
 		this.username = (String) json.get("username");
 		this.password = (String) json.get("password");
 		this.artefactId = (String) json.get("artefactId");
 		this.deployJobUri = (String) json.get("deployJobUri");
+		this.environmentConfig = (String) json.get("environmentConfig");
+
+		ChoiceParameterDefinition choices = new ChoiceParameterDefinition("choice", this.environmentConfig, "Description");
+		this.environments = choices.getChoices();
 	}
 
 	/**
@@ -189,6 +199,34 @@ public class DashboardView extends View {
 		versions.addAll(versionsSet);
 		Collections.sort(versions);
 		return versions;
+	}
+
+	/**
+	 * @return the environments
+	 */
+	public List<String> getEnvironments() {
+		return environments;
+	}
+
+	/**
+	 * @param environments the environments to set
+	 */
+	public void setEnvironments(List<String> environments) {
+		this.environments = environments;
+	}
+
+	/**
+	 * @return the environmentConfig
+	 */
+	public String getEnvironmentConfig() {
+		return environmentConfig;
+	}
+
+	/**
+	 * @param environmentConfig the environmentConfig to set
+	 */
+	public void setEnvironmentConfig(String environmentConfig) {
+		this.environmentConfig = environmentConfig;
 	}
 
 	public static class DescriptorImpl extends ViewDescriptor {

@@ -23,4 +23,10 @@
   <f:entry title="${%artifactory.rest.deployJobUri.title}" description="${%artifactory.rest.deployJobUri.description}">
     <f:textbox field="deployJobUri"/>
   </f:entry>
+
+  <f:entry title="${%artifactory.rest.environmentConfig.title}" description="${%artifactory.rest.environmentConfig.description}">
+    <f:textarea field="environmentConfig"/>
+  </f:entry>
+
+
 </j:jelly>
