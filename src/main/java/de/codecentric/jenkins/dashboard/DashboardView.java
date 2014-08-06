@@ -1,5 +1,6 @@
 package de.codecentric.jenkins.dashboard;
 
+import static de.codecentric.jenkins.dashboard.Environment.EnvironmentDescriptor;
 import static de.codecentric.jenkins.dashboard.util.LocalMessages.DASHBOARD_VIEW_DISPLAYNAME;
 import hudson.Extension;
 import hudson.model.Item;
@@ -15,7 +16,6 @@ import hudson.util.FormValidation;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 
 import jenkins.model.Jenkins;
-import net.sf.json.JSONObject;
 
 import org.jfrog.artifactory.client.Artifactory;
 import org.jfrog.artifactory.client.ArtifactoryClient;
@@ -35,6 +34,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.springframework.util.StringUtils;
 
 import de.codecentric.jenkins.dashboard.artifactory.ArtifactoryConnector;
 
@@ -51,8 +51,9 @@ public class DashboardView extends View {
 	private String artefactId = "";
 	private String deployJobUri = "";
 	private String environmentConfig = "";
-	private List<String> environments = new ArrayList<String>();
-	
+    private List<String> environmentNames;
+    private List<Environment> environments;
+
 	public DashboardView(final String name) {
 		super(name);
 	}
@@ -66,7 +67,7 @@ public class DashboardView extends View {
 			final String name, final String artifactoryRestUri,
 			final String username, final String password, 
 			final String artefactId, final String deployJobUri,
-			final String environmentConfig) {
+			final String environmentConfig, List<Environment> environments) {
 		this(name);
 		setArtifactoryRestUri(artifactoryRestUri);
 		setUsername(username);
@@ -74,8 +75,9 @@ public class DashboardView extends View {
 		setArtefactId(artefactId);
 		setDeployJobUri(deployJobUri);
 		setEnvironmentConfig(environmentConfig);
-		LOG.info("DataBoundConstructor");
-	}
+        setEnvironments(environments);
+        LOG.info("DataBoundConstructor");
+    }
 
 	@Override
 	public ViewDescriptor getDescriptor() {
@@ -92,7 +94,7 @@ public class DashboardView extends View {
 
 	/**
 	 * Checks if the job is in this collection.
-	 * 
+	 *
 	 * @param item
 	 */
 	@Override
@@ -104,24 +106,17 @@ public class DashboardView extends View {
 	 * Handles the configuration submission.
 	 * <p/>
 	 * Load view-specific properties here.
-	 * 
+	 *
 	 * @param req
 	 */
 	@Override
 	protected synchronized void submit(final StaplerRequest req)
 			throws IOException, ServletException, Descriptor.FormException {
 		LOG.info("DashboardView submitted configuration");
-
-		JSONObject json = req.getSubmittedForm();
-		this.artifactoryRestUri = (String) json.get("artifactoryRestUri");
-		this.username = (String) json.get("username");
-		this.password = (String) json.get("password");
-		this.artefactId = (String) json.get("artefactId");
-		this.deployJobUri = (String) json.get("deployJobUri");
-		this.environmentConfig = (String) json.get("environmentConfig");
+        req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly should work
 
 		ChoiceParameterDefinition choices = new ChoiceParameterDefinition("choice", this.environmentConfig, "Description");
-		this.environments = choices.getChoices();
+		this.environmentNames = choices.getChoices();
 	}
 
 	/**
@@ -131,7 +126,7 @@ public class DashboardView extends View {
 	 * This method should call
 	 * {@link ModifiableItemGroup#doCreateItem(org.kohsuke.stapler.StaplerRequest, org.kohsuke.stapler.StaplerResponse)}
 	 * and then add the newly created item to this view.
-	 * 
+	 *
 	 * @param req
 	 * @param rsp
 	 * @return null if fails.
@@ -204,15 +199,15 @@ public class DashboardView extends View {
 	/**
 	 * @return the environments
 	 */
-	public List<String> getEnvironments() {
-		return environments;
+	public List<String> getEnvironmentNames() {
+		return environmentNames;
 	}
 
 	/**
-	 * @param environments the environments to set
+	 * @param environmentNames the environments to set
 	 */
-	public void setEnvironments(List<String> environments) {
-		this.environments = environments;
+	public void setEnvironmentNames(List<String> environmentNames) {
+		this.environmentNames = environmentNames;
 	}
 
 	/**
@@ -229,6 +224,14 @@ public class DashboardView extends View {
 		this.environmentConfig = environmentConfig;
 	}
 
+    public List<Environment> getEnvironments() {
+        return Collections.unmodifiableList(environments);
+    }
+
+    public void setEnvironments(final List<Environment> environmentsList) {
+        this.environments = environmentsList == null ? new ArrayList<Environment>() : new ArrayList<Environment>(environmentsList);
+    }
+
 	public static class DescriptorImpl extends ViewDescriptor {
 
 		@Override
@@ -236,7 +239,11 @@ public class DashboardView extends View {
 			return DASHBOARD_VIEW_DISPLAYNAME.toString();
 		}
 
-		@Override
+        public List<EnvironmentDescriptor> getEnvironmentDescriptors() {
+            return Jenkins.getInstance().getDescriptorList(Environment.class);
+        }
+
+        @Override
 		public String getHelpFile() {
 			return "/plugin/jenkins-deployment-dashboard-plugin/help.html";
 		}
