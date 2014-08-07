@@ -4,17 +4,23 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-public class Environment {
+public class ServerEnvironment {
 
 	private String instanceId;
 	private String environmentTag;
 	private String instanceType;
 	private String version;
 	private List<Tag> tags;
+	private ENVIRONMENT_TYPES type;
 
-	public Environment(String instanceId, String instanceType) {
+	public enum ENVIRONMENT_TYPES {
+		TEST, PRODUCTION, STAGING, JENKINS
+	}
+	
+	public ServerEnvironment(String instanceId, String instanceType) {
 		this.instanceId = instanceId;
 		this.instanceType = instanceType;
+		this.setType(ENVIRONMENT_TYPES.TEST);
 	}
 	
 	public String getEnvironmentTag() {
@@ -47,7 +53,12 @@ public class Environment {
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
 	}
-	
+	public ENVIRONMENT_TYPES getType() {
+		return type;
+	}
+	public void setType(ENVIRONMENT_TYPES type) {
+		this.type = type;
+	}
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

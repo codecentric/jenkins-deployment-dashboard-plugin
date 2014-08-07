@@ -6,7 +6,7 @@ import com.amazonaws.regions.Region;
 
 public interface EnvironmentInterface {
 
-	public List<Environment> getEnvironments(Region region);
-	public List<Environment> getEnvironmentsByTag(Region region, String tag);
+	public List<ServerEnvironment> getEnvironments(Region region);
+	public List<ServerEnvironment> getEnvironmentsByTag(Region region, String tag);
 	
 }

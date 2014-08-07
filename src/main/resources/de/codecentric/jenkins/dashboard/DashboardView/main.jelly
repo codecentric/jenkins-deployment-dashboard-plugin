@@ -1,13 +1,29 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:f="/lib/form">
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:f="/lib/form" xmlns:d="jelly:define">
+
+	<style type="text/css">
+		.TEST {
+			background-color: orange
+		}	
+		.STAGING {
+			background-color: yellow
+		}	
+		.PRODUCTION {
+			background-color: lightgreen
+		}
+		.JENKINS {
+			background-color: lightblue
+		}
+	</style>
 
     <h1>Release Dashboard</h1>
-    
+
     <b>Current configuration</b><br/>
     Username ${it.username}<br/>
     Artifactory URI <a href="${it.artifactoryRestUri}">${it.artifactoryRestUri}</a><br/>
     ArtefactId ${it.artefactId}<br/>
     DeployJobUri <a href="${it.deployJobUri}">${it.deployJobUri}</a><br/>
-    
+
     <h2>Artefact Repository Versions</h2>
 
     <table border='0' cellpadding='10' style='background-color:lightgreen' width='100%'>
@@ -41,7 +57,25 @@
         </tr>
     </table>
         
-    <h2>EC2 Environments</h2>
+    <h2>Live: EC2 Environments</h2>
+
+    <table style='background-color:#FFFFFF' width='100%'>
+        <tr>
+			<j:set var="environments" value="${it.getEC2Environments()}"/>
+			<j:forEach var="environment" items="${environments}">
+				<td class="${environment.type}">
+			         <table border='0' cellpadding='10' style='background-color:#FFFFFF' width='100%'>
+			        	<tr><td class="${environment.type}">${environment.instanceId}</td></tr>
+			        	<tr><td class="${environment.type}">Tag: ${environment.environmentTag}</td></tr>
+			        	<tr><td class="${environment.type}">Instance Type: ${environment.instanceType}</td></tr>
+			        	<tr><td class="${environment.type}">Version: ${environment.version}</td></tr>
+			        </table>
+			    </td>
+			</j:forEach>
+		</tr>
+	</table>
+
+    <h2>Hardcoded: EC2 Environments</h2>
 
     <table border='0' cellpadding='10' style='background-color:#FFFFFF' width='100%'>
         <tr>

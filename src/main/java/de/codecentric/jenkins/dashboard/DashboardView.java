@@ -28,10 +28,16 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.springframework.util.StringUtils;
+
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 
 import de.codecentric.jenkins.dashboard.Environment.EnvironmentDescriptor;
+import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.api.repository.Artifact;
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
+import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
 
 public class DashboardView extends View {
 
@@ -46,7 +52,7 @@ public class DashboardView extends View {
 	private String artefactId = "";
 	private String deployJobUri = "";
 	private String environmentConfig = "";
-    private List<Environment> environments;
+	private List<Environment> environments;
 
 	public DashboardView(final String name) {
 		super(name);
@@ -57,9 +63,8 @@ public class DashboardView extends View {
 	}
 
 	@DataBoundConstructor
-	public DashboardView(
-			final String name, final String artifactoryRestUri,
-			final String username, final String password, 
+	public DashboardView(final String name, final String artifactoryRestUri,
+			final String username, final String password,
 			final String artefactId, final String deployJobUri,
 			final String environmentConfig, List<Environment> environments) {
 		this(name);
@@ -69,9 +74,9 @@ public class DashboardView extends View {
 		setArtefactId(artefactId);
 		setDeployJobUri(deployJobUri);
 		setEnvironmentConfig(environmentConfig);
-        setEnvironments(environments);
-        LOGGER.info("DataBoundConstructor");
-    }
+		setEnvironments(environments);
+		LOGGER.info("DataBoundConstructor");
+	}
 
 	@Override
 	public ViewDescriptor getDescriptor() {
@@ -107,7 +112,7 @@ public class DashboardView extends View {
 	protected synchronized void submit(final StaplerRequest req)
 			throws IOException, ServletException, Descriptor.FormException {
 		LOGGER.info("DashboardView submitted configuration");
-        req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly should work
+		req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly should work
 	}
 
 	/**
@@ -178,11 +183,26 @@ public class DashboardView extends View {
 			e.printStackTrace();
 			return new ArrayList<Artifact>();
 		}
-		ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
+		ArtifactoryConnector repository = new ArtifactoryConnector(username,
+				password, repositoryURI);
 		List<Artifact> versions = repository.getArtefactList(artefactId);
 		return versions;
 	}
 
+	public List<ServerEnvironment> getEC2Environments() {
+		EC2Connector env = new EC2Connector();
+		Region region = Region.getRegion(Regions.EU_WEST_1);
+		
+		List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
+		for( Environment envTag : environments) {
+			LOGGER.info("getEC2Environments " + envTag.getName());
+			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(region, envTag.getName());
+			list.addAll(foundEnvironment);
+		}
+		LOGGER.info("get ec2 environments " + list.size());
+		return list;
+	}
+	
 	/**
 	 * @return the environmentConfig
 	 */
@@ -191,19 +211,21 @@ public class DashboardView extends View {
 	}
 
 	/**
-	 * @param environmentConfig the environmentConfig to set
+	 * @param environmentConfig
+	 *            the environmentConfig to set
 	 */
 	public void setEnvironmentConfig(String environmentConfig) {
 		this.environmentConfig = environmentConfig;
 	}
 
-    public List<Environment> getEnvironments() {
-        return Collections.unmodifiableList(environments);
-    }
+	public List<Environment> getEnvironments() {
+		return Collections.unmodifiableList(environments);
+	}
 
-    public void setEnvironments(final List<Environment> environmentsList) {
-        this.environments = environmentsList == null ? new ArrayList<Environment>() : new ArrayList<Environment>(environmentsList);
-    }
+	public void setEnvironments(final List<Environment> environmentsList) {
+		this.environments = environmentsList == null ? new ArrayList<Environment>()
+				: new ArrayList<Environment>(environmentsList);
+	}
 
 	public static class DescriptorImpl extends ViewDescriptor {
 
@@ -212,11 +234,11 @@ public class DashboardView extends View {
 			return DASHBOARD_VIEW_DISPLAYNAME.toString();
 		}
 
-        public List<EnvironmentDescriptor> getEnvironmentDescriptors() {
-            return Jenkins.getInstance().getDescriptorList(Environment.class);
-        }
+		public List<EnvironmentDescriptor> getEnvironmentDescriptors() {
+			return Jenkins.getInstance().getDescriptorList(Environment.class);
+		}
 
-        @Override
+		@Override
 		public String getHelpFile() {
 			return "/plugin/jenkins-deployment-dashboard-plugin/help.html";
 		}
@@ -228,12 +250,20 @@ public class DashboardView extends View {
 
 		public FormValidation doCheckUsername(
 				@QueryParameter final String username) {
-			return FormValidation.ok();
+			
+			if( StringUtils.hasText(username) ) {
+				return FormValidation.ok();
+			}
+			return FormValidation.warning("Please provide a username");
 		}
 
 		public FormValidation doCheckPassword(
 				@QueryParameter final String password) {
-			return FormValidation.ok();
+
+			if( StringUtils.hasText(password) ) {
+				return FormValidation.ok();
+			}
+			return FormValidation.warning("Please provide a valid password");
 		}
 
 		public FormValidation doTestArtifactoryConnection(
@@ -241,13 +271,16 @@ public class DashboardView extends View {
 				@QueryParameter("username") final String username,
 				@QueryParameter("password") final String password) {
 
-			LOGGER.info("Verify Artifactory Connection for URI " + artifactoryRestUri);
+			LOGGER.info("Verify Artifactory Connection for URI "
+					+ artifactoryRestUri);
 
 			FormValidation validationResult;
 			try {
 				URI repositoryURI = new URI(artifactoryRestUri);
-				ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
-				LOGGER.info("Artifactory config valid? " + repository.canConnect());
+				ArtifactoryConnector repository = new ArtifactoryConnector(
+						username, password, repositoryURI);
+				LOGGER.info("Artifactory config valid? "
+						+ repository.canConnect());
 				if (repository.canConnect()) {
 					validationResult = FormValidation
 							.ok("Connection with Artifactory successful.");
@@ -268,5 +301,6 @@ public class DashboardView extends View {
 		}
 
 	}
+	
 
 }

@@ -3,6 +3,8 @@ package de.codecentric.jenkins.dashboard.ec2;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
@@ -11,15 +13,16 @@ import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.Tag;
 
-import de.codecentric.jenkins.dashboard.api.environment.Environment;
+import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
+import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment.ENVIRONMENT_TYPES;
 import de.codecentric.jenkins.dashboard.api.environment.EnvironmentInterface;
 
 public class EC2Connector implements EnvironmentInterface {
 
 	private static final String DEFAULT_INSTANCE_NAME_TAG = "Name";
 	
-	public List<Environment> getEnvironments(Region region) {
-		List<Environment> environments = new ArrayList<Environment>();
+	public List<ServerEnvironment> getEnvironments(Region region) {
+		List<ServerEnvironment> environments = new ArrayList<ServerEnvironment>();
 		
 		AmazonEC2 ec2 = new AmazonEC2Client();
 		ec2.setRegion(region);
@@ -33,8 +36,8 @@ public class EC2Connector implements EnvironmentInterface {
 		return environments;
 	}
 
-	public List<Environment> getEnvironmentsByTag(Region region, String searchTag) {
-		List<Environment> environments = new ArrayList<Environment>();
+	public List<ServerEnvironment> getEnvironmentsByTag(Region region, String searchTag) {
+		List<ServerEnvironment> environments = new ArrayList<ServerEnvironment>();
 		AmazonEC2 ec2 = new AmazonEC2Client();
 		ec2.setRegion(region);
 		DescribeInstancesResult instances = ec2.describeInstances();
@@ -50,14 +53,25 @@ public class EC2Connector implements EnvironmentInterface {
 		return environments;
 	}
 
-	private Environment getEnvironmentFromInstance(Instance instance) {
-		Environment env = new Environment(instance.getInstanceId(), instance.getInstanceType());
+	private ServerEnvironment getEnvironmentFromInstance(Instance instance) {
+		System.out.println(ToStringBuilder.reflectionToString(instance));
+		ServerEnvironment env = new ServerEnvironment(instance.getInstanceId(), instance.getInstanceType());
 		List<de.codecentric.jenkins.dashboard.api.environment.Tag> tags = new ArrayList<de.codecentric.jenkins.dashboard.api.environment.Tag>();
 		for (Tag tag : instance.getTags()) {
 			de.codecentric.jenkins.dashboard.api.environment.Tag envTag = new de.codecentric.jenkins.dashboard.api.environment.Tag(tag.getKey(), tag.getValue());
 			tags.add(envTag);
 			if( tag.getKey().equalsIgnoreCase(DEFAULT_INSTANCE_NAME_TAG)) {
 				env.setEnvironmentTag(tag.getValue());
+				if( tag.getValue().contains("PROD")) {
+					env.setType(ENVIRONMENT_TYPES.PRODUCTION);
+				} else if( tag.getValue().contains("STAGING")) {
+					env.setType(ENVIRONMENT_TYPES.STAGING);
+				} else if( tag.getValue().contains("JENKINS")) {
+					env.setType(ENVIRONMENT_TYPES.JENKINS);
+				}
+			}
+			if( tag.getKey().equalsIgnoreCase("Version")) {
+				env.setVersion(tag.getValue());
 			}
 		}
 		env.setTags(tags);

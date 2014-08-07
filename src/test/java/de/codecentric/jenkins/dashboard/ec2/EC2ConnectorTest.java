@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
-import de.codecentric.jenkins.dashboard.api.environment.Environment;
+import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 
 /**
  * Please add your AWS credentials to your user home to successfully run these unit tests 
@@ -31,7 +31,7 @@ public class EC2ConnectorTest {
 	public void testGetEnvironments() {
 		EC2Connector env = new EC2Connector();
 		Region region = Region.getRegion(Regions.EU_WEST_1);
-		List<Environment> list = env.getEnvironments(region);
+		List<ServerEnvironment> list = env.getEnvironments(region);
 		assertTrue(list.size() > 0);
 	}
 
@@ -39,7 +39,7 @@ public class EC2ConnectorTest {
 	public void testGetEnvironmentsByTag() {
 		EC2Connector env = new EC2Connector();
 		Region region = Region.getRegion(Regions.EU_WEST_1);
-		List<Environment> list = env.getEnvironmentsByTag(region, "ALE_PROD_A");
+		List<ServerEnvironment> list = env.getEnvironmentsByTag(region, "ALE_PROD_A");
 		assertTrue(list.size() == 1);
 
 	}
