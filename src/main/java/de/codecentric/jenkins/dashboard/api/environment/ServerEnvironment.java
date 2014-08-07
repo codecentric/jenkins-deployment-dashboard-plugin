@@ -1,8 +1,11 @@
 package de.codecentric.jenkins.dashboard.api.environment;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.amazonaws.services.ec2.model.InstanceState;
 
 public class ServerEnvironment {
 
@@ -10,9 +13,13 @@ public class ServerEnvironment {
 	private String environmentTag;
 	private String instanceType;
 	private String version;
+	private String publicIpAddress;
+
+	private Date launchTime;
+	private InstanceState state;
 	private List<Tag> tags;
 	private ENVIRONMENT_TYPES type;
-
+	
 	public enum ENVIRONMENT_TYPES {
 		TEST, PRODUCTION, STAGING, JENKINS
 	}
@@ -63,5 +70,30 @@ public class ServerEnvironment {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+
+	public InstanceState getState() {
+		return state;
+	}
+
+	public void setState(InstanceState state) {
+		this.state = state;
+	}
+
+	public Date getLaunchTime() {
+		return launchTime;
+	}
+
+	public void setLaunchTime(Date launchTime) {
+		this.launchTime = launchTime;
+	}
+
+	public String getPublicIpAddress() {
+		return publicIpAddress;
+	}
+
+	public void setPublicIpAddress(String publicIpAddress) {
+		this.publicIpAddress = publicIpAddress;
+	}
+
 	
 }

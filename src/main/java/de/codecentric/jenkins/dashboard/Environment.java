@@ -25,7 +25,7 @@ public class Environment extends AbstractDescribableImpl<Environment> {
     public void setName(final String name) {
         this.name = name;
     }
-
+ 
     @Override
     public Descriptor getDescriptor() {
         return DESCRIPTOR;

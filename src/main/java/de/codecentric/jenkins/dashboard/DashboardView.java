@@ -54,6 +54,8 @@ public class DashboardView extends View {
 	private String environmentConfig = "";
 	private List<Environment> environments;
 
+	Regions region = Regions.EU_WEST_1; // TODO: replace hard coded variable
+			
 	public DashboardView(final String name) {
 		super(name);
 	}
@@ -66,7 +68,8 @@ public class DashboardView extends View {
 	public DashboardView(final String name, final String artifactoryRestUri,
 			final String username, final String password,
 			final String artefactId, final String deployJobUri,
-			final String environmentConfig, List<Environment> environments) {
+			final String environmentConfig, List<Environment> environments, 
+			final String region) {
 		this(name);
 		setArtifactoryRestUri(artifactoryRestUri);
 		setUsername(username);
@@ -75,7 +78,6 @@ public class DashboardView extends View {
 		setDeployJobUri(deployJobUri);
 		setEnvironmentConfig(environmentConfig);
 		setEnvironments(environments);
-		LOGGER.info("DataBoundConstructor");
 	}
 
 	@Override
@@ -109,8 +111,7 @@ public class DashboardView extends View {
 	 * @param req
 	 */
 	@Override
-	protected synchronized void submit(final StaplerRequest req)
-			throws IOException, ServletException, Descriptor.FormException {
+	protected synchronized void submit(final StaplerRequest req) throws IOException, ServletException, Descriptor.FormException {
 		LOGGER.info("DashboardView submitted configuration");
 		req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly should work
 	}
@@ -128,8 +129,7 @@ public class DashboardView extends View {
 	 * @return null if fails.
 	 */
 	@Override
-	public Item doCreateItem(final StaplerRequest req, final StaplerResponse rsp)
-			throws IOException, ServletException {
+	public Item doCreateItem(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
 		return Jenkins.getInstance().doCreateItem(req, rsp);
 	}
 
@@ -183,23 +183,18 @@ public class DashboardView extends View {
 			e.printStackTrace();
 			return new ArrayList<Artifact>();
 		}
-		ArtifactoryConnector repository = new ArtifactoryConnector(username,
-				password, repositoryURI);
+		ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
 		List<Artifact> versions = repository.getArtefactList(artefactId);
 		return versions;
 	}
 
 	public List<ServerEnvironment> getEC2Environments() {
 		EC2Connector env = new EC2Connector();
-		Region region = Region.getRegion(Regions.EU_WEST_1);
-		
 		List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
 		for( Environment envTag : environments) {
-			LOGGER.info("getEC2Environments " + envTag.getName());
-			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(region, envTag.getName());
+			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.EU_WEST_1), envTag.getName());
 			list.addAll(foundEnvironment);
 		}
-		LOGGER.info("get ec2 environments " + list.size());
 		return list;
 	}
 	
@@ -243,13 +238,11 @@ public class DashboardView extends View {
 			return "/plugin/jenkins-deployment-dashboard-plugin/help.html";
 		}
 
-		public FormValidation doCheckArtifactoryRestUri(
-				@QueryParameter final String artifactoryRestUri) {
+		public FormValidation doCheckArtifactoryRestUri(@QueryParameter final String artifactoryRestUri) {
 			return FormValidation.ok();
 		}
 
-		public FormValidation doCheckUsername(
-				@QueryParameter final String username) {
+		public FormValidation doCheckUsername(@QueryParameter final String username) {
 			
 			if( StringUtils.hasText(username) ) {
 				return FormValidation.ok();
@@ -257,8 +250,7 @@ public class DashboardView extends View {
 			return FormValidation.warning("Please provide a username");
 		}
 
-		public FormValidation doCheckPassword(
-				@QueryParameter final String password) {
+		public FormValidation doCheckPassword(@QueryParameter final String password) {
 
 			if( StringUtils.hasText(password) ) {
 				return FormValidation.ok();
@@ -271,36 +263,27 @@ public class DashboardView extends View {
 				@QueryParameter("username") final String username,
 				@QueryParameter("password") final String password) {
 
-			LOGGER.info("Verify Artifactory Connection for URI "
-					+ artifactoryRestUri);
+			LOGGER.info("Verify Artifactory Connection for URI " + artifactoryRestUri);
 
 			FormValidation validationResult;
 			try {
 				URI repositoryURI = new URI(artifactoryRestUri);
-				ArtifactoryConnector repository = new ArtifactoryConnector(
-						username, password, repositoryURI);
-				LOGGER.info("Artifactory config valid? "
-						+ repository.canConnect());
+				ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
+				LOGGER.info("Artifactory config valid? " + repository.canConnect());
 				if (repository.canConnect()) {
-					validationResult = FormValidation
-							.ok("Connection with Artifactory successful.");
+					validationResult = FormValidation.ok(Messages.DashboardView_artifactoryConnectionSuccessful());
 				} else {
-					validationResult = FormValidation
-							.warning("Connection with Artifactory could not be established. Please check your credentials and URL "
-									+ artifactoryRestUri);
+					validationResult = FormValidation.warning(Messages.DashboardView_artifactoryConnectionFailed() + artifactoryRestUri);
 				}
 
 			} catch (Exception e) {
 				LOGGER.severe(e.getMessage());
-				validationResult = FormValidation
-						.error("A critical error occured when checking your configuration settings."
-								+ e.getMessage());
+				validationResult = FormValidation.error(Messages.DashboardView_artifactoryConnectionCritical() + e.getMessage());
 			}
 
 			return validationResult;
 		}
 
 	}
-	
 
 }

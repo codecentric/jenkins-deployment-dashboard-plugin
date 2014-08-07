@@ -18,13 +18,7 @@
 
     <h1>Release Dashboard</h1>
 
-    <b>Current configuration</b><br/>
-    Username ${it.username}<br/>
-    Artifactory URI <a href="${it.artifactoryRestUri}">${it.artifactoryRestUri}</a><br/>
-    ArtefactId ${it.artefactId}<br/>
-    DeployJobUri <a href="${it.deployJobUri}">${it.deployJobUri}</a><br/>
-
-    <h2>Artefact Repository Versions</h2>
+    <h2>Artefact Versions</h2>
 
     <table border='0' cellpadding='10' style='background-color:lightgreen' width='100%'>
         <tr>
@@ -57,51 +51,28 @@
         </tr>
     </table>
         
-    <h2>Live: EC2 Environments</h2>
+    <h2>EC2 Environments</h2>
 
-    <table style='background-color:#FFFFFF' width='100%'>
-        <tr>
-			<j:set var="environments" value="${it.getEC2Environments()}"/>
-			<j:forEach var="environment" items="${environments}">
-				<td class="${environment.type}">
-			         <table border='0' cellpadding='10' style='background-color:#FFFFFF' width='100%'>
-			        	<tr><td class="${environment.type}">${environment.instanceId}</td></tr>
-			        	<tr><td class="${environment.type}">Tag: ${environment.environmentTag}</td></tr>
-			        	<tr><td class="${environment.type}">Instance Type: ${environment.instanceType}</td></tr>
-			        	<tr><td class="${environment.type}">Version: ${environment.version}</td></tr>
-			        </table>
-			    </td>
-			</j:forEach>
+    <table cellpadding='10' style='background-color:#FFFFFF' width='100%'>
+		<tr style="background-color: lightgrey">
+			<th>Name</th>
+			<th>State</th>
+			<th>Link</th>
+			<th>Version</th>
+			<th>Tag</th>
+			<th>AWS Information</th>
 		</tr>
+		<j:set var="environments" value="${it.getEC2Environments()}"/>
+		<j:forEach var="environment" items="${environments}">
+			<tr class="${environment.type}">
+	        	<td>${environment.type}</td>
+	        	<td><b>${environment.state.name}</b><br/>Last started: ${environment.launchTime}</td>
+        		<td>${environment.publicIpAddress}</td>
+	        	<td>${environment.version}</td>
+	        	<td>${environment.environmentTag}</td>
+	        	<td>Instance Id: ${environment.instanceId}<br/>Instance Type: ${environment.instanceType}</td>
+			</tr>
+		</j:forEach>
 	</table>
-
-    <h2>Hardcoded: EC2 Environments</h2>
-
-    <table border='0' cellpadding='10' style='background-color:#FFFFFF' width='100%'>
-        <tr>
-          <th bgcolor='orange'>Acceptance/Performance Test</th> 
-          <th bgcolor='yellow'>UAT Environment</th>
-          <th bgcolor='lightgreen'>Production Green</th>
-          <th bgcolor='lightblue'>Production Blue</th>
-        </tr>
-        <tr>
-          <td bgcolor='orange'>Version: 1.4.416</td>
-          <td bgcolor='yellow'>Version: 1.4.416</td>
-          <td bgcolor='lightgreen'>Version: 1.4.414</td>
-          <td bgcolor='lightblue'>Version: 1.4.403</td>
-        </tr>
-        <tr>
-          <td bgcolor='orange'>Go to <a href='http://localhost:8080/worblehat-web/' target='_blank'>ACCEPTANCE-1</a></td>
-          <td bgcolor='yellow'>not running</td>
-          <td bgcolor='lightgreen'>not running</td>
-          <td bgcolor='lightblue'>not running</td>
-        </tr>
-        <tr>
-          <td bgcolor='orange'>Status: running <br/>AWS Instance ID:  i-44b9bc20 <br/>Instance-Type:  m1.small <br/>Time started: 2012-04-12T10:25:14+0000<br/>AWS-TAG: ACCEPTANCE-1 </td>
-          <td bgcolor='yellow'>Status: not running <br/>AWS Instance ID:  i-abd722cc <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: UAT-ENVIRONMENT </td>
-          <td bgcolor='lightgreen'>Status: not running <br/>AWS Instance ID:  i-375eab50 <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: PRODUCTION-GREEN </td>
-          <td bgcolor='lightblue'>Status: not running <br/>AWS Instance ID:  i-40181224 <br/>Instance-Type:  t1.micro <br/>Time started: <br/>AWS-TAG: PRODUCTION-BLUE </td>
-        </tr>
-    </table>
 
 </j:jelly>

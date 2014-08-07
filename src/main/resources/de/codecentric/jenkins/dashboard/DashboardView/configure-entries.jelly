@@ -31,6 +31,6 @@
        oneEach="false"
        items="${instance.environments}"
        descriptors="${descriptor.environmentDescriptors}" />
-    </f:entry>
-
+  </f:entry>
+  
 </j:jelly>
