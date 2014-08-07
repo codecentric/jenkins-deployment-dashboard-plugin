@@ -22,4 +22,5 @@ public enum LocalMessages {
   public String toString() {
     return MESSAGES.getString(msgRef);
   }
+  
 }

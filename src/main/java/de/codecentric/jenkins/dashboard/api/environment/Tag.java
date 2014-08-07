@@ -2,6 +2,15 @@ package de.codecentric.jenkins.dashboard.api.environment;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+/**
+ * Environment Tag consisting of a key-value pair.
+ * EC2 instances can be tagged. We use that concept, 
+ * to attach information like instance name and 
+ * deployed software version to an the instance.
+ * 
+ * @author marcel.birkner
+ * 
+ */
 public class Tag {
 	
 	private String key;

@@ -1,5 +1,13 @@
 package de.codecentric.jenkins.dashboard.api.repository;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+/**
+ * Information of artifact in artifact repository.
+ * 
+ * @author marcel.birkner
+ *
+ */
 public class Artifact {
 	
 	private String name;
@@ -31,4 +39,9 @@ public class Artifact {
 		this.version = version;
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }

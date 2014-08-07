@@ -7,6 +7,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.amazonaws.services.ec2.model.InstanceState;
 
+/**
+ * Detailed server environment information.
+ * 
+ * @author marcel.birkner
+ *
+ */
 public class ServerEnvironment {
 
 	private String instanceId;
@@ -66,34 +72,28 @@ public class ServerEnvironment {
 	public void setType(ENVIRONMENT_TYPES type) {
 		this.type = type;
 	}
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
-
 	public InstanceState getState() {
 		return state;
 	}
-
 	public void setState(InstanceState state) {
 		this.state = state;
 	}
-
 	public Date getLaunchTime() {
 		return launchTime;
 	}
-
 	public void setLaunchTime(Date launchTime) {
 		this.launchTime = launchTime;
 	}
-
 	public String getPublicIpAddress() {
 		return publicIpAddress;
 	}
-
 	public void setPublicIpAddress(String publicIpAddress) {
 		this.publicIpAddress = publicIpAddress;
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 	
 }

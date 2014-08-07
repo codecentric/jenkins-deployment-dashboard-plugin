@@ -39,6 +39,10 @@ import de.codecentric.jenkins.dashboard.api.repository.Artifact;
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
 
+/**
+ * Dashboard View
+ * 
+ */
 public class DashboardView extends View {
 
 	private final static Logger LOGGER = Logger.getLogger(DashboardView.class.getName());

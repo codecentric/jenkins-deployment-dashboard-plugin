@@ -22,6 +22,12 @@ import org.slf4j.LoggerFactory;
 import de.codecentric.jenkins.dashboard.api.repository.Artifact;
 import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
 
+/**
+ * Implementation of Artifactory repository integration
+ * 
+ * @author marcel.birkner
+ *
+ */
 public class ArtifactoryConnector implements RepositoryInterface {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ArtifactoryConnector.class);

@@ -16,6 +16,12 @@ import de.codecentric.jenkins.dashboard.api.environment.EnvironmentInterface;
 import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment.ENVIRONMENT_TYPES;
 
+/**
+ * Implementation of EC2 environment integration
+ * 
+ * @author marcel.birkner
+ *
+ */
 public class EC2Connector implements EnvironmentInterface {
 
 	private final static Logger LOGGER = Logger.getLogger(EC2Connector.class.getName());

@@ -1,6 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:f="/lib/form" xmlns:d="jelly:define">
 
+	<!-- Custom Styles for table -->
 	<style type="text/css">
 		.TEST {
 			background-color: orange
