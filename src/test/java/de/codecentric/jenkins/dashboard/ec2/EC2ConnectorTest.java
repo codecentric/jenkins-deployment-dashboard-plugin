@@ -1,16 +1,16 @@
 package de.codecentric.jenkins.dashboard.ec2;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
-import de.codecentric.jenkins.dashboard.environmentapi.Environment;
+import de.codecentric.jenkins.dashboard.api.environment.Environment;
 
 /**
  * Please add your AWS credentials to your user home to successfully run these unit tests 

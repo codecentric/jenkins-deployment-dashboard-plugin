@@ -1,6 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:f="/lib/form">
 
-    <h1>Infrastructure Dashboard</h1>
+    <h1>Release Dashboard</h1>
     
     <b>Current configuration</b><br/>
     Username ${it.username}<br/>
@@ -16,21 +16,22 @@
             <form name='form' target='_blank' action='${it.deployJobUri}/buildWithParameters' method='GET'>
               <div align='center'>
                 <h3>Available Releases</h3> 
-                Deploy VERSION
+                <p>Please select the version of your application and the environment you want to deploy to.</p>
+                Version: 
                 <select name='VERSION'>
-                    <j:set var="versions" value="${it.getVersions()}"/>
-                    <j:forEach var="v" items="${versions}">
+                    <j:set var="artifacts" value="${it.getArtifacts()}"/>
+                    <j:forEach var="artifact" items="${artifacts}">
                       <center>
-                            <option value='${v}'>Version ${v}</option>
+                            <option value='${artifact.version}'>${artifact.version}</option>
                       </center>
                       <br />
                     </j:forEach>
                 </select>
-                to ENVIRONMENT 
-                <select name='SERVER'>
+                Environment:
+                <select name='ENVIRONMENT'>
                     <j:set var="environments" value="${it.getEnvironments()}"/>
                     <j:forEach var="env" items="${environments}">
-                        <option value='${env}'>${env}</option>
+                        <option value='${env.name}'>${env.name}</option>
                     </j:forEach>
                 </select>
                 <input type='submit' value='Submit' />

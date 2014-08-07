@@ -1,3 +1,6 @@
 <div>
-    View for codecentric Deployment Dashboard.
+    View for Deployment Dashboard. This dashboard integrates with an artifact 
+    repository to get all available versions of a specified artifactId. It
+    also integrates with your EC2 environments and gets the current status
+    of your instances.
 </div>

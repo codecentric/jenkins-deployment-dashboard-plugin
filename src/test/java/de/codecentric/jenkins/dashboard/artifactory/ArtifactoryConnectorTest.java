@@ -15,7 +15,8 @@ import org.junit.Test;
 
 import com.xebialabs.restito.server.StubServer;
 
-import de.codecentric.jenkins.dashboard.repositoryapi.RepositoryInterface;
+import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
+import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 
 public class ArtifactoryConnectorTest {
 	

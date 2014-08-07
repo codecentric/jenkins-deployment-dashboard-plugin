@@ -1,12 +1,10 @@
 package de.codecentric.jenkins.dashboard;
 
-import static de.codecentric.jenkins.dashboard.Environment.EnvironmentDescriptor;
 import static de.codecentric.jenkins.dashboard.util.LocalMessages.DASHBOARD_VIEW_DISPLAYNAME;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.TopLevelItem;
 import hudson.model.ViewGroup;
-import hudson.model.ChoiceParameterDefinition;
 import hudson.model.Descriptor;
 import hudson.model.ModifiableItemGroup;
 import hudson.model.View;
@@ -15,32 +13,29 @@ import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
 import jenkins.model.Jenkins;
 
-import org.jfrog.artifactory.client.Artifactory;
-import org.jfrog.artifactory.client.ArtifactoryClient;
-import org.jfrog.artifactory.client.model.RepoPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.springframework.util.StringUtils;
 
-import de.codecentric.jenkins.dashboard.artifactory.ArtifactoryConnector;
+import de.codecentric.jenkins.dashboard.Environment.EnvironmentDescriptor;
+import de.codecentric.jenkins.dashboard.api.repository.Artifact;
+import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 
 public class DashboardView extends View {
 
-	private final static Logger LOG = Logger.getLogger(DashboardView.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(DashboardView.class.getName());
 
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
@@ -51,7 +46,6 @@ public class DashboardView extends View {
 	private String artefactId = "";
 	private String deployJobUri = "";
 	private String environmentConfig = "";
-    private List<String> environmentNames;
     private List<Environment> environments;
 
 	public DashboardView(final String name) {
@@ -76,7 +70,7 @@ public class DashboardView extends View {
 		setDeployJobUri(deployJobUri);
 		setEnvironmentConfig(environmentConfig);
         setEnvironments(environments);
-        LOG.info("DataBoundConstructor");
+        LOGGER.info("DataBoundConstructor");
     }
 
 	@Override
@@ -112,11 +106,8 @@ public class DashboardView extends View {
 	@Override
 	protected synchronized void submit(final StaplerRequest req)
 			throws IOException, ServletException, Descriptor.FormException {
-		LOG.info("DashboardView submitted configuration");
+		LOGGER.info("DashboardView submitted configuration");
         req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly should work
-
-		ChoiceParameterDefinition choices = new ChoiceParameterDefinition("choice", this.environmentConfig, "Description");
-		this.environmentNames = choices.getChoices();
 	}
 
 	/**
@@ -177,37 +168,19 @@ public class DashboardView extends View {
 		this.deployJobUri = deployJobUri;
 	}
 
-	public List<String> getVersions() {
-		LOG.info("getting all versions from artefact repository");
+	public List<Artifact> getArtifacts() {
+		LOGGER.info("getting all versions from artefact repository");
 
-		List<String> versions = new ArrayList<String>();
-		Set<String> versionsSet = new TreeSet<String>();
-		Artifactory artifactory = ArtifactoryClient.create(artifactoryRestUri, username, password);		
-		List<RepoPath> results = artifactory.searches().artifactsByName(artefactId).doSearch();
-		LOG.info("Found " + results.size() + " matching artefacts");
-		for (int i = 0; i < results.size(); i++) {
-			String itemPath = results.get(i).getItemPath();
-			String[] split = itemPath.split(artefactId);
-			String version = split[1].replaceAll("/", "");
-			versionsSet.add(version);
+		URI repositoryURI;
+		try {
+			repositoryURI = new URI(artifactoryRestUri);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return new ArrayList<Artifact>();
 		}
-		versions.addAll(versionsSet);
-		Collections.sort(versions);
+		ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
+		List<Artifact> versions = repository.getArtefactList(artefactId);
 		return versions;
-	}
-
-	/**
-	 * @return the environments
-	 */
-	public List<String> getEnvironmentNames() {
-		return environmentNames;
-	}
-
-	/**
-	 * @param environmentNames the environments to set
-	 */
-	public void setEnvironmentNames(List<String> environmentNames) {
-		this.environmentNames = environmentNames;
 	}
 
 	/**
@@ -268,15 +241,13 @@ public class DashboardView extends View {
 				@QueryParameter("username") final String username,
 				@QueryParameter("password") final String password) {
 
-			LOG.info("Verify Artifactory Connection for URI "
-					+ artifactoryRestUri);
+			LOGGER.info("Verify Artifactory Connection for URI " + artifactoryRestUri);
 
 			FormValidation validationResult;
 			try {
 				URI repositoryURI = new URI(artifactoryRestUri);
-				ArtifactoryConnector repository = new ArtifactoryConnector(
-						username, password, repositoryURI);
-				LOG.info("Artifactory config valid? " + repository.canConnect());
+				ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
+				LOGGER.info("Artifactory config valid? " + repository.canConnect());
 				if (repository.canConnect()) {
 					validationResult = FormValidation
 							.ok("Connection with Artifactory successful.");
@@ -287,7 +258,7 @@ public class DashboardView extends View {
 				}
 
 			} catch (Exception e) {
-				LOG.severe(e.getMessage());
+				LOGGER.severe(e.getMessage());
 				validationResult = FormValidation
 						.error("A critical error occured when checking your configuration settings."
 								+ e.getMessage());

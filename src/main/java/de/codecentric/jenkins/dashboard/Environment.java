@@ -1,11 +1,10 @@
 package de.codecentric.jenkins.dashboard;
 
-import org.kohsuke.stapler.DataBoundConstructor;
-
-
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+
+import org.kohsuke.stapler.DataBoundConstructor;
 
 public class Environment extends AbstractDescribableImpl<Environment> {
 
@@ -34,7 +33,7 @@ public class Environment extends AbstractDescribableImpl<Environment> {
 
     public static class EnvironmentDescriptor extends Descriptor<Environment> {
         public String getDisplayName() {
-            return "EC2 Environment";
+            return Messages.Environment_displayName();
         }
     }
 }

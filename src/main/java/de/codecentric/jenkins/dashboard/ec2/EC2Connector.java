@@ -11,8 +11,8 @@ import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.Tag;
 
-import de.codecentric.jenkins.dashboard.environmentapi.Environment;
-import de.codecentric.jenkins.dashboard.environmentapi.EnvironmentInterface;
+import de.codecentric.jenkins.dashboard.api.environment.Environment;
+import de.codecentric.jenkins.dashboard.api.environment.EnvironmentInterface;
 
 public class EC2Connector implements EnvironmentInterface {
 
@@ -52,9 +52,9 @@ public class EC2Connector implements EnvironmentInterface {
 
 	private Environment getEnvironmentFromInstance(Instance instance) {
 		Environment env = new Environment(instance.getInstanceId(), instance.getInstanceType());
-		List<de.codecentric.jenkins.dashboard.environmentapi.Tag> tags = new ArrayList<de.codecentric.jenkins.dashboard.environmentapi.Tag>();
+		List<de.codecentric.jenkins.dashboard.api.environment.Tag> tags = new ArrayList<de.codecentric.jenkins.dashboard.api.environment.Tag>();
 		for (Tag tag : instance.getTags()) {
-			de.codecentric.jenkins.dashboard.environmentapi.Tag envTag = new de.codecentric.jenkins.dashboard.environmentapi.Tag(tag.getKey(), tag.getValue());
+			de.codecentric.jenkins.dashboard.api.environment.Tag envTag = new de.codecentric.jenkins.dashboard.api.environment.Tag(tag.getKey(), tag.getValue());
 			tags.add(envTag);
 			if( tag.getKey().equalsIgnoreCase(DEFAULT_INSTANCE_NAME_TAG)) {
 				env.setEnvironmentTag(tag.getValue());

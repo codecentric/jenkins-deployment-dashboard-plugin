@@ -1,20 +1,20 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
-    <f:entry title="${%artifactory.rest.uri.title}" description="${%artifactory.rest.uri.description}">
-        <f:textbox field="artifactoryRestUri"/>
-    </f:entry>
+  <f:entry title="${%artifactory.rest.uri.title}" description="${%artifactory.rest.uri.description}">
+    <f:textbox field="artifactoryRestUri"/>
+  </f:entry>
 
-    <f:entry title="${%artifactory.rest.username.title}" description="${%artifactory.rest.username.description}">
-        <f:textbox field="username" default="${descriptor.defaultUsername}"/>
-    </f:entry>
+  <f:entry title="${%artifactory.rest.username.title}" description="${%artifactory.rest.username.description}">
+    <f:textbox field="username" default="${descriptor.defaultUsername}"/>
+  </f:entry>
 
-    <f:entry title="${%artifactory.rest.password.title}" description="${%artifactory.rest.password.description}">
-        <f:password field="password"/>
-    </f:entry>
+  <f:entry title="${%artifactory.rest.password.title}" description="${%artifactory.rest.password.description}">
+    <f:password field="password"/>
+  </f:entry>
 
-    <f:validateButton
-            title="${%artifactory.connection.test.title}" progress="${%artifactory.connection.test.progress}"
-            method="testArtifactoryConnection" with="artifactoryRestUri,username,password,applicationName"/>
+  <f:validateButton
+    title="${%artifactory.connection.test.title}" progress="${%artifactory.connection.test.progress}"
+    method="testArtifactoryConnection" with="artifactoryRestUri,username,password,applicationName"/>
 
   <f:entry title="${%artifactory.rest.artefactId.title}" description="${%artifactory.rest.artefactId.description}">
     <f:textbox field="artefactId"/>
@@ -24,15 +24,12 @@
     <f:textbox field="deployJobUri"/>
   </f:entry>
 
-  <f:entry title="${%artifactory.rest.environmentConfig.title}" description="${%artifactory.rest.environmentConfig.description}">
-    <f:textarea field="environmentConfig"/>
-  </f:entry>
-
-    <f:entry>
-        <f:hetero-list name="environments" hasHeader="true"
-                       addCaption="${%environments.add.title}"
-                       oneEach="false"
-                       items="${instance.environments}"
-                       descriptors="${descriptor.environmentDescriptors}" />
+  <f:entry title="${%environments.add.title}" description="${%environments.add.description}">
+    <f:hetero-list name="environments" hasHeader="true"
+       addCaption="${%environments.add.action}"
+       oneEach="false"
+       items="${instance.environments}"
+       descriptors="${descriptor.environmentDescriptors}" />
     </f:entry>
+
 </j:jelly>
