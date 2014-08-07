@@ -55,11 +55,8 @@ public class DashboardView extends View {
 	private String password = "";
 	private String artefactId = "";
 	private String deployJobUri = "";
-	private String environmentConfig = "";
 	private List<Environment> environments;
 
-	Regions region = Regions.EU_WEST_1; // TODO: replace hard coded variable
-			
 	public DashboardView(final String name) {
 		super(name);
 	}
@@ -69,18 +66,17 @@ public class DashboardView extends View {
 	}
 
 	@DataBoundConstructor
-	public DashboardView(final String name, final String artifactoryRestUri,
+	public DashboardView(
+			final String name, final String artifactoryRestUri,
 			final String username, final String password,
 			final String artefactId, final String deployJobUri,
-			final String environmentConfig, List<Environment> environments, 
-			final String region) {
+			final List<Environment> environments, final String region) {
 		this(name);
 		setArtifactoryRestUri(artifactoryRestUri);
 		setUsername(username);
 		setPassword(password);
 		setArtefactId(artefactId);
 		setDeployJobUri(deployJobUri);
-		setEnvironmentConfig(environmentConfig);
 		setEnvironments(environments);
 	}
 
@@ -116,7 +112,7 @@ public class DashboardView extends View {
 	 */
 	@Override
 	protected synchronized void submit(final StaplerRequest req) throws IOException, ServletException, Descriptor.FormException {
-		LOGGER.info("DashboardView submitted configuration");
+		LOGGER.info("DashboardView submit configuration");
 		req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly should work
 	}
 
@@ -165,7 +161,7 @@ public class DashboardView extends View {
 		return artefactId;
 	}
 
-	public void setArtefactId(String artefactId) {
+	public void setArtefactId(final String artefactId) {
 		this.artefactId = artefactId;
 	}
 
@@ -173,12 +169,12 @@ public class DashboardView extends View {
 		return deployJobUri;
 	}
 
-	public void setDeployJobUri(String deployJobUri) {
+	public void setDeployJobUri(final String deployJobUri) {
 		this.deployJobUri = deployJobUri;
 	}
 
 	public List<Artifact> getArtifacts() {
-		LOGGER.info("getting all versions from artefact repository");
+		LOGGER.info("Getting artifacts");
 
 		URI repositoryURI;
 		try {
@@ -202,21 +198,6 @@ public class DashboardView extends View {
 		return list;
 	}
 	
-	/**
-	 * @return the environmentConfig
-	 */
-	public String getEnvironmentConfig() {
-		return environmentConfig;
-	}
-
-	/**
-	 * @param environmentConfig
-	 *            the environmentConfig to set
-	 */
-	public void setEnvironmentConfig(String environmentConfig) {
-		this.environmentConfig = environmentConfig;
-	}
-
 	public List<Environment> getEnvironments() {
 		return Collections.unmodifiableList(environments);
 	}
@@ -251,7 +232,7 @@ public class DashboardView extends View {
 			if( StringUtils.hasText(username) ) {
 				return FormValidation.ok();
 			}
-			return FormValidation.warning("Please provide a username");
+			return FormValidation.warning(Messages.DashboardView_artifactoryUsername());
 		}
 
 		public FormValidation doCheckPassword(@QueryParameter final String password) {
@@ -259,7 +240,7 @@ public class DashboardView extends View {
 			if( StringUtils.hasText(password) ) {
 				return FormValidation.ok();
 			}
-			return FormValidation.warning("Please provide a valid password");
+			return FormValidation.warning(Messages.DashboardView_artifactoryPassword());
 		}
 
 		public FormValidation doTestArtifactoryConnection(
@@ -267,7 +248,7 @@ public class DashboardView extends View {
 				@QueryParameter("username") final String username,
 				@QueryParameter("password") final String password) {
 
-			LOGGER.info("Verify Artifactory Connection for URI " + artifactoryRestUri);
+			LOGGER.info("Verify Artifactory connection for URI " + artifactoryRestUri);
 
 			FormValidation validationResult;
 			try {
