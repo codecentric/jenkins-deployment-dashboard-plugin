@@ -16,18 +16,6 @@ The plugin was constructed with the maven goal hpi:create, which generats a basi
 2. Run _mvn hpi:run_. This will start a jenkins with the plugin already installed and ready to use.
 3. Locate http://localhost:8080/jenkins and enjoy...
 
-## Integration Tests
-
-Please add your AWS credentials to your user home to successfully run the EC2 integration tests.
-
-```bash
-# File: $USER_HOME/.aws/credentials 
-
-[default]
-aws_access_key_id = <KEY_ID>
-aws_secret_access_key = <ACCESS_KEY>
-```
-
 ## Developers
 
 * Miel Donkers
