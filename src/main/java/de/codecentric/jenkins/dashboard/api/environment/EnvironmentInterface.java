@@ -15,6 +15,7 @@ import com.amazonaws.regions.Region;
  */
 public interface EnvironmentInterface {
 
+	public boolean tagEnvironmentWithVersion(Region region, String searchTag, String version);
 	public List<ServerEnvironment> getEnvironments(Region region);
 	public List<ServerEnvironment> getEnvironmentsByTag(Region region, String tag);
 	

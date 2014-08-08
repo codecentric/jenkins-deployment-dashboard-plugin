@@ -6,30 +6,37 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.util.StringUtils;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
 import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 
 /**
- * Please add your AWS credentials to your user home to successfully run these unit tests 
- * 
- * $USER_HOME/.aws/credentials 
- *  
- * [default]
- *  aws_access_key_id = <KEY_ID>
- *  aws_secret_access_key = <ACCESS_KEY>
+ * Add your AWS credentials to run these integration tests 
  * 
  * @author marcel.birkner
  * 
  */
 @Ignore
 public class EC2ConnectorTest {
+
+	// FILL OUT AWS CREDENTIALS BEFORE RUNNING THE INTEGRATION TESTS
+	private String awsAccessKey = "";
+	private String awsSecretKey = "";
+	// END
+	
+	private AWSCredentials awsCredentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
 	
 	@Test
 	public void testGetEnvironments() {
-		EC2Connector env = new EC2Connector();
+		assertTrue("Please provide your AWS credentials before running the tests.", StringUtils.hasText(awsAccessKey));
+		assertTrue("Please provide your AWS credentials before running the tests.", StringUtils.hasText(awsSecretKey));
+		
+		EC2Connector env = new EC2Connector(awsCredentials);
 		Region region = Region.getRegion(Regions.EU_WEST_1);
 		List<ServerEnvironment> list = env.getEnvironments(region);
 		assertTrue(list.size() > 0);
@@ -37,11 +44,13 @@ public class EC2ConnectorTest {
 
 	@Test
 	public void testGetEnvironmentsByTag() {
-		EC2Connector env = new EC2Connector();
+		assertTrue("Please provide your AWS credentials before running the tests.", StringUtils.hasText(awsAccessKey));
+		assertTrue("Please provide your AWS credentials before running the tests.", StringUtils.hasText(awsSecretKey));
+		
+		EC2Connector env = new EC2Connector(awsCredentials);
 		Region region = Region.getRegion(Regions.EU_WEST_1);
 		List<ServerEnvironment> list = env.getEnvironmentsByTag(region, "ALE_PROD_A");
 		assertTrue(list.size() == 1);
 
 	}
-
 }

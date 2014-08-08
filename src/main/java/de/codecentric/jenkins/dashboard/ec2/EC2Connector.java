@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.CreateTagsRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
@@ -28,10 +30,48 @@ public class EC2Connector implements EnvironmentInterface {
 
 	private static final String DEFAULT_INSTANCE_NAME_TAG = "Name";
 	
+	private AmazonEC2 ec2;
+	
+	public EC2Connector(AWSCredentials awsCredentials) {
+		this.ec2 = new AmazonEC2Client(awsCredentials);
+	}
+
+	public boolean tagEnvironmentWithVersion(Region region, String searchTag, String version) {
+		LOGGER.info("tagEnvironmentWithVersion " + region + " Tag " + searchTag + " version " + version);
+		
+		boolean environmentSuccessfulTagged = false;
+		ec2.setRegion(region);
+		DescribeInstancesResult instances = ec2.describeInstances();
+		for (Reservation reservation : instances.getReservations()) {
+			for (Instance instance :  reservation.getInstances()) {
+				for (Tag tag : instance.getTags()) {
+					if( tag.getValue().equalsIgnoreCase(searchTag)) {
+						CreateTagsRequest createTagsRequest = new CreateTagsRequest();
+						createTagsRequest.withResources(instance.getInstanceId())
+					    				 .withTags(new Tag("Version", version));
+						LOGGER.info("Create Tag " + version + " for instance " + instance.getInstanceId());
+						ec2.createTags(createTagsRequest);
+						environmentSuccessfulTagged = true;
+					}
+				}
+			}
+		}
+		return environmentSuccessfulTagged;
+	}
+	
+	public boolean areAwsCredentialsValid() {
+		try {
+			ec2.describeInstances();
+			return true;
+		} catch (Exception e) {
+			LOGGER.info("AWS is Invalid " + e.getMessage());
+			return false;
+		}
+	}
+
 	public List<ServerEnvironment> getEnvironments(Region region) {
 		List<ServerEnvironment> environments = new ArrayList<ServerEnvironment>();
 		
-		AmazonEC2 ec2 = new AmazonEC2Client();
 		ec2.setRegion(region);
 		DescribeInstancesResult instances = ec2.describeInstances();
 		for (Reservation reservation : instances.getReservations()) {
@@ -47,7 +87,6 @@ public class EC2Connector implements EnvironmentInterface {
 		LOGGER.info("getEnvironmentsByTag " + region + " tag: " + searchTag);
 		List<ServerEnvironment> environments = new ArrayList<ServerEnvironment>();
 
-		AmazonEC2 ec2 = new AmazonEC2Client();
 		ec2.setRegion(region);
 		DescribeInstancesResult instances = ec2.describeInstances();
 		for (Reservation reservation : instances.getReservations()) {
@@ -89,4 +128,5 @@ public class EC2Connector implements EnvironmentInterface {
 		env.setTags(tags);
 		return env;
 	}
+
 }
