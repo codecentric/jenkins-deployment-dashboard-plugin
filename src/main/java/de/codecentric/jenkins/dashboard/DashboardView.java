@@ -52,6 +52,8 @@ public class DashboardView extends View {
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
+	private boolean showDeployField;
+	
 	private String artifactoryRestUri = "";
 	private String username = "";
 	private String password = "";
@@ -73,11 +75,13 @@ public class DashboardView extends View {
 	@DataBoundConstructor
 	public DashboardView(
 			final String name, final String artifactoryRestUri,
+			final boolean showDeployField,
 			final String username, final String password,
 			final String awsAccessKey, final String awsAccessSecret,
 			final String artefactId, final String deployJobUri,
 			final List<Environment> environments, final String region) {
 		this(name);
+		setShowDeployField(showDeployField);
 		setArtifactoryRestUri(artifactoryRestUri);
 		setUsername(username);
 		setPassword(password);
@@ -139,6 +143,18 @@ public class DashboardView extends View {
 	@Override
 	public Item doCreateItem(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
 		return Jenkins.getInstance().doCreateItem(req, rsp);
+	}
+
+	public String getDisplayDeployField(){
+		return showDeployField ? "" : "display:none;";
+	}
+	
+	public boolean getShowDeployField() {
+		return showDeployField;
+	}
+
+	public void setShowDeployField(boolean showDeployField) {
+		this.showDeployField = showDeployField;
 	}
 
 	public String getArtifactoryRestUri() {
