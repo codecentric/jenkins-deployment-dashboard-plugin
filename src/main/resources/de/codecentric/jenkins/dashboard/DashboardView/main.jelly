@@ -19,14 +19,14 @@
 
     <h1>Release Dashboard</h1>
 
-    <h2>Artefact Versions</h2>
+    <h2 style='${it.displayDeployField}'>Artefact Versions</h2>
 
-    <table border='0' cellpadding='10' style='background-color:lightgreen' width='100%'>
+    <table border='0' cellpadding='10' style='background-color:lightgreen;${it.displayDeployField}' width='100%'>
         <tr>
           <td>
             <form name='form' target='_blank' action='${it.deployJobUri}/buildWithParameters' method='GET'>
               <div align='center'>
-                <h3>Available Releases</h3> 
+                <h3>Available Releases</h3>  
                 <p>Please select the version of your application and the environment you want to deploy to.</p>
                 Version: 
                 <select name='VERSION'>

@@ -1,6 +1,10 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
+  <f:entry title="${%artifactory.rest.showDeploySelection.title}" description="${%artifactory.rest.showDeploySelection.description}">
+    <f:checkbox field="showDeployField"/>
+  </f:entry>
+
   <f:entry title="${%artifactory.rest.uri.title}" description="${%artifactory.rest.uri.description}">
     <f:textbox field="artifactoryRestUri"/>
   </f:entry>
