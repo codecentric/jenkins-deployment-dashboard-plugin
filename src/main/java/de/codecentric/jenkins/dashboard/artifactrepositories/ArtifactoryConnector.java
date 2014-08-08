@@ -67,6 +67,7 @@ public class ArtifactoryConnector implements RepositoryInterface {
 		
 		versions.addAll(versionsSet);
 		Collections.sort(versions);
+		Collections.reverse(versions);
 
 		List<Artifact> artifactList = new ArrayList<Artifact>();
 		for (String version : versions) {
