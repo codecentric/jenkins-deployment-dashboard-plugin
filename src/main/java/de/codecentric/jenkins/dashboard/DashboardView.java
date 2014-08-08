@@ -30,6 +30,8 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.springframework.util.StringUtils;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
@@ -50,16 +52,16 @@ public class DashboardView extends View {
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
-	private boolean showDeployField;
-	
-
 	private String artifactoryRestUri = "";
 	private String username = "";
 	private String password = "";
 	private String artefactId = "";
 	private String deployJobUri = "";
 	private List<Environment> environments;
-
+	
+	private String awsAccessKey = "";
+	private String awsSecretKey = "";
+	
 	public DashboardView(final String name) {
 		super(name);
 	}
@@ -70,15 +72,17 @@ public class DashboardView extends View {
 
 	@DataBoundConstructor
 	public DashboardView(
-			final boolean showDeployField, final String name, final String artifactoryRestUri,
+			final String name, final String artifactoryRestUri,
 			final String username, final String password,
+			final String awsAccessKey, final String awsAccessSecret,
 			final String artefactId, final String deployJobUri,
 			final List<Environment> environments, final String region) {
 		this(name);
-		setShowDeployField(showDeployField);
 		setArtifactoryRestUri(artifactoryRestUri);
 		setUsername(username);
 		setPassword(password);
+		setAwsAccessKey(awsAccessKey);
+		setAwsSecretKey(awsSecretKey);
 		setArtefactId(artefactId);
 		setDeployJobUri(deployJobUri);
 		setEnvironments(environments);
@@ -137,18 +141,6 @@ public class DashboardView extends View {
 		return Jenkins.getInstance().doCreateItem(req, rsp);
 	}
 
-	public String getDisplayDeployField(){
-		return showDeployField ? "" : "display:none;";
-	}
-	
-	public boolean getShowDeployField() {
-		return showDeployField;
-	}
-
-	public void setShowDeployField(boolean showDeployField) {
-		this.showDeployField = showDeployField;
-	}
-	
 	public String getArtifactoryRestUri() {
 		return artifactoryRestUri;
 	}
@@ -205,7 +197,14 @@ public class DashboardView extends View {
 	}
 
 	public List<ServerEnvironment> getEC2Environments() {
-		EC2Connector env = new EC2Connector();
+		AWSCredentials awsCredentials = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
+		EC2Connector env = new EC2Connector(awsCredentials);
+		
+		if( ! env.areAwsCredentialsValid() ) {
+			System.out.println("AWS Credentials are invalid");
+			return new ArrayList<ServerEnvironment>();
+		}
+		
 		List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
 		for( Environment envTag : environments) {
 			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.EU_WEST_1), envTag.getName());
@@ -221,6 +220,22 @@ public class DashboardView extends View {
 	public void setEnvironments(final List<Environment> environmentsList) {
 		this.environments = environmentsList == null ? new ArrayList<Environment>()
 				: new ArrayList<Environment>(environmentsList);
+	}
+
+	public String getAwsAccessKey() {
+		return awsAccessKey;
+	}
+
+	public void setAwsAccessKey(String awsAccessKey) {
+		this.awsAccessKey = awsAccessKey;
+	}
+
+	public String getAwsSecretKey() {
+		return awsSecretKey;
+	}
+
+	public void setAwsSecretKey(String awsSecretKey) {
+		this.awsSecretKey = awsSecretKey;
 	}
 
 	public static class DescriptorImpl extends ViewDescriptor {
