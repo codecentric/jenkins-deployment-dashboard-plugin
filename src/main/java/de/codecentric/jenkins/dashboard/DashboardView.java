@@ -21,13 +21,19 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Response;
 
 import jenkins.model.Jenkins;
 
+import org.apache.commons.httpclient.HttpState;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.springframework.util.StringUtils;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -114,7 +120,20 @@ public class DashboardView extends View {
 	public boolean contains(final TopLevelItem item) {
 		return false;
 	}
+	
+	@JavaScriptMethod
+    public String deploy(String version, String environment) {
+		LOGGER.info("Deployment of version " + version + " for environment " + environment + " via " + deployJobUri);
 
+		Client client = ClientBuilder.newClient();
+		Invocation.Builder invocationBuilder = client.target(deployJobUri + "/buildWithParameters").queryParam("VERSION", version).queryParam("ENVIRONMENT", environment).request();
+		Response response = invocationBuilder.get();
+		if( response.getStatus() == Response.Status.CREATED.getStatusCode() ) {
+			return "Deployment of version " + version + " for environment " + environment + " successfully triggered.";
+		};  
+		return "Deployment not successful.";
+    }
+	
 	/**
 	 * Handles the configuration submission.
 	 * <p/>

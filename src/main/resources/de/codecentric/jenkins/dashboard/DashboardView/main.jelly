@@ -1,6 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:f="/lib/form" xmlns:d="jelly:define">
 
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/superagent/0.15.7/superagent.min.js" />
+
 	<!-- Custom Styles for table -->
 	<style type="text/css">
 		.TEST {
@@ -18,18 +20,28 @@
 	</style>
 
     <h1>Release Dashboard</h1>
-
+	
+  	<script>
+	  function deploy() {
+	    var app = <st:bind value="${it}"/>
+	    var version = document.getElementById('versionId').value;
+	    var environment = document.getElementById('environmentId').value;
+	    app.deploy(version, environment, function(t) {
+	      document.getElementById('msg').innerHTML = t.responseObject();
+	    })
+	  }
+  	</script>
+	
     <h2 style='${it.displayDeployField}'>Artefact Versions</h2>
 
     <table border='0' cellpadding='10' style='background-color:lightgreen;${it.displayDeployField}' width='100%'>
         <tr>
           <td>
-            <form name='form' target='_blank' action='${it.deployJobUri}/buildWithParameters' method='GET'>
               <div align='center'>
                 <h3>Available Releases</h3>  
                 <p>Please select the version of your application and the environment you want to deploy to.</p>
-                Version: 
-                <select name='VERSION'>
+                Version 
+                <select id="versionId" name='VERSION'>
                     <j:set var="artifacts" value="${it.getArtifacts()}"/>
                     <j:forEach var="artifact" items="${artifacts}">
                       <center>
@@ -38,16 +50,19 @@
                       <br />
                     </j:forEach>
                 </select>
-                Environment:
-                <select name='ENVIRONMENT'>
+                Environment
+                <select id="environmentId" name='ENVIRONMENT'>
                     <j:set var="environments" value="${it.getEnvironments()}"/>
                     <j:forEach var="env" items="${environments}">
                         <option value='${env.name}'>${env.name}</option>
                     </j:forEach>
                 </select>
-                <input type='submit' value='Submit' />
+                Deploy App
+				<a id="deployLink" title="Deploy application link" href="" onclick="deploy(); return false;">
+					<img title="Build with parameters" alt="Build with parameters" src="/jenkins/static/624ed599/images/24x24/clock.png" border="0" />
+				</a>
+				<div id="msg" />
               </div>
-            </form>
           </td>
         </tr>
     </table>
