@@ -11,6 +11,7 @@ import java.net.URI;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.xebialabs.restito.server.StubServer;
@@ -18,6 +19,7 @@ import com.xebialabs.restito.server.StubServer;
 import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 
+@Ignore
 public class ArtifactoryConnectorTest {
 	
 	private static final String USER = "jenkins";
