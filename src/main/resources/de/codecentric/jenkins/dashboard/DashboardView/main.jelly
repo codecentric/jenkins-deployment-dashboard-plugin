@@ -61,7 +61,9 @@
 				<a id="deployLink" title="Deploy application link" href="" onclick="deploy(); return false;">
 					<img title="Build with parameters" alt="Build with parameters" src="/jenkins/static/624ed599/images/24x24/clock.png" border="0" />
 				</a>
-				<div id="msg" />
+				<p>
+				  <div id="msg" />
+				</p>
               </div>
           </td>
         </tr>
