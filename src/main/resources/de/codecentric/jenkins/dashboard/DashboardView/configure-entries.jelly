@@ -1,40 +1,51 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
-  <f:entry title="${%artifactory.rest.showDeploySelection.title}" description="${%artifactory.rest.showDeploySelection.description}">
+  <f:entry title="${%repository.rest.showDeploySelection.title}" description="${%repository.rest.showDeploySelection.description}">
     <f:checkbox field="showDeployField"/>
   </f:entry>
 
-  <f:entry title="${%artifactory.rest.uri.title}" description="${%artifactory.rest.uri.description}">
-    <f:textbox field="artifactoryRestUri"/>
-  </f:entry>
+  <f:section>
+    <f:entry title="Choose Repository Type" field="repositoryType">
+      <select name="repositoryType">
+        <option value="artifactory">jFrog Artifactory</option>
+        <option value="nexus">Sonatype Nexus</option>
+      </select>
+    </f:entry>
+  
+    <f:entry title="${%repository.rest.uri.title}" description="${%repository.rest.uri.description}">
+      <f:textbox field="repositoryRestUri"/>
+    </f:entry>
+  
+    <f:entry title="${%repository.rest.username.title}" description="${%repository.rest.username.description}">
+      <f:textbox field="username" default="${descriptor.defaultUsername}"/>
+    </f:entry>
+  
+    <f:entry title="${%repository.rest.password.title}" description="${%repository.rest.password.description}">
+      <f:password field="password"/>
+    </f:entry>
+  
+    <f:validateButton
+      title="${%repository.connection.test.title}" progress="${%repository.connection.test.progress}"
+      method="testRepositoryConnection" with="repositoryRestUri,username,password,applicationName"/>
+  
+    <f:entry title="${%repository.rest.artefactId.title}" description="${%repository.rest.artefactId.description}">
+      <f:textbox field="artefactId"/>
+    </f:entry>
+  </f:section>
 
-  <f:entry title="${%artifactory.rest.username.title}" description="${%artifactory.rest.username.description}">
-    <f:textbox field="username" default="${descriptor.defaultUsername}"/>
-  </f:entry>
-
-  <f:entry title="${%artifactory.rest.password.title}" description="${%artifactory.rest.password.description}">
-    <f:password field="password"/>
-  </f:entry>
-
-  <f:validateButton
-    title="${%artifactory.connection.test.title}" progress="${%artifactory.connection.test.progress}"
-    method="testArtifactoryConnection" with="artifactoryRestUri,username,password,applicationName"/>
-
-  <f:entry title="${%artifactory.rest.artefactId.title}" description="${%artifactory.rest.artefactId.description}">
-    <f:textbox field="artefactId"/>
-  </f:entry>
-
-  <f:entry title="${%artifactory.rest.deployJobUri.title}" description="${%artifactory.rest.deployJobUri.description}">
-    <f:textbox field="deployJobUri"/>
-  </f:entry>
-
-  <f:entry title="${%environments.add.title}" description="${%environments.add.description}">
-    <f:hetero-list name="environments" hasHeader="true"
-       addCaption="${%environments.add.action}"
-       oneEach="false"
-       items="${instance.environments}"
-       descriptors="${descriptor.environmentDescriptors}" />
-  </f:entry>
-
+  <f:section>  
+    <f:entry title="${%repository.rest.deployJobUri.title}" description="${%repository.rest.deployJobUri.description}">
+      <f:textbox field="deployJobUri"/>
+    </f:entry>
+    
+    <f:entry title="${%environments.add.title}" description="${%environments.add.description}">
+      <f:hetero-list name="environments" hasHeader="true"
+         addCaption="${%environments.add.action}"
+         oneEach="false"
+         items="${instance.environments}"
+         descriptors="${descriptor.environmentDescriptors}" />
+    </f:entry>
+  </f:section>
+  
 </j:jelly>

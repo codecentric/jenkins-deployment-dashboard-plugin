@@ -28,7 +28,6 @@ import javax.ws.rs.core.Response;
 
 import jenkins.model.Jenkins;
 
-import org.apache.commons.httpclient.HttpState;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -44,7 +43,9 @@ import com.amazonaws.regions.Regions;
 import de.codecentric.jenkins.dashboard.Environment.EnvironmentDescriptor;
 import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.api.repository.Artifact;
+import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
+import de.codecentric.jenkins.dashboard.artifactrepositories.NexusConnector;
 import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
 
 /**
@@ -59,8 +60,8 @@ public class DashboardView extends View {
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
 	private boolean showDeployField;
-	
-	private String artifactoryRestUri = "";
+	private String repositoryType;
+	private String repositoryRestUri = "";
 	private String username = "";
 	private String password = "";
 	private String artefactId = "";
@@ -80,15 +81,16 @@ public class DashboardView extends View {
 
 	@DataBoundConstructor
 	public DashboardView(
-			final String name, final String artifactoryRestUri,
-			final boolean showDeployField,
+			final String name, final String repositoryRestUri,
+			final String repositoryType, final boolean showDeployField,
 			final String username, final String password,
 			final String awsAccessKey, final String awsAccessSecret,
 			final String artefactId, final String deployJobUri,
 			final List<Environment> environments, final String region) {
 		this(name);
 		setShowDeployField(showDeployField);
-		setArtifactoryRestUri(artifactoryRestUri);
+		setRepositoryType(repositoryType);
+		setRepositoryRestUri(repositoryRestUri);
 		setUsername(username);
 		setPassword(password);
 		setAwsAccessKey(awsAccessKey);
@@ -176,12 +178,12 @@ public class DashboardView extends View {
 		this.showDeployField = showDeployField;
 	}
 
-	public String getArtifactoryRestUri() {
-		return artifactoryRestUri;
+	public String getRepositoryRestUri() {
+		return repositoryRestUri;
 	}
 
-	public void setArtifactoryRestUri(final String artifactoryRestUri) {
-		this.artifactoryRestUri = artifactoryRestUri;
+	public void setRepositoryRestUri(final String repositoryRestUri) {
+		this.repositoryRestUri = repositoryRestUri;
 	}
 
 	public String getUsername() {
@@ -217,18 +219,30 @@ public class DashboardView extends View {
 	}
 
 	public List<Artifact> getArtifacts() {
-		LOGGER.info("Getting artifacts");
+		LOGGER.info("Getting artifacts for " + repositoryType);
 
-		URI repositoryURI;
+		RepositoryInterface repository;
 		try {
-			repositoryURI = new URI(artifactoryRestUri);
+			repository = createRepository();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return new ArrayList<Artifact>();
 		}
-		ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
+		
 		List<Artifact> versions = repository.getArtefactList(artefactId);
 		return versions;
+	}
+
+	private RepositoryInterface createRepository() throws URISyntaxException {
+		URI repositoryURI;
+		repositoryURI = new URI(repositoryRestUri);
+		RepositoryInterface repository;
+		if( repositoryType.equalsIgnoreCase( RepositoryType.ARTIFACTORY.getid() )) {
+			repository = new ArtifactoryConnector(username, password, repositoryURI);
+		} else {
+			repository = new NexusConnector(username, password, repositoryURI);
+		}
+		return repository;
 	}
 
 	public List<ServerEnvironment> getEC2Environments() {
@@ -273,6 +287,14 @@ public class DashboardView extends View {
 		this.awsSecretKey = awsSecretKey;
 	}
 
+	public String getRepositoryType() {
+		return repositoryType;
+	}
+
+	public void setRepositoryType(String repositoryType) {
+		this.repositoryType = repositoryType;
+	}
+
 	public static class DescriptorImpl extends ViewDescriptor {
 
 		@Override
@@ -288,7 +310,7 @@ public class DashboardView extends View {
 		public String getHelpFile() {
 			return "/plugin/jenkins-deployment-dashboard-plugin/help.html";
 		}
-
+		
 		public FormValidation doCheckArtifactoryRestUri(@QueryParameter final String artifactoryRestUri) {
 			return FormValidation.ok();
 		}
@@ -309,22 +331,22 @@ public class DashboardView extends View {
 			return FormValidation.warning(Messages.DashboardView_artifactoryPassword());
 		}
 
-		public FormValidation doTestArtifactoryConnection(
-				@QueryParameter("artifactoryRestUri") final String artifactoryRestUri,
+		public FormValidation doTestRepositoryConnection(
+				@QueryParameter("repositoryRestUri") final String repositoryRestUri,
 				@QueryParameter("username") final String username,
 				@QueryParameter("password") final String password) {
 
-			LOGGER.info("Verify Artifactory connection for URI " + artifactoryRestUri);
+			LOGGER.info("Verify Repository connection for URI " + repositoryRestUri);
 
 			FormValidation validationResult;
 			try {
-				URI repositoryURI = new URI(artifactoryRestUri);
+				URI repositoryURI = new URI(repositoryRestUri);
 				ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
 				LOGGER.info("Artifactory config valid? " + repository.canConnect());
 				if (repository.canConnect()) {
 					validationResult = FormValidation.ok(Messages.DashboardView_artifactoryConnectionSuccessful());
 				} else {
-					validationResult = FormValidation.warning(Messages.DashboardView_artifactoryConnectionFailed() + artifactoryRestUri);
+					validationResult = FormValidation.warning(Messages.DashboardView_artifactoryConnectionFailed() + repositoryRestUri);
 				}
 
 			} catch (Exception e) {

@@ -24,7 +24,6 @@ public class ArtifactoryConnectorTest {
 	private static final String PASS = "c0d3c3ntr1c";
 	private URI repositoryURI;
 	
-
 	private RepositoryInterface repositoryInterface;
 	
 	private StubServer server;
@@ -50,7 +49,6 @@ public class ArtifactoryConnectorTest {
 		whenHttp(server).match(get("/test")).then(status(HttpStatus.OK_200));
 		assertTrue(repositoryInterface.canConnect());
 	}
-	
 
 	@Test
 	public void testCantConnect() throws Exception{
