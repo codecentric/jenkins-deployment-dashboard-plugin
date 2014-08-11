@@ -20,4 +20,5 @@ public enum RepositoryType {
 	public String getDescription() {
 		return description;
 	}
+
 }

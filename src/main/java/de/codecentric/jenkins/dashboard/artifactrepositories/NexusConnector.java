@@ -1,26 +1,24 @@
 package de.codecentric.jenkins.dashboard.artifactrepositories;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.nexus.rest.model.NexusNGArtifact;
-import org.sonatype.nexus.rest.model.SearchNGResponse;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 
 import de.codecentric.jenkins.dashboard.api.repository.Artifact;
 import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
+import de.codecentric.jenkins.dashboard.artifactrepositories.nexus.NexusArtifact;
+import de.codecentric.jenkins.dashboard.artifactrepositories.nexus.SearchResponse;
 
 /**
  * Implementation of Sonatype Nexus repository integration
@@ -41,21 +39,20 @@ public class NexusConnector implements RepositoryInterface {
 		this.password = password;
 		this.repositoryURI = repositoryURI;
 	}
-
+	
 	public boolean canConnect() {
 		LOGGER.info("Checking Nexus connection");
-		ClientConfig config = new DefaultClientConfig();
-		Client client = Client.create(config);
-		client.addFilter(new HTTPBasicAuthFilter(username, password));
-		WebResource service = client.resource(repositoryURI);
-		ClientResponse nexusStatus = service.path("service").path("local")
-				.path("status").accept(MediaType.APPLICATION_JSON)
-				.get(ClientResponse.class);
-		if (nexusStatus.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
+		Client client = ClientBuilder.newClient();
+		client.register(feature);
+		Invocation.Builder invocationBuilder = client.target(repositoryURI).request();
+		Response response = invocationBuilder.get();
+		int status = response.getStatus();
+		if (status == 200) {
 			return true;
 		}
-
-		LOGGER.warn("Could not connect to {}. ResponseCode: {}", repositoryURI, nexusStatus.getStatus());
+		LOGGER.warn("Could not connect to {}. ResponseCode: {}", repositoryURI, status);
 		return false;
 	}
 
@@ -64,22 +61,23 @@ public class NexusConnector implements RepositoryInterface {
 	}
 	
 	public List<Artifact> getArtefactList(String groupId, String artifactId) {
+		LOGGER.info("Get artifact list for " + groupId + " " + artifactId);
 		List<Artifact> list = new ArrayList<Artifact>();
 	
-		ClientConfig config = new DefaultClientConfig();
-		Client client = Client.create(config);
-		client.addFilter( new HTTPBasicAuthFilter(username, password) ); 
+		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
+		Client client = ClientBuilder.newClient();
+		client.register(feature);
+		WebTarget path = client.target(repositoryURI).path("service").path("local").path("lucene").path("search");
+		Invocation.Builder builder = path.queryParam("g", groupId).queryParam("a", artifactId).request(MediaType.APPLICATION_JSON);
+		SearchResponse response= builder.get(SearchResponse.class);
 
-		WebResource service = client.resource(repositoryURI);
-		WebResource path = service.path("service").path("local").path("lucene").path("search");
-		Builder builder = path.queryParam("g", groupId).queryParam("a", artifactId).accept(MediaType.APPLICATION_JSON);
-		SearchNGResponse searchResult = builder.get(SearchNGResponse.class);
-		
-		List<NexusNGArtifact> data = searchResult.getData();
-		for (NexusNGArtifact nexusNGArtifact : data) {
-			Artifact a = new Artifact(nexusNGArtifact.getArtifactId(), nexusNGArtifact.getVersion(), "");
+		List<NexusArtifact> data = response.getData();
+		for (NexusArtifact nexusArtifact : data) {
+			Artifact a = new Artifact(nexusArtifact.getArtifactId(), nexusArtifact.getVersion(), "");
 			list.add(a);
 		}
+		
 		return list;
 	}
+
 }
