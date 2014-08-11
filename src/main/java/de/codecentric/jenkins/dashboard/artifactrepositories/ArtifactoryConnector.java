@@ -43,6 +43,7 @@ public class ArtifactoryConnector implements RepositoryInterface {
 	}
 
 	public boolean canConnect() {
+		LOGGER.info("Checking Artifactory connection");
 		Response response = getResponse();
 		int status = response.getStatus();
 		if (status == 200) {
@@ -53,23 +54,37 @@ public class ArtifactoryConnector implements RepositoryInterface {
 	}
 
 	public List<Artifact> getArtefactList(String artifactId) {
+		return getArtefactList("", artifactId);
+	}
+
+	public List<Artifact> getArtefactList(String groupId, String artifactId) {
+		List<Artifact> artifactList = new ArrayList<Artifact>();
+		if( !org.springframework.util.StringUtils.hasText(artifactId) ) {
+			LOGGER.warn("artifactId is empty. Cannot search for artifacts.");
+			return artifactList;
+		}
+		
 		List<String> versions = new ArrayList<String>();
 		Set<String> versionsSet = new TreeSet<String>();
 		Artifactory artifactory = ArtifactoryClient.create(repositoryURI.toString(), username, password);
 		List<RepoPath> results = artifactory.searches().artifactsByName(artifactId).doSearch();
 		
-		for (int i = 0; i < results.size(); i++) {
-			String itemPath = results.get(i).getItemPath();
+		for (RepoPath item : results) {
+			String itemPath = item.getItemPath();
 			String[] split = itemPath.split(artifactId);
-			String version = split[1].replaceAll("/", "");
-			versionsSet.add(version);
+			String itemVersion = split[1].replaceAll("/", "");
+			String itemGroupId = org.apache.commons.lang.StringUtils.removeEnd(split[0], "/").replace("/", ".");
+			if( org.springframework.util.StringUtils.hasText(itemGroupId) && itemGroupId.equalsIgnoreCase(groupId)) {
+				versionsSet.add(itemVersion);
+			} else {
+				versionsSet.add(itemVersion);
+			}
 		}
 		
 		versions.addAll(versionsSet);
 		Collections.sort(versions);
 		Collections.reverse(versions);
 
-		List<Artifact> artifactList = new ArrayList<Artifact>();
 		for (String version : versions) {
 			artifactList.add(new Artifact(artifactId, version, ""));
 		}

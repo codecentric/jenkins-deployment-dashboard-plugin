@@ -12,5 +12,6 @@ public interface RepositoryInterface {
 
 	public boolean canConnect();
 	public List<Artifact> getArtefactList(String artifactId);
-
+	public List<Artifact> getArtefactList(String groupId, String artifactId);
+	
 }
