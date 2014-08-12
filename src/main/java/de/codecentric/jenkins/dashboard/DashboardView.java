@@ -132,8 +132,11 @@ public class DashboardView extends View {
 		Response response = invocationBuilder.get();
 		if( response.getStatus() == Response.Status.CREATED.getStatusCode() ) {
 			return "Deployment of version " + version + " for environment " + environment + " successfully triggered.";
-		};  
-		return "Deployment not successful.";
+		} else if ( response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ) {
+			return "Deployment not successful due to: " + response.getStatusInfo().getReasonPhrase();
+		}
+		return "Deployment not successful. Please check the URL of the Deployment Job and if its correctly "
+				+ "configured as a parameterized job that takes two parameters [ENVIRONMENT, VERSION].";
     }
 	
 	/**
