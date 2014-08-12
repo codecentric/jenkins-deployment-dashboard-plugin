@@ -114,7 +114,7 @@ public class EnvironmentTagBuilder extends Builder {
          */
         @Override
         public String getDisplayName() {
-            return Messages.Environment_displayName();
+            return Messages.Environment_DisplayName();
         }
 
         /**

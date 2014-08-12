@@ -28,7 +28,7 @@
 	</parent>
 
 	<artifactId>jenkins-deployment-dashboard</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>hpi</packaging>
 
 	<name>Deployment Dashboard Plugin for Jenkins</name>

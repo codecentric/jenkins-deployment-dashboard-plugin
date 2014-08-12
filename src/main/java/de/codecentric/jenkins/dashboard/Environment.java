@@ -33,7 +33,7 @@ public class Environment extends AbstractDescribableImpl<Environment> {
 
     public static class EnvironmentDescriptor extends Descriptor<Environment> {
         public String getDisplayName() {
-            return Messages.Environment_displayName();
+            return Messages.Environment_DisplayName();
         }
     }
 }
