@@ -4,7 +4,7 @@
 
 ## Plugin Documentation
 
-* [Documentation!](documentation/README.md)
+* [Getting started documentation](documentation/README.md)
 
 ## What is this plugin about?
 
