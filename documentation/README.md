@@ -30,3 +30,9 @@ It also gets all artifact versions from your artifact repository. Currently we s
 * within this job, configure your Deployment (via ShellScript/Batch/Puppet/Chef/ ...)
 
 ![Deployment Job configuration](3-deployJob.png)
+
+### AWS Details
+
+AWS instances can be tagged with custom tags. This plugin uses tags to identify the specified environments and stores the deployed software version in that tag. Here is an example screenshot from the AWS Management Console.
+
+![AWS configuration](4-aws-tags.png)
