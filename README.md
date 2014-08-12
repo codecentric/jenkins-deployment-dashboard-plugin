@@ -4,7 +4,7 @@
 
 ## Plugin Documentation
 
-* [Getting started documentation & screenshots](documentation/README.md)
+* [Getting started & screenshots](documentation/README.md)
 
 ## What is this plugin about?
 
