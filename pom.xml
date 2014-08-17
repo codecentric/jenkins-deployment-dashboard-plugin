@@ -162,19 +162,23 @@
 			<version>${aws.java.sdk.version}</version>
 		</dependency>
 
-		<!-- Used for Nexus Integration 
+		<!-- Used for Nexus Integration -->
 		<dependency>
 			<groupId>org.sonatype.nexus</groupId>
 			<artifactId>nexus-client-core</artifactId>
 			<version>${nexus.client.version}</version>
-			<scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
-		-->
+
 		<dependency>
 			<groupId>org.sonatype.nexus.indexer-lucene</groupId>
 			<artifactId>nexus-indexer-lucene-model</artifactId>
 			<version>${nexus.lucene.model.version}</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Used for Artifactory Integration -->
