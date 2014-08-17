@@ -80,7 +80,7 @@
 			<th>Tag</th>
 			<th>AWS Information</th>
 		</tr>
-		<j:set var="environments" value="${it.getEC2Environments()}"/>
+		<j:set var="environments" value="${it.getMatchingEC2Environments()}"/>
 		<j:forEach var="environment" items="${environments}">
 			<tr class="${environment.type}">
 	        	<td>${environment.type}</td>

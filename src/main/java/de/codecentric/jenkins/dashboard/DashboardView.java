@@ -1,6 +1,5 @@
 package de.codecentric.jenkins.dashboard;
 
-import static de.codecentric.jenkins.dashboard.util.LocalMessages.DASHBOARD_VIEW_DISPLAYNAME;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.TopLevelItem;
@@ -26,6 +25,8 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
+
+import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -65,11 +66,11 @@ public class DashboardView extends View {
 	private String username = "";
 	private String password = "";
 	private String artefactId = "";
-	private String deployJobUri = "";
 	private List<Environment> environments;
 	
 	private String awsAccessKey = "";
 	private String awsSecretKey = "";
+    private String awsRegion = "";
 	
 	public DashboardView(final String name) {
 		super(name);
@@ -79,26 +80,25 @@ public class DashboardView extends View {
 		super(name, owner);
 	}
 
-	@DataBoundConstructor
-	public DashboardView(
-			final String name, final String repositoryRestUri,
-			final String repositoryType, final boolean showDeployField,
-			final String username, final String password,
-			final String awsAccessKey, final String awsAccessSecret,
-			final String artefactId, final String deployJobUri,
-			final List<Environment> environments, final String region) {
-		this(name);
-		setShowDeployField(showDeployField);
-		setRepositoryType(repositoryType);
-		setRepositoryRestUri(repositoryRestUri);
-		setUsername(username);
-		setPassword(password);
-		setAwsAccessKey(awsAccessKey);
-		setAwsSecretKey(awsSecretKey);
-		setArtefactId(artefactId);
-		setDeployJobUri(deployJobUri);
-		setEnvironments(environments);
-	}
+    @DataBoundConstructor
+    public DashboardView(
+            final String name, final String repositoryRestUri,
+            final String repositoryType, final boolean showDeployField,
+            final String username, final String password,
+            final String awsAccessKey, final String awsSecretKey, final String awsRegion,
+            final String artefactId, final List<Environment> environments) {
+        this(name);
+        setShowDeployField(showDeployField);
+        setRepositoryType(repositoryType);
+        setRepositoryRestUri(repositoryRestUri);
+        setUsername(username);
+        setPassword(password);
+        setAwsAccessKey(awsAccessKey);
+        setAwsSecretKey(awsSecretKey);
+        setAwsRegion(awsRegion);
+        setArtefactId(artefactId);
+        setEnvironments(environments);
+    }
 
 	@Override
 	public ViewDescriptor getDescriptor() {
@@ -125,10 +125,12 @@ public class DashboardView extends View {
 	
 	@JavaScriptMethod
     public String deploy(String version, String environment) {
-		LOGGER.info("Deployment of version " + version + " for environment " + environment + " via " + deployJobUri);
+        // TODO fix now that we have removed the deployJobUri...
+//		LOGGER.info("Deployment of version " + version + " for environment " + environment + " via " + deployJobUri);
 
 		Client client = ClientBuilder.newClient();
-		Invocation.Builder invocationBuilder = client.target(deployJobUri + "/buildWithParameters").queryParam("VERSION", version).queryParam("ENVIRONMENT", environment).request();
+		Invocation.Builder invocationBuilder = client.target(/*deployJobUri + */"/buildWithParameters").queryParam("VERSION",
+                version).queryParam("ENVIRONMENT", environment).request();
 		Response response = invocationBuilder.get();
 		if( response.getStatus() == Response.Status.CREATED.getStatusCode() ) {
 			return "Deployment of version " + version + " for environment " + environment + " successfully triggered.";
@@ -213,14 +215,6 @@ public class DashboardView extends View {
 		this.artefactId = artefactId;
 	}
 
-	public String getDeployJobUri() {
-		return deployJobUri;
-	}
-
-	public void setDeployJobUri(final String deployJobUri) {
-		this.deployJobUri = deployJobUri;
-	}
-
 	public List<Artifact> getArtifacts() {
 		LOGGER.info("Getting artifacts for " + repositoryType);
 
@@ -248,23 +242,35 @@ public class DashboardView extends View {
 		return repository;
 	}
 
-	public List<ServerEnvironment> getEC2Environments() {
-		AWSCredentials awsCredentials = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
-		EC2Connector env = new EC2Connector(awsCredentials);
+	public List<ServerEnvironment> getMatchingEC2Environments() {
+		final AWSCredentials awsCredentials = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
+		final EC2Connector env = new EC2Connector(awsCredentials);
 		
-		if( ! env.areAwsCredentialsValid() ) {
+		if (! env.areAwsCredentialsValid()) {
 			System.out.println("AWS Credentials are invalid");
 			return new ArrayList<ServerEnvironment>();
 		}
 		
-		List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
-		for( Environment envTag : environments) {
-			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.EU_WEST_1), envTag.getName());
+		final List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
+		for (Environment envTag : environments) {
+			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.fromName(awsRegion)), envTag.getAwsInstance());
 			list.addAll(foundEnvironment);
 		}
 		return list;
 	}
 	
+	public List<ServerEnvironment> getAllEC2Environments() {
+		final AWSCredentials awsCredentials = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
+		final EC2Connector env = new EC2Connector(awsCredentials);
+
+		if (! env.areAwsCredentialsValid()) {
+			System.out.println("AWS Credentials are invalid");
+			return new ArrayList<ServerEnvironment>();
+		}
+
+        return env.getEnvironments(Region.getRegion(Regions.fromName(awsRegion)));
+	}
+
 	public List<Environment> getEnvironments() {
 		return Collections.unmodifiableList(environments);
 	}
@@ -290,7 +296,15 @@ public class DashboardView extends View {
 		this.awsSecretKey = awsSecretKey;
 	}
 
-	public String getRepositoryType() {
+    public String getAwsRegion() {
+        return awsRegion;
+    }
+
+    public void setAwsRegion(final String awsRegion) {
+        this.awsRegion = awsRegion;
+    }
+
+    public String getRepositoryType() {
 		return repositoryType;
 	}
 
@@ -298,11 +312,34 @@ public class DashboardView extends View {
 		this.repositoryType = repositoryType;
 	}
 
-	public static class DescriptorImpl extends ViewDescriptor {
+    public static enum AwsRegion {
+        AP_NORTHEAST_1("ap-northeast-1", "Asia Pacific (Tokyo) Region"),
+        AP_SOUTHEAST_1("ap-southeast-1", "Asia Pacific (Singapore) Region"),
+        AP_SOUTHEAST_2("ap-southeast-2", "Asia Pacific (Sydney) Region"),
+        EU_WEST_1("eu-west-1", "EU (Ireland) Region"),
+        SA_EAST_1("sa-east-1", "South America (Sao Paulo) Region"),
+        US_EAST_1("us-east-1", "US East (Northern Virginia) Region"),
+        US_WEST_1("us-west-1", "US West (Northern California) Region"),
+        US_WEST_2("us-west-2", "US West (Oregon) Region");
+
+        private final String identifier;
+        private final String name;
+
+        private AwsRegion(final String identifier, final String name) {
+            this.identifier = identifier;
+            this.name = name;
+        }
+    }
+
+    public static final class DescriptorImpl extends ViewDescriptor {
+
+        public DescriptorImpl() {
+            super();
+        }
 
 		@Override
 		public String getDisplayName() {
-			return DASHBOARD_VIEW_DISPLAYNAME.toString();
+			return Messages.DashboardView_DisplayName();
 		}
 
 		public List<EnvironmentDescriptor> getEnvironmentDescriptors() {
@@ -313,8 +350,28 @@ public class DashboardView extends View {
 		public String getHelpFile() {
 			return "/plugin/jenkins-deployment-dashboard-plugin/help.html";
 		}
-		
-		public FormValidation doCheckArtifactoryRestUri(@QueryParameter final String artifactoryRestUri) {
+
+        public ListBoxModel doFillRepositoryTypeItems() {
+            final ListBoxModel model = new ListBoxModel();
+
+            for (RepositoryType value : RepositoryType.values()) {
+                model.add(value.getDescription(), value.getid());
+            }
+
+            return model;
+        }
+
+        public ListBoxModel doFillAwsRegionItems() {
+            final ListBoxModel model = new ListBoxModel();
+
+            for (AwsRegion value : AwsRegion.values()) {
+                model.add(value.name, value.identifier);
+            }
+
+            return model;
+        }
+
+        public FormValidation doCheckArtifactoryRestUri(@QueryParameter final String artifactoryRestUri) {
 			return FormValidation.ok();
 		}
 
@@ -359,7 +416,5 @@ public class DashboardView extends View {
 
 			return validationResult;
 		}
-
 	}
-
 }

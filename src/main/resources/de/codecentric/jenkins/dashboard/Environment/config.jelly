@@ -1,8 +1,16 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
-  <f:entry title="Environment name">
-    <f:textbox field="name" />
-  </f:entry>
+    <f:entry title="${%environment.name.title}" description="${%environment.name.description}">
+        <f:textbox field="name"/>
+    </f:entry>
+
+    <f:entry title="${%aws.instance.title}" description="${%aws.instance.description}">
+        <f:select field="awsInstance"/>
+    </f:entry>
+
+    <f:entry title="${%environment.type.title}" description="${%environment.type.description}">
+        <f:select field="environmentType"/>
+    </f:entry>
 
 </j:jelly>
