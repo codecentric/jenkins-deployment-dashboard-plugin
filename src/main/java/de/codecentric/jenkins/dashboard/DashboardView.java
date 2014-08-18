@@ -20,10 +20,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
 
 
 import hudson.util.ListBoxModel;
@@ -128,15 +124,15 @@ public class DashboardView extends View {
         // TODO fix now that we have removed the deployJobUri...
 //		LOGGER.info("Deployment of version " + version + " for environment " + environment + " via " + deployJobUri);
 
-		Client client = ClientBuilder.newClient();
-		Invocation.Builder invocationBuilder = client.target(/*deployJobUri + */"/buildWithParameters").queryParam("VERSION",
-                version).queryParam("ENVIRONMENT", environment).request();
-		Response response = invocationBuilder.get();
-		if( response.getStatus() == Response.Status.CREATED.getStatusCode() ) {
-			return "Deployment of version " + version + " for environment " + environment + " successfully triggered.";
-		} else if ( response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ) {
-			return "Deployment not successful due to: " + response.getStatusInfo().getReasonPhrase();
-		}
+//		Client client = ClientBuilder.newClient();
+//		Invocation.Builder invocationBuilder = client.target(/*deployJobUri + */"/buildWithParameters").queryParam("VERSION",
+//                version).queryParam("ENVIRONMENT", environment).request();
+//		Response response = invocationBuilder.get();
+//		if( response.getStatus() == Response.Status.CREATED.getStatusCode() ) {
+//			return "Deployment of version " + version + " for environment " + environment + " successfully triggered.";
+//		} else if ( response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ) {
+//			return "Deployment not successful due to: " + response.getStatusInfo().getReasonPhrase();
+//		}
 		return "Deployment not successful. Please check the URL of the Deployment Job and if its correctly "
 				+ "configured as a parameterized job that takes two parameters [ENVIRONMENT, VERSION].";
     }

@@ -73,7 +73,7 @@
 		<compileSource>1.7</compileSource>
 		<compileTarget>1.7</compileTarget>
 
-		<jersey.client.version>2.9</jersey.client.version>
+		<jersey.client.version>1.17.1</jersey.client.version>
 		<joda.time.version>2.4</joda.time.version>
 		<org.slf4j.version>1.7.7</org.slf4j.version>
 
@@ -119,21 +119,21 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>${jersey.client.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>${jersey.client.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.connectors</groupId>
-			<artifactId>jersey-apache-connector</artifactId>
-			<version>${jersey.client.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>${jersey.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-apache-client</artifactId>
+            <version>${jersey.client.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
@@ -153,6 +153,7 @@
 			<groupId>com.xebialabs.restito</groupId>
 			<artifactId>restito</artifactId>
 			<version>0.4-beta-3</version>
+            <scope>test</scope>
 		</dependency>
 
 		<!-- Used for AWS Integration -->
@@ -171,6 +172,10 @@
                 <exclusion>
                     <groupId>com.thoughtworks.xstream</groupId>
                     <artifactId>xstream</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-client</artifactId>
                 </exclusion>
             </exclusions>
 		</dependency>

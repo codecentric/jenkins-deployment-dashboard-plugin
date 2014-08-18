@@ -7,17 +7,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
 
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.jfrog.artifactory.client.Artifactory;
 import org.jfrog.artifactory.client.ArtifactoryClient;
 import org.jfrog.artifactory.client.model.RepoPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.json.JSONConfiguration;
+import com.sun.jersey.client.apache.ApacheHttpClient;
+import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
 
 import de.codecentric.jenkins.dashboard.api.repository.Artifact;
 import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
@@ -44,7 +48,7 @@ public class ArtifactoryConnector implements RepositoryInterface {
 
 	public boolean canConnect() {
 		LOGGER.info("Checking Artifactory connection");
-		Response response = getResponse();
+		ClientResponse response = getResponse();
 		int status = response.getStatus();
 		if (status == 200) {
 			return true;
@@ -92,17 +96,21 @@ public class ArtifactoryConnector implements RepositoryInterface {
 		return artifactList;
 	}
 
-	private Response getResponse() {
-		Client client = buildClient();
-		Invocation.Builder invocationBuilder = client.target(repositoryURI).request();
-		return invocationBuilder.get();
+	private ClientResponse getResponse() {
+		final Client client = buildClient();
+        final WebResource restResource = client.resource(repositoryURI);
+        final ClientResponse response = restResource.accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        return response;
 	}
 
 	private Client buildClient() {
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
-		Client client = ClientBuilder.newClient();
-		client.register(feature);
-		return client;
+        DefaultApacheHttpClientConfig config = new DefaultApacheHttpClientConfig();
+        config.getState().setCredentials(null, null, -1, username, password);
+        config.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+        Client restClient = ApacheHttpClient.create(config);
+        restClient.setFollowRedirects(true);
+
+		return restClient;
 	}
 
 }

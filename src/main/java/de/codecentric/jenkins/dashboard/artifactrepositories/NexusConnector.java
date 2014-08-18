@@ -4,16 +4,18 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.json.JSONConfiguration;
+import com.sun.jersey.client.apache.ApacheHttpClient;
+import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
 
 import de.codecentric.jenkins.dashboard.api.repository.Artifact;
 import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
@@ -30,7 +32,7 @@ public class NexusConnector implements RepositoryInterface {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(NexusConnector.class);
 
-	private String username;
+    private String username;
 	private String password;
 	private URI repositoryURI;
 
@@ -43,11 +45,10 @@ public class NexusConnector implements RepositoryInterface {
 	public boolean canConnect() {
 		LOGGER.info("Checking Nexus connection");
 
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
-		Client client = ClientBuilder.newClient();
-		client.register(feature);
-		Invocation.Builder invocationBuilder = client.target(repositoryURI).request();
-		Response response = invocationBuilder.get();
+        final Client client = buildClient();
+        final WebResource restResource = client.resource(repositoryURI);
+        final ClientResponse response = restResource.accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+
 		int status = response.getStatus();
 		if (status == 200) {
 			return true;
@@ -63,14 +64,14 @@ public class NexusConnector implements RepositoryInterface {
 	public List<Artifact> getArtefactList(String groupId, String artifactId) {
 		LOGGER.info("Get artifact list for " + groupId + " " + artifactId);
 		List<Artifact> list = new ArrayList<Artifact>();
-	
-		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(username, password);
-		Client client = ClientBuilder.newClient();
-		client.register(feature);
-		WebTarget path = client.target(repositoryURI).path("service").path("local").path("lucene").path("search");
-		Invocation.Builder builder = path.queryParam("g", groupId).queryParam("a", artifactId).request(MediaType.APPLICATION_JSON);
-		SearchResponse response= builder.get(SearchResponse.class);
 
+        final Client client = buildClient();
+        final WebResource restResource = client.resource(repositoryURI);
+        final ClientResponse clientResponse = restResource.path("service").path("local").path("lucene").path("search")
+                .queryParam("g", groupId).queryParam("a", artifactId)
+                .accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+
+        final SearchResponse response = clientResponse.getEntity(SearchResponse.class);
 		List<NexusArtifact> data = response.getData();
 		for (NexusArtifact nexusArtifact : data) {
 			Artifact a = new Artifact(nexusArtifact.getArtifactId(), nexusArtifact.getVersion(), "");
@@ -79,5 +80,15 @@ public class NexusConnector implements RepositoryInterface {
 		
 		return list;
 	}
+
+    private Client buildClient() {
+        DefaultApacheHttpClientConfig config = new DefaultApacheHttpClientConfig();
+        config.getState().setCredentials(null, null, -1, username, password);
+        config.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+        Client restClient = ApacheHttpClient.create(config);
+        restClient.setFollowRedirects(true);
+
+        return restClient;
+    }
 
 }
