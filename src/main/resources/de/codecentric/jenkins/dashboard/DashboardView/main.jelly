@@ -38,7 +38,7 @@
         <tr>
           <td>
               <div align='center'>
-                <h3>Available Releases</h3>  
+                <h3>Available Releases for ${it.artefactId}</h3>
                 <p>Please select the version of your application and the environment you want to deploy to.</p>
                 Version 
                 <select id="versionId" name='VERSION'>
@@ -54,7 +54,7 @@
                 <select id="environmentId" name='ENVIRONMENT'>
                     <j:set var="environments" value="${it.getEnvironments()}"/>
                     <j:forEach var="env" items="${environments}">
-                        <option value='${env.name}'>${env.name}</option>
+                        <option value='${env.awsInstance}'>${env.name}</option>
                     </j:forEach>
                 </select>
                 Deploy App

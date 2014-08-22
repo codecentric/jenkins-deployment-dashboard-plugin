@@ -9,6 +9,7 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.View;
+import hudson.util.ComboBoxModel;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
@@ -22,17 +23,16 @@ public class Environment extends AbstractDescribableImpl<Environment> {
 
     private String name;
     private EnvironmentType environmentType;
+    private String buildJob;
     private String awsInstance;
 
 
-//            - tag of the environment (i suggest we search for the instanceId via the tag)
-//    - type (production / test makes sense)
-
     @DataBoundConstructor
-    public Environment(final String name, final String environmentType, final String awsInstance) {
+    public Environment(final String name, final String environmentType, final String awsInstance, final String buildJob) {
         setName(name);
         setEnvironmentType(environmentType);
         setAwsInstance(awsInstance);
+        setBuildJob(buildJob);
     }
 
     public String getName() {
@@ -64,6 +64,14 @@ public class Environment extends AbstractDescribableImpl<Environment> {
         return DESCRIPTOR;
     }
 
+    public String getBuildJob() {
+        return buildJob;
+    }
+
+    public void setBuildJob(final String buildJob) {
+        this.buildJob = buildJob;
+    }
+
     public static class EnvironmentDescriptor extends Descriptor<Environment> {
         public String getDisplayName() {
             return Messages.Environment_DisplayName();
@@ -90,6 +98,16 @@ public class Environment extends AbstractDescribableImpl<Environment> {
                         model.add(env.getEnvironmentTag());
                     }
                 }
+            }
+
+            return model;
+        }
+
+        public ComboBoxModel doFillBuildJobItems() {
+            ComboBoxModel model = new ComboBoxModel();
+
+            for (String jobName : Jenkins.getInstance().getJobNames()) {
+                model.add(jobName);
             }
 
             return model;

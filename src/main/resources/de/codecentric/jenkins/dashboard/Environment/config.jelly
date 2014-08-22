@@ -13,4 +13,8 @@
         <f:select />
     </f:entry>
 
+    <f:entry field="buildJob" title="${%buildjob.title}" description="${%buildjob.description}">
+        <f:combobox />
+    </f:entry>
+
 </j:jelly>

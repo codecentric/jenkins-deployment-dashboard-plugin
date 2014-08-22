@@ -1,7 +1,11 @@
 package de.codecentric.jenkins.dashboard;
 
 import hudson.Extension;
+import hudson.model.AbstractProject;
+import hudson.model.Cause;
 import hudson.model.Item;
+import hudson.model.ParametersAction;
+import hudson.model.StringParameterValue;
 import hudson.model.TopLevelItem;
 import hudson.model.ViewGroup;
 import hudson.model.Descriptor;
@@ -121,20 +125,40 @@ public class DashboardView extends View {
 	
 	@JavaScriptMethod
     public String deploy(String version, String environment) {
-        // TODO fix now that we have removed the deployJobUri...
-//		LOGGER.info("Deployment of version " + version + " for environment " + environment + " via " + deployJobUri);
+		LOGGER.info("Deployment of version " + version + " for environment " + environment);
 
-//		Client client = ClientBuilder.newClient();
-//		Invocation.Builder invocationBuilder = client.target(/*deployJobUri + */"/buildWithParameters").queryParam("VERSION",
-//                version).queryParam("ENVIRONMENT", environment).request();
-//		Response response = invocationBuilder.get();
-//		if( response.getStatus() == Response.Status.CREATED.getStatusCode() ) {
-//			return "Deployment of version " + version + " for environment " + environment + " successfully triggered.";
-//		} else if ( response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() ) {
-//			return "Deployment not successful due to: " + response.getStatusInfo().getReasonPhrase();
-//		}
-		return "Deployment not successful. Please check the URL of the Deployment Job and if its correctly "
-				+ "configured as a parameterized job that takes two parameters [ENVIRONMENT, VERSION].";
+        // Get the environment with corresponding build-job
+        Environment buildEnvironment = null;
+        for (Environment env : environments) {
+            if (env.getAwsInstance().equals(environment)) {
+                buildEnvironment = env;
+                break;
+            }
+        }
+
+        final AbstractProject buildJob = Jenkins.getInstance().getItemByFullName(buildEnvironment.getBuildJob(), AbstractProject.class);
+        LOGGER.info("Executing job: " + buildJob);
+
+        if (buildJob == null) {
+            return String.format("Build job corresponding to environment %s cannot be found, please try to configure again.",
+                    buildEnvironment.getName());
+        }
+
+        if ((!buildJob.isBuildable()) || (!buildJob.isParameterized())) {
+            return "Deployment cannot be executed. Please check that the Deployment Job is not disabled and if its correctly "
+                    + "configured as a parameterized job that takes one parameter [VERSION].";
+        }
+
+        final ParametersAction params = new ParametersAction(new StringParameterValue("version", version));
+
+        // TODO change to using 'scheduleBuild2' which will return a Future object so we can wait for completion.
+        final boolean schedulingSuccessful = buildJob.scheduleBuild(2, new Cause.UserIdCause(), params);
+
+        if (schedulingSuccessful) {
+            return String.format("Successfully scheduled build job %s, waiting for completion...", buildJob.getName());
+        } else {
+            return String.format("Failed scheduling build job %s for unknown reason. Please check the configuration.", buildJob.getName());
+        }
     }
 	
 	/**
