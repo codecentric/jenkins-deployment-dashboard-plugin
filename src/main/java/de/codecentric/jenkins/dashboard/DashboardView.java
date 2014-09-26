@@ -66,6 +66,8 @@ public class DashboardView extends View {
 	private String groupId = "";
 	private String artefactId = "";
 	
+	private String errorMessage = "";
+	
 	private List<Environment> environments;
 	
 	private String awsAccessKey = "";
@@ -144,7 +146,7 @@ public class DashboardView extends View {
                     + "configured as a parameterized job that takes one parameter [VERSION].";
         }
 
-        final ParametersAction params = new ParametersAction(new StringParameterValue("version", version));
+        final ParametersAction params = new ParametersAction(new StringParameterValue("VERSION", version));
 
         // TODO change to using 'scheduleBuild2' which will return a Future object so we can wait for completion.
         final boolean schedulingSuccessful = buildJob.scheduleBuild(2, new Cause.UserIdCause(), params);
