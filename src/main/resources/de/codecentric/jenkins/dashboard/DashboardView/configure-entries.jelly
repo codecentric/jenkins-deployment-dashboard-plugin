@@ -29,6 +29,7 @@
     <f:entry title="${%repository.rest.groupId.title}" description="${%repository.rest.groupId.description}">
         <f:textbox field="groupId"/>
     </f:entry>
+
     <f:entry title="${%repository.rest.artefactId.title}" description="${%repository.rest.artefactId.description}">
         <f:textbox field="artefactId"/>
     </f:entry>

@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
+import net.sf.json.JSONObject;
 
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
@@ -61,6 +62,7 @@ public class DashboardView extends View {
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
 	private boolean showDeployField;
+
 	private String repositoryType;
 	private String repositoryRestUri = "";
 	private String username = "";
@@ -85,17 +87,11 @@ public class DashboardView extends View {
 
     @DataBoundConstructor
     public DashboardView(
-            final String name, final String repositoryRestUri,
-            final String repositoryType, final boolean showDeployField,
-            final String username, final String password,
+            final String name, final boolean showDeployField,
             final String awsAccessKey, final String awsSecretKey, final String awsRegion,
             final String groupId, final String artefactId, final List<Environment> environments) {
         this(name);
         setShowDeployField(showDeployField);
-        setRepositoryType(repositoryType);
-        setRepositoryRestUri(repositoryRestUri);
-        setUsername(username);
-        setPassword(password);
         setAwsAccessKey(awsAccessKey);
         setAwsSecretKey(awsSecretKey);
         setAwsRegion(awsRegion);
@@ -207,30 +203,6 @@ public class DashboardView extends View {
 		this.showDeployField = showDeployField;
 	}
 
-	public String getRepositoryRestUri() {
-		return repositoryRestUri;
-	}
-
-	public void setRepositoryRestUri(final String repositoryRestUri) {
-		this.repositoryRestUri = repositoryRestUri;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(final String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(final String password) {
-		this.password = password;
-	}
-
 	public String getArtefactId() {
 		return artefactId;
 	}
@@ -248,7 +220,7 @@ public class DashboardView extends View {
 	}
 
 	public List<Artifact> getArtifacts() {
-		LOGGER.info("Getting artifacts for " + repositoryType);
+		LOGGER.info("Getting artifacts for " + DESCRIPTOR.getRepositoryType());
 
 		RepositoryInterface repository;
 		try {
@@ -264,12 +236,12 @@ public class DashboardView extends View {
 
 	private RepositoryInterface createRepository() throws URISyntaxException {
 		URI repositoryURI;
-		repositoryURI = new URI(repositoryRestUri);
+		repositoryURI = new URI(DESCRIPTOR.getRepositoryRestUri());
 		RepositoryInterface repository;
-		if( repositoryType.equalsIgnoreCase( RepositoryType.ARTIFACTORY.getid() )) {
-			repository = new ArtifactoryConnector(username, password, repositoryURI);
+		if( DESCRIPTOR.getRepositoryType().equalsIgnoreCase( RepositoryType.ARTIFACTORY.getid() )) {
+			repository = new ArtifactoryConnector(DESCRIPTOR.getUsername(), DESCRIPTOR.getPassword(), repositoryURI);
 		} else {
-			repository = new NexusConnector(username, password, repositoryURI);
+			repository = new NexusConnector(DESCRIPTOR.getUsername(), DESCRIPTOR.getPassword(), repositoryURI);
 		}
 		return repository;
 	}
@@ -336,14 +308,6 @@ public class DashboardView extends View {
         this.awsRegion = awsRegion;
     }
 
-    public String getRepositoryType() {
-		return repositoryType;
-	}
-
-	public void setRepositoryType(String repositoryType) {
-		this.repositoryType = repositoryType;
-	}
-
     public static enum AwsRegion {
         AP_NORTHEAST_1("ap-northeast-1", "Asia Pacific (Tokyo) Region"),
         AP_SOUTHEAST_1("ap-southeast-1", "Asia Pacific (Singapore) Region"),
@@ -364,6 +328,11 @@ public class DashboardView extends View {
     }
 
     public static final class DescriptorImpl extends ViewDescriptor {
+
+        private String repositoryType;
+        private String repositoryRestUri = "";
+        private String username = "";
+        private String password = "";
 
         public DescriptorImpl() {
             super();
@@ -448,5 +417,45 @@ public class DashboardView extends View {
 
 			return validationResult;
 		}
-	}
+
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject json) throws Descriptor.FormException {
+            req.bindJSON(this, json.getJSONObject("deployment-dashboard"));
+            save();
+            return true;
+        }
+
+        public String getRepositoryType() {
+            return repositoryType;
+        }
+
+        public void setRepositoryType(String repositoryType) {
+            this.repositoryType = repositoryType;
+        }
+
+        public String getRepositoryRestUri() {
+            return repositoryRestUri;
+        }
+
+        public void setRepositoryRestUri(final String repositoryRestUri) {
+            this.repositoryRestUri = repositoryRestUri;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(final String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(final String password) {
+            this.password = password;
+        }
+
+    }
 }
