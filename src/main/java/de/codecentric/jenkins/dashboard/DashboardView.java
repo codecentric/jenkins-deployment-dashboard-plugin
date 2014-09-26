@@ -342,6 +342,7 @@ public class DashboardView extends View {
 
         public DescriptorImpl() {
             super();
+            load();
         }
 
 		@Override
