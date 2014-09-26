@@ -63,11 +63,6 @@ public class DashboardView extends View {
 
 	private boolean showDeployField;
 
-	private String repositoryType;
-	private String repositoryRestUri = "";
-	private String username = "";
-	private String password = "";
-	
 	private String groupId = "";
 	private String artefactId = "";
 	
@@ -235,8 +230,7 @@ public class DashboardView extends View {
 	}
 
 	private RepositoryInterface createRepository() throws URISyntaxException {
-		URI repositoryURI;
-		repositoryURI = new URI(DESCRIPTOR.getRepositoryRestUri());
+		URI repositoryURI = new URI(DESCRIPTOR.getRepositoryRestUri());
 		RepositoryInterface repository;
 		if( DESCRIPTOR.getRepositoryType().equalsIgnoreCase( RepositoryType.ARTIFACTORY.getid() )) {
 			repository = new ArtifactoryConnector(DESCRIPTOR.getUsername(), DESCRIPTOR.getPassword(), repositoryURI);
