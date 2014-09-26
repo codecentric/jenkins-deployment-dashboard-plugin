@@ -65,7 +65,10 @@ public class DashboardView extends View {
 	private String repositoryRestUri = "";
 	private String username = "";
 	private String password = "";
+	
+	private String groupId = "";
 	private String artefactId = "";
+	
 	private List<Environment> environments;
 	
 	private String awsAccessKey = "";
@@ -86,7 +89,7 @@ public class DashboardView extends View {
             final String repositoryType, final boolean showDeployField,
             final String username, final String password,
             final String awsAccessKey, final String awsSecretKey, final String awsRegion,
-            final String artefactId, final List<Environment> environments) {
+            final String groupId, final String artefactId, final List<Environment> environments) {
         this(name);
         setShowDeployField(showDeployField);
         setRepositoryType(repositoryType);
@@ -96,6 +99,7 @@ public class DashboardView extends View {
         setAwsAccessKey(awsAccessKey);
         setAwsSecretKey(awsSecretKey);
         setAwsRegion(awsRegion);
+        setGroupId(groupId);
         setArtefactId(artefactId);
         setEnvironments(environments);
     }
@@ -235,6 +239,14 @@ public class DashboardView extends View {
 		this.artefactId = artefactId;
 	}
 
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
+	}
+
 	public List<Artifact> getArtifacts() {
 		LOGGER.info("Getting artifacts for " + repositoryType);
 
@@ -246,7 +258,7 @@ public class DashboardView extends View {
 			return new ArrayList<Artifact>();
 		}
 		
-		List<Artifact> versions = repository.getArtefactList(artefactId);
+		List<Artifact> versions = repository.getArtefactList(groupId, artefactId);
 		return versions;
 	}
 
