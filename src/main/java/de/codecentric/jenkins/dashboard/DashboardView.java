@@ -217,6 +217,11 @@ public class DashboardView extends View {
 	public List<Artifact> getArtifacts() {
 		LOGGER.info("Getting artifacts for " + DESCRIPTOR.getRepositoryType());
 
+		// User needs to configure an artifact repository on the global config page
+		if( DESCRIPTOR.getRepositoryType() == null ) {
+			return new ArrayList<Artifact>();
+		}
+		
 		RepositoryInterface repository;
 		try {
 			repository = createRepository();
@@ -232,6 +237,11 @@ public class DashboardView extends View {
 	private RepositoryInterface createRepository() throws URISyntaxException {
 		URI repositoryURI = new URI(DESCRIPTOR.getRepositoryRestUri());
 		RepositoryInterface repository;
+		
+		System.out.println(DESCRIPTOR.getRepositoryType());
+		
+		
+		
 		if( DESCRIPTOR.getRepositoryType().equalsIgnoreCase( RepositoryType.ARTIFACTORY.getid() )) {
 			repository = new ArtifactoryConnector(DESCRIPTOR.getUsername(), DESCRIPTOR.getPassword(), repositoryURI);
 		} else {
