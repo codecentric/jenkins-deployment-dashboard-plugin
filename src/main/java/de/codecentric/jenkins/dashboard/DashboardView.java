@@ -70,10 +70,6 @@ public class DashboardView extends View {
 	
 	private List<Environment> environments;
 	
-	private String awsAccessKey = "";
-	private String awsSecretKey = "";
-    private String awsRegion = "";
-	
 	public DashboardView(final String name) {
 		super(name);
 	}
@@ -85,13 +81,9 @@ public class DashboardView extends View {
     @DataBoundConstructor
     public DashboardView(
             final String name, final boolean showDeployField,
-            final String awsAccessKey, final String awsSecretKey, final String awsRegion,
             final String groupId, final String artefactId, final List<Environment> environments) {
         this(name);
         setShowDeployField(showDeployField);
-        setAwsAccessKey(awsAccessKey);
-        setAwsSecretKey(awsSecretKey);
-        setAwsRegion(awsRegion);
         setGroupId(groupId);
         setArtefactId(artefactId);
         setEnvironments(environments);
@@ -253,7 +245,7 @@ public class DashboardView extends View {
 	}
 
 	public List<ServerEnvironment> getMatchingEC2Environments() {
-		final AWSCredentials awsCredentials = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
+		final AWSCredentials awsCredentials = new BasicAWSCredentials(DESCRIPTOR.getAwsAccessKey(), DESCRIPTOR.getAwsSecretKey());
 		final EC2Connector env = new EC2Connector(awsCredentials);
 		
 		if (! env.areAwsCredentialsValid()) {
@@ -263,14 +255,15 @@ public class DashboardView extends View {
 		
 		final List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
 		for (Environment envTag : environments) {
-			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.fromName(awsRegion)), envTag.getAwsInstance());
+			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.fromName(DESCRIPTOR.getAwsRegion())),
+                    envTag.getAwsInstance());
 			list.addAll(foundEnvironment);
 		}
 		return list;
 	}
 	
 	public List<ServerEnvironment> getAllEC2Environments() {
-		final AWSCredentials awsCredentials = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
+		final AWSCredentials awsCredentials = new BasicAWSCredentials(DESCRIPTOR.getAwsAccessKey(), DESCRIPTOR.getAwsSecretKey());
 		final EC2Connector env = new EC2Connector(awsCredentials);
 
 		if (! env.areAwsCredentialsValid()) {
@@ -278,7 +271,7 @@ public class DashboardView extends View {
 			return new ArrayList<ServerEnvironment>();
 		}
 
-        return env.getEnvironments(Region.getRegion(Regions.fromName(awsRegion)));
+        return env.getEnvironments(Region.getRegion(Regions.fromName(DESCRIPTOR.getAwsRegion())));
 	}
 
 	public List<Environment> getEnvironments() {
@@ -289,30 +282,6 @@ public class DashboardView extends View {
 		this.environments = environmentsList == null ? new ArrayList<Environment>()
 				: new ArrayList<Environment>(environmentsList);
 	}
-
-	public String getAwsAccessKey() {
-		return awsAccessKey;
-	}
-
-	public void setAwsAccessKey(String awsAccessKey) {
-		this.awsAccessKey = awsAccessKey;
-	}
-
-	public String getAwsSecretKey() {
-		return awsSecretKey;
-	}
-
-	public void setAwsSecretKey(String awsSecretKey) {
-		this.awsSecretKey = awsSecretKey;
-	}
-
-    public String getAwsRegion() {
-        return awsRegion;
-    }
-
-    public void setAwsRegion(final String awsRegion) {
-        this.awsRegion = awsRegion;
-    }
 
     public static enum AwsRegion {
         AP_NORTHEAST_1("ap-northeast-1", "Asia Pacific (Tokyo) Region"),
@@ -339,6 +308,10 @@ public class DashboardView extends View {
         private String repositoryRestUri = "";
         private String username = "";
         private String password = "";
+
+        private String awsAccessKey = "";
+        private String awsSecretKey = "";
+        private String awsRegion = "";
 
         public DescriptorImpl() {
             super();
@@ -462,6 +435,30 @@ public class DashboardView extends View {
 
         public void setPassword(final String password) {
             this.password = password;
+        }
+
+        public String getAwsAccessKey() {
+            return awsAccessKey;
+        }
+
+        public void setAwsAccessKey(String awsAccessKey) {
+            this.awsAccessKey = awsAccessKey;
+        }
+
+        public String getAwsSecretKey() {
+            return awsSecretKey;
+        }
+
+        public void setAwsSecretKey(String awsSecretKey) {
+            this.awsSecretKey = awsSecretKey;
+        }
+
+        public String getAwsRegion() {
+            return awsRegion;
+        }
+
+        public void setAwsRegion(final String awsRegion) {
+            this.awsRegion = awsRegion;
         }
 
     }
