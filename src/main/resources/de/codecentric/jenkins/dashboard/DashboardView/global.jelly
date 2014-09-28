@@ -2,7 +2,8 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
     <f:section title="${%section.title}" name="deployment-dashboard">
-        <f:entry title="Choose Repository Type" field="repositoryType">
+    
+        <f:entry title="${%section.repository.type}" field="repositoryType">
             <f:select />
         </f:entry>
 
@@ -21,6 +22,7 @@
         <f:validateButton
                 title="${%repository.connection.test.title}" progress="${%repository.connection.test.progress}"
                 method="testRepositoryConnection" with="repositoryRestUri,username,password,applicationName"/>
+    
     </f:section>
 
 </j:jelly>

@@ -19,7 +19,7 @@
 		}
 	</style>
 
-    <h1>Release Dashboard</h1>
+	<h1>${%main.view.title}</h1>
 	
   	<script>
 	  function deploy() {
@@ -32,15 +32,17 @@
 	  }
   	</script>
 	
-    <h2 style='${it.displayDeployField}'>Artefact Versions</h2>
+    <h2 style='${it.displayDeployField}'>${%main.view.artefact.versions}</h2>
 
     <table border='0' cellpadding='10' style='background-color:lightgreen;${it.displayDeployField}' width='100%'>
         <tr>
           <td>
               <div align='center'>
-                <h3>Available Releases for ${it.artefactId}</h3>
-                <p>Please select the version of your application and the environment you want to deploy to.</p>
-                Version 
+                <h3>${%main.view.available.releases} ${it.artefactId}</h3>
+                <p>${%main.view.select.version}</p>
+                
+                ${%main.view.version}
+                
                 <select id="versionId" name='VERSION'>
                     <j:set var="artifacts" value="${it.getArtifacts()}"/>
                     <j:forEach var="artifact" items="${artifacts}">
@@ -50,45 +52,51 @@
                       <br />
                     </j:forEach>
                 </select>
-                Environment
+                
+                ${%main.view.environment}
+                
                 <select id="environmentId" name='ENVIRONMENT'>
                     <j:set var="environments" value="${it.getEnvironments()}"/>
                     <j:forEach var="env" items="${environments}">
                         <option value='${env.awsInstance}'>${env.name}</option>
                     </j:forEach>
                 </select>
-                Deploy App
-				<a id="deployLink" title="Deploy application link" href="" onclick="deploy(); return false;">
-					<img title="Build with parameters" alt="Build with parameters" src="/jenkins/static/624ed599/images/24x24/clock.png" border="0" />
+                
+                ${%main.view.deploy.app}
+                
+				<a id="deployLink" title="${%main.view.deploy.app.link}" href="" onclick="deploy(); return false;">
+					<img title="${%main.view.build.parameters}" alt="${%main.view.build.parameters}" src="/jenkins/static/624ed599/images/24x24/clock.png" border="0" />
 				</a>
+				
 				<p>
 				  <div id="msg" />
 				</p>
+				
               </div>
           </td>
         </tr>
     </table>
         
-    <h2>EC2 Environments</h2>
+    <h2>${%main.view.server.title}</h2>
 
     <table cellpadding='10' style='background-color:#FFFFFF' width='100%'>
 		<tr style="background-color: lightgrey">
-			<th>Name</th>
-			<th>State</th>
-			<th>Link</th>
-			<th>Version</th>
-			<th>Tag</th>
-			<th>AWS Information</th>
+			<th>${%main.view.server.name}</th>
+			<th>${%main.view.server.state}</th>
+			<th>${%main.view.server.link}</th>
+			<th>${%main.view.server.versions}</th>
+			<th>${%main.view.server.tag}</th>
+			<th>${%main.view.server.details}</th>
 		</tr>
 		<j:set var="environments" value="${it.getMatchingEC2Environments()}"/>
 		<j:forEach var="environment" items="${environments}">
 			<tr class="${environment.type}">
 	        	<td>${environment.type}</td>
-	        	<td><b>${environment.state.name}</b><br/>Last started: ${environment.launchTime}</td>
+	        	<td><b>${environment.state.name}</b><br/>${%main.view.server.last.started} ${environment.launchTime}</td>
         		<td>${environment.publicIpAddress}</td>
 	        	<td>${environment.version}</td>
 	        	<td>${environment.environmentTag}</td>
-	        	<td>Instance Id: ${environment.instanceId}<br/>Instance Type: ${environment.instanceType}</td>
+	        	<td>Instance Id: ${environment.instanceId}<br/>${%main.view.server.instance.type} ${environment.instanceType}</td>
 			</tr>
 		</j:forEach>
 	</table>
