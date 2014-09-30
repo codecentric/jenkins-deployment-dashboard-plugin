@@ -1,0 +1,28 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:section title="${%section.title}" name="deployment-dashboard">
+    
+        <f:entry title="${%section.repository.type}" field="repositoryType">
+            <f:select />
+        </f:entry>
+
+        <f:entry title="${%repository.rest.uri.title}" description="${%repository.rest.uri.description}">
+            <f:textbox field="repositoryRestUri"/>
+        </f:entry>
+
+        <f:entry title="${%repository.rest.username.title}" description="${%repository.rest.username.description}">
+            <f:textbox field="username"/>
+        </f:entry>
+
+        <f:entry title="${%repository.rest.password.title}" description="${%repository.rest.password.description}">
+            <f:password field="password"/>
+        </f:entry>
+
+        <f:validateButton
+                title="${%repository.connection.test.title}" progress="${%repository.connection.test.progress}"
+                method="testRepositoryConnection" with="repositoryRestUri,username,password,applicationName"/>
+    
+    </f:section>
+
+</j:jelly>

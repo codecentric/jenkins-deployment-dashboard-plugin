@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
+import net.sf.json.JSONObject;
 
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
@@ -61,11 +62,12 @@ public class DashboardView extends View {
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
 	private boolean showDeployField;
-	private String repositoryType;
-	private String repositoryRestUri = "";
-	private String username = "";
-	private String password = "";
+
+	private String groupId = "";
 	private String artefactId = "";
+	
+	private String errorMessage = "";
+	
 	private List<Environment> environments;
 	
 	private String awsAccessKey = "";
@@ -82,20 +84,15 @@ public class DashboardView extends View {
 
     @DataBoundConstructor
     public DashboardView(
-            final String name, final String repositoryRestUri,
-            final String repositoryType, final boolean showDeployField,
-            final String username, final String password,
+            final String name, final boolean showDeployField,
             final String awsAccessKey, final String awsSecretKey, final String awsRegion,
-            final String artefactId, final List<Environment> environments) {
+            final String groupId, final String artefactId, final List<Environment> environments) {
         this(name);
         setShowDeployField(showDeployField);
-        setRepositoryType(repositoryType);
-        setRepositoryRestUri(repositoryRestUri);
-        setUsername(username);
-        setPassword(password);
         setAwsAccessKey(awsAccessKey);
         setAwsSecretKey(awsSecretKey);
         setAwsRegion(awsRegion);
+        setGroupId(groupId);
         setArtefactId(artefactId);
         setEnvironments(environments);
     }
@@ -149,10 +146,11 @@ public class DashboardView extends View {
                     + "configured as a parameterized job that takes one parameter [VERSION].";
         }
 
-        final ParametersAction params = new ParametersAction(new StringParameterValue("version", version));
-
+        final ParametersAction versionParam = new ParametersAction(new StringParameterValue("VERSION", version));
+        final ParametersAction environmentParams = new ParametersAction(new StringParameterValue("ENVIRONMENT", environment));
+        
         // TODO change to using 'scheduleBuild2' which will return a Future object so we can wait for completion.
-        final boolean schedulingSuccessful = buildJob.scheduleBuild(2, new Cause.UserIdCause(), params);
+        final boolean schedulingSuccessful = buildJob.scheduleBuild(2, new Cause.UserIdCause(), versionParam, environmentParams);
 
         if (schedulingSuccessful) {
             return String.format("Successfully scheduled build job %s, waiting for completion...", buildJob.getName());
@@ -203,30 +201,6 @@ public class DashboardView extends View {
 		this.showDeployField = showDeployField;
 	}
 
-	public String getRepositoryRestUri() {
-		return repositoryRestUri;
-	}
-
-	public void setRepositoryRestUri(final String repositoryRestUri) {
-		this.repositoryRestUri = repositoryRestUri;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(final String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(final String password) {
-		this.password = password;
-	}
-
 	public String getArtefactId() {
 		return artefactId;
 	}
@@ -235,9 +209,22 @@ public class DashboardView extends View {
 		this.artefactId = artefactId;
 	}
 
-	public List<Artifact> getArtifacts() {
-		LOGGER.info("Getting artifacts for " + repositoryType);
+	public String getGroupId() {
+		return groupId;
+	}
 
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
+	}
+
+	public List<Artifact> getArtifacts() {
+		LOGGER.info("Getting artifacts for " + DESCRIPTOR.getRepositoryType());
+
+		// User needs to configure an artifact repository on the global config page
+		if( DESCRIPTOR.getRepositoryType() == null ) {
+			return new ArrayList<Artifact>();
+		}
+		
 		RepositoryInterface repository;
 		try {
 			repository = createRepository();
@@ -246,18 +233,22 @@ public class DashboardView extends View {
 			return new ArrayList<Artifact>();
 		}
 		
-		List<Artifact> versions = repository.getArtefactList(artefactId);
+		List<Artifact> versions = repository.getArtefactList(groupId, artefactId);
 		return versions;
 	}
 
 	private RepositoryInterface createRepository() throws URISyntaxException {
-		URI repositoryURI;
-		repositoryURI = new URI(repositoryRestUri);
+		URI repositoryURI = new URI(DESCRIPTOR.getRepositoryRestUri());
 		RepositoryInterface repository;
-		if( repositoryType.equalsIgnoreCase( RepositoryType.ARTIFACTORY.getid() )) {
-			repository = new ArtifactoryConnector(username, password, repositoryURI);
+		
+		System.out.println(DESCRIPTOR.getRepositoryType());
+		
+		
+		
+		if( DESCRIPTOR.getRepositoryType().equalsIgnoreCase( RepositoryType.ARTIFACTORY.getid() )) {
+			repository = new ArtifactoryConnector(DESCRIPTOR.getUsername(), DESCRIPTOR.getPassword(), repositoryURI);
 		} else {
-			repository = new NexusConnector(username, password, repositoryURI);
+			repository = new NexusConnector(DESCRIPTOR.getUsername(), DESCRIPTOR.getPassword(), repositoryURI);
 		}
 		return repository;
 	}
@@ -324,14 +315,6 @@ public class DashboardView extends View {
         this.awsRegion = awsRegion;
     }
 
-    public String getRepositoryType() {
-		return repositoryType;
-	}
-
-	public void setRepositoryType(String repositoryType) {
-		this.repositoryType = repositoryType;
-	}
-
     public static enum AwsRegion {
         AP_NORTHEAST_1("ap-northeast-1", "Asia Pacific (Tokyo) Region"),
         AP_SOUTHEAST_1("ap-southeast-1", "Asia Pacific (Singapore) Region"),
@@ -353,8 +336,14 @@ public class DashboardView extends View {
 
     public static final class DescriptorImpl extends ViewDescriptor {
 
+        private String repositoryType;
+        private String repositoryRestUri = "";
+        private String username = "";
+        private String password = "";
+
         public DescriptorImpl() {
             super();
+            load();
         }
 
 		@Override
@@ -436,5 +425,45 @@ public class DashboardView extends View {
 
 			return validationResult;
 		}
-	}
+
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject json) throws Descriptor.FormException {
+            req.bindJSON(this, json.getJSONObject("deployment-dashboard"));
+            save();
+            return true;
+        }
+
+        public String getRepositoryType() {
+            return repositoryType;
+        }
+
+        public void setRepositoryType(String repositoryType) {
+            this.repositoryType = repositoryType;
+        }
+
+        public String getRepositoryRestUri() {
+            return repositoryRestUri;
+        }
+
+        public void setRepositoryRestUri(final String repositoryRestUri) {
+            this.repositoryRestUri = repositoryRestUri;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(final String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(final String password) {
+            this.password = password;
+        }
+
+    }
 }
