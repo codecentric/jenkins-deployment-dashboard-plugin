@@ -1,6 +1,5 @@
 package de.codecentric.jenkins.dashboard;
 
-import java.util.Collection;
 import java.util.List;
 
 
@@ -8,7 +7,6 @@ import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.model.View;
 import hudson.util.ComboBoxModel;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
@@ -89,15 +87,11 @@ public class Environment extends AbstractDescribableImpl<Environment> {
 
         public ListBoxModel doFillAwsInstanceItems() {
             final ListBoxModel model = new ListBoxModel();
-            final Collection<View> views = Jenkins.getInstance().getViews();
-            for (View view : views) {
-                if (view instanceof DashboardView) {
-                    final List<ServerEnvironment> allEC2Environments = ((DashboardView) view).getAllEC2Environments();
+            final DashboardViewDescriptor descriptor = (DashboardViewDescriptor) Jenkins.getInstance().getDescriptor(DashboardView.class);
+            final List<ServerEnvironment> allEC2Environments = descriptor.getAllEC2Environments();
 
-                    for (ServerEnvironment env : allEC2Environments) {
-                        model.add(env.getEnvironmentTag());
-                    }
-                }
+            for (ServerEnvironment env : allEC2Environments) {
+                model.add(env.getEnvironmentTag());
             }
 
             return model;

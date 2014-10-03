@@ -236,12 +236,12 @@ public class DashboardView extends View {
 	public List<ServerEnvironment> getMatchingEC2Environments() {
 		final AWSCredentials awsCredentials = new BasicAWSCredentials(DESCRIPTOR.getAwsAccessKey(), DESCRIPTOR.getAwsSecretKey());
 		final EC2Connector env = new EC2Connector(awsCredentials);
-		
+
 		if (! env.areAwsCredentialsValid()) {
 			System.out.println("AWS Credentials are invalid");
 			return new ArrayList<ServerEnvironment>();
 		}
-		
+
 		final List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
 		for (Environment envTag : environments) {
 			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.fromName(DESCRIPTOR.getAwsRegion())),
@@ -249,18 +249,6 @@ public class DashboardView extends View {
 			list.addAll(foundEnvironment);
 		}
 		return list;
-	}
-	
-	public List<ServerEnvironment> getAllEC2Environments() {
-		final AWSCredentials awsCredentials = new BasicAWSCredentials(DESCRIPTOR.getAwsAccessKey(), DESCRIPTOR.getAwsSecretKey());
-		final EC2Connector env = new EC2Connector(awsCredentials);
-
-		if (! env.areAwsCredentialsValid()) {
-			System.out.println("AWS Credentials are invalid");
-			return new ArrayList<ServerEnvironment>();
-		}
-
-        return env.getEnvironments(Region.getRegion(Regions.fromName(DESCRIPTOR.getAwsRegion())));
 	}
 
 	public List<Environment> getEnvironments() {

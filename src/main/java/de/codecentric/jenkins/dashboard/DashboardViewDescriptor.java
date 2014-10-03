@@ -1,6 +1,7 @@
 package de.codecentric.jenkins.dashboard;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -11,7 +12,14 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.springframework.util.StringUtils;
 
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+
+import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
+import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
 import hudson.model.Descriptor;
 import hudson.model.ViewDescriptor;
 import hudson.util.FormValidation;
@@ -121,6 +129,18 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
         req.bindJSON(this, json.getJSONObject("deployment-dashboard"));
         save();
         return true;
+    }
+
+    public List<ServerEnvironment> getAllEC2Environments() {
+        final AWSCredentials awsCredentials = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
+        final EC2Connector env = new EC2Connector(awsCredentials);
+
+        if (! env.areAwsCredentialsValid()) {
+            System.out.println("AWS Credentials are invalid");
+            return new ArrayList<ServerEnvironment>();
+        }
+
+        return env.getEnvironments(Region.getRegion(Regions.fromName(getAwsRegion())));
     }
 
     public String getRepositoryType() {
