@@ -3,7 +3,7 @@
 
     <f:section title="${%section.title}" name="deployment-dashboard">
         <f:block>
-            <f:entry title="Choose Repository Type" field="repositoryType">
+            <f:entry title="${%section.repository.type}" field="repositoryType">
                 <f:select/>
             </f:entry>
 

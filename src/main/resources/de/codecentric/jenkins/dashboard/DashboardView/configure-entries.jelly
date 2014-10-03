@@ -16,10 +16,10 @@
 
     <f:entry title="${%environments.add.title}" description="${%environments.add.description}">
         <f:hetero-list name="environments" hasHeader="true"
-                       addCaption="${%environments.add.action}"
-                       oneEach="false"
-                       items="${instance.environments}"
-                       descriptors="${descriptor.environmentDescriptors}"/>
-    </f:entry>
+           addCaption="${%environments.add.action}"
+           oneEach="false"
+           items="${instance.environments}"
+           descriptors="${descriptor.environmentDescriptors}"/>
+	</f:entry>
 
 </j:jelly>

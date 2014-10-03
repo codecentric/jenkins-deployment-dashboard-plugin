@@ -12,6 +12,13 @@ public class ServerInstance {
     private String user;
     private DateTime timeStamp;
 
+    public ServerInstance(String version, String environment, String user) {
+    	this.version = version;
+    	this.environment = environment;
+    	this.user = user;
+    	this.timeStamp = new DateTime();
+    }
+    
     public String getVersion() {
         return version;
     }

@@ -138,10 +138,11 @@ public class DashboardView extends View {
                     + "configured as a parameterized job that takes one parameter [VERSION].";
         }
 
-        final ParametersAction params = new ParametersAction(new StringParameterValue("VERSION", version));
-
+        final ParametersAction versionParam = new ParametersAction(new StringParameterValue("VERSION", version));
+        final ParametersAction environmentParams = new ParametersAction(new StringParameterValue("ENVIRONMENT", environment));
+        
         // TODO change to using 'scheduleBuild2' which will return a Future object so we can wait for completion.
-        final boolean schedulingSuccessful = buildJob.scheduleBuild(2, new Cause.UserIdCause(), params);
+        final boolean schedulingSuccessful = buildJob.scheduleBuild(2, new Cause.UserIdCause(), versionParam, environmentParams);
 
         if (schedulingSuccessful) {
             return String.format("Successfully scheduled build job %s, waiting for completion...", buildJob.getName());

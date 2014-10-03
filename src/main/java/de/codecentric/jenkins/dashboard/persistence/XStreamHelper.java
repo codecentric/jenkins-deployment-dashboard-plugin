@@ -38,7 +38,6 @@ public class XStreamHelper {
     private XStreamHelper(){
         String jenkinsHome = Jenkins.getInstance().getRootDir().getAbsolutePath();
         filePath = jenkinsHome + "/" + filename;
-
        
         try {
             File f = new File(filePath);
@@ -70,7 +69,5 @@ public class XStreamHelper {
             LOGGER.log(Level.SEVERE, "Could not write object to configuration file.");
         }
     }
-    
-
     
 }

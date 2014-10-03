@@ -1,5 +1,6 @@
 package de.codecentric.jenkins.dashboard;
 
+import jenkins.model.Jenkins;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.BuildListener;
@@ -15,7 +16,9 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
-import de.codecentric.jenkins.dashboard.ec2.EC2Connector;;
+import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
+import de.codecentric.jenkins.dashboard.ec2.ServerInstance;
+import de.codecentric.jenkins.dashboard.persistence.XStreamHelper;
 
 /**
  * This {@link Builder} tags the specified environment with a given version number.
@@ -72,6 +75,12 @@ public class EnvironmentTagBuilder extends Builder {
         if( ! taggingSuccessful ) {
         	listener.getLogger().println("ERROR: Could not tag ENVIRONMENT [" + environment + "] with Version [" + version + "]");
         }
+        
+        ServerInstance instance = new ServerInstance(version, environment, Jenkins.getAuthentication().getName());
+        XStreamHelper xstream = XStreamHelper.getInstance();
+        xstream.toXML(instance);
+        System.out.println("WRITE DATA TO FILE");
+        
         return taggingSuccessful;
 	}
 
