@@ -1,6 +1,14 @@
-package de.codecentric.jenkins.dashboard;
+package de.codecentric.jenkins.dashboard.ec2;
 
+/**
+ * Amazon EC2 Region enum. Constants for all available regions.
+ * Access keys are configured on a per region basis. Therefore we
+ * need to be able to select the region that matches the configured 
+ * access keys. 
+ *
+ */
 public enum AwsRegion {
+
     AP_NORTHEAST_1("ap-northeast-1", "Asia Pacific (Tokyo) Region"),
     AP_SOUTHEAST_1("ap-southeast-1", "Asia Pacific (Singapore) Region"),
     AP_SOUTHEAST_2("ap-southeast-2", "Asia Pacific (Sydney) Region"),

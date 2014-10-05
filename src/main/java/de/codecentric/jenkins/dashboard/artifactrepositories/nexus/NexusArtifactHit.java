@@ -2,6 +2,10 @@ package de.codecentric.jenkins.dashboard.artifactrepositories.nexus;
 
 import org.sonatype.nexus.rest.model.NexusNGArtifactLink;
 
+/**
+ * Nexus artifact hit count model. Used for JSON un-/marshalling.
+ * 
+ */
 @javax.xml.bind.annotation.XmlType(name = "artifactHit")
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 public class NexusArtifactHit implements java.io.Serializable {

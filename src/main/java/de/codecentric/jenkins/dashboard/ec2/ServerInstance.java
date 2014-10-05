@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
  * @author Andreas Houben
  */
 public class ServerInstance {
+	
     private String version;
     private String environment;
     private String user;
@@ -50,7 +51,5 @@ public class ServerInstance {
     public void setTimeStamp(DateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
-    
-    
     
 }

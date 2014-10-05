@@ -3,6 +3,10 @@ package de.codecentric.jenkins.dashboard.artifactrepositories.nexus;
 import org.sonatype.nexus.rest.model.NexusNGArtifact;
 import org.sonatype.nexus.rest.model.NexusNGRepositoryDetail;
 
+/**
+ * Nexus artifact repository search response model. Used for JSON un-/marshalling.
+ * 
+ */
 @javax.xml.bind.annotation.XmlRootElement(name = "searchResponse")
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 public class SearchResponse implements java.io.Serializable {

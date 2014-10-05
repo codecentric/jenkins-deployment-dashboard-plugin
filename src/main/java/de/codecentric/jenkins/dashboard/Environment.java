@@ -1,18 +1,18 @@
 package de.codecentric.jenkins.dashboard;
 
-import java.util.List;
-
-
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.ComboBoxModel;
 import hudson.util.ListBoxModel;
+
+import java.util.List;
+
 import jenkins.model.Jenkins;
 
-
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 
 public class Environment extends AbstractDescribableImpl<Environment> {
 

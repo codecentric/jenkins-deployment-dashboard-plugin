@@ -43,7 +43,8 @@ import hudson.model.ViewGroup;
 import jenkins.model.Jenkins;
 
 /**
- * Dashboard View
+ * Central class for the dashboard view. When adding a new view to Jenkins page, 
+ * this DashboardView will appear. Each time this view is loaded, this class will be called. 
  * 
  */
 public class DashboardView extends View {

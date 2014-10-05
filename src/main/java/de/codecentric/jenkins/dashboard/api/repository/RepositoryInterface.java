@@ -3,7 +3,7 @@ package de.codecentric.jenkins.dashboard.api.repository;
 import java.util.List;
 
 /**
- * Interface for accessing repository information.
+ * Interface for accessing artifact repository information.
  * 
  * @author marcel.birkner
  *

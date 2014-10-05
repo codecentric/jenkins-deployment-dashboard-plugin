@@ -11,7 +11,6 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.springframework.util.StringUtils;
 
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
@@ -19,6 +18,7 @@ import com.amazonaws.regions.Regions;
 
 import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
+import de.codecentric.jenkins.dashboard.ec2.AwsRegion;
 import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
 import hudson.model.Descriptor;
 import hudson.model.ViewDescriptor;
@@ -26,6 +26,10 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
+/**
+ * Descriptor for the Dashboard View. This descriptor object contains the metadata about the Dashboard View.
+ *
+ */
 public final class DashboardViewDescriptor extends ViewDescriptor {
 
     private final static Logger LOGGER = Logger.getLogger(DashboardViewDescriptor.class.getName());

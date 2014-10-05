@@ -79,7 +79,7 @@ public class EnvironmentTagBuilder extends Builder {
         ServerInstance instance = new ServerInstance(version, environment, Jenkins.getAuthentication().getName());
         XStreamHelper xstream = XStreamHelper.getInstance();
         xstream.toXML(instance);
-        System.out.println("WRITE DATA TO FILE");
+        listener.getLogger().println("Test: writing data to file");
         
         return taggingSuccessful;
 	}
