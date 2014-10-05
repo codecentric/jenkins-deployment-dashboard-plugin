@@ -119,13 +119,11 @@ public class DashboardView extends View {
         LOGGER.info("Executing job: " + buildJob);
 
         if (buildJob == null) {
-            return String.format("Build job corresponding to environment %s cannot be found, please try to configure again.",
-                    buildEnvironment.getName());
+            return String.format(Messages.DashboardView_buildJobNotFound(), buildEnvironment.getName());
         }
 
         if ((!buildJob.isBuildable()) || (!buildJob.isParameterized())) {
-            return "Deployment cannot be executed. Please check that the Deployment Job is not disabled and if its correctly "
-                    + "configured as a parameterized job that takes one parameter [VERSION].";
+            return Messages.DashboardView_deploymentCannotBeExecuted();
         }
 
         final ParametersAction versionParam = new ParametersAction(new StringParameterValue("VERSION", version));
@@ -135,9 +133,9 @@ public class DashboardView extends View {
         final boolean schedulingSuccessful = buildJob.scheduleBuild(2, new Cause.UserIdCause(), versionParam, environmentParams);
 
         if (schedulingSuccessful) {
-            return String.format("Successfully scheduled build job %s, waiting for completion...", buildJob.getName());
+            return String.format(Messages.DashboardView_buildJobScheduledSuccessfully(), buildJob.getName());
         } else {
-            return String.format("Failed scheduling build job %s for unknown reason. Please check the configuration.", buildJob.getName());
+            return String.format(Messages.DashboardView_buildJobSchedulingFailed(), buildJob.getName());
         }
     }
 	
