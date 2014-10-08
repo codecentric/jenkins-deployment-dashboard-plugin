@@ -64,7 +64,7 @@ public class EC2Connector implements EnvironmentInterface {
 			ec2.describeInstances();
 			return true;
 		} catch (Exception e) {
-			LOGGER.info("AWS is Invalid " + e.getMessage());
+			LOGGER.info("AWS is Invalid: " + e.getMessage());
 			return false;
 		}
 	}

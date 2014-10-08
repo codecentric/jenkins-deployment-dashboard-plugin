@@ -130,26 +130,21 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
 
     public FormValidation doTestAwsConnection(
             @QueryParameter("awsAccessKey") final String accessKey,
-            @QueryParameter("awsSecretKey") final String secretKey,
-            @QueryParameter("awsRegion") final String region) {
+            @QueryParameter("awsSecretKey") final String secretKey) {
 
-        LOGGER.info("Verify AWS connection key " + accessKey + " in region " + region);
+        LOGGER.info("Verify AWS connection key " + accessKey);
 
         FormValidation validationResult;
         try {
-        	final AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-            final EC2Connector conn = new EC2Connector(awsCredentials);
-            if (conn.areAwsCredentialsValid()) {
-                validationResult = FormValidation.ok(Messages.DashboardView_awsConnectionSuccessful());
-            } else {
-                validationResult = FormValidation.warning(Messages.DashboardView_awsConnectionFailed());
-            }
+	    	final AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+	        final EC2Connector conn = new EC2Connector(awsCredentials);
+	        validationResult = conn.areAwsCredentialsValid() ? FormValidation.ok(Messages.DashboardView_awsConnectionSuccessful())
+	            				            				 : FormValidation.warning(Messages.DashboardView_awsConnectionFailed());
 
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
-            validationResult = FormValidation.error(Messages.DashboardView_artifactoryConnectionCritical() + e.getMessage());
+            validationResult = FormValidation.error(Messages.DashboardView_awsConnectionCritical() + e.getMessage());        	
         }
-
         return validationResult;
     }
     
