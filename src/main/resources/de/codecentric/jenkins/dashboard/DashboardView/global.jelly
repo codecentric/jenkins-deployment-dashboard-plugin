@@ -33,7 +33,10 @@
             <f:entry field="awsRegion" title="${%aws.region.title}" description="${%aws.region.description}">
                 <f:select/>
             </f:entry>
-            <p/>
+            
+            <f:validateButton
+                    title="${%aws.connection.test.title}" progress="${%aws.connection.test.progress}"
+                    method="testAwsConnection" with="awsAccessKey,awsSecretKey,awsRegion,applicationName"/>
         </f:block>
     </f:section>
 

@@ -128,6 +128,26 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
         return validationResult;
     }
 
+    public FormValidation doTestAwsConnection(
+            @QueryParameter("awsAccessKey") final String accessKey,
+            @QueryParameter("awsSecretKey") final String secretKey) {
+
+        LOGGER.info("Verify AWS connection key " + accessKey);
+
+        FormValidation validationResult;
+        try {
+	    	final AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+	        final EC2Connector conn = new EC2Connector(awsCredentials);
+	        validationResult = conn.areAwsCredentialsValid() ? FormValidation.ok(Messages.DashboardView_awsConnectionSuccessful())
+	            				            				 : FormValidation.warning(Messages.DashboardView_awsConnectionFailed());
+
+        } catch (Exception e) {
+            LOGGER.severe(e.getMessage());
+            validationResult = FormValidation.error(Messages.DashboardView_awsConnectionCritical() + e.getMessage());        	
+        }
+        return validationResult;
+    }
+    
     @Override
     public boolean configure(StaplerRequest req, JSONObject json) throws Descriptor.FormException {
         req.bindJSON(this, json.getJSONObject("deployment-dashboard"));
