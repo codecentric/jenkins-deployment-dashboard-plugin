@@ -36,3 +36,36 @@ It also gets all artifact versions from your artifact repository. Currently we s
 AWS instances can be tagged with custom tags. This plugin uses tags to identify the specified environments and stores the deployed software version in that tag. Here is an example screenshot from the AWS Management Console.
 
 ![AWS configuration](4-aws-tags.png)
+
+### AWS Credentials
+
+Please follow these steps to configure the necessary AWS Credentials:
+
+* Open https://console.aws.amazon.com/iam/home?#users
+* Create new IAM User
+* Attach User Policy -> Custom Policy -> Select -> Set Policy Name -> Paste Policy statement from below
+** allow User to create tags
+** allow User to delete tags
+** allow User to describe instances
+
+Policy Statement: 
+
+``` bash
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1412928158000",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteTags",
+        "ec2:DescribeInstances",
+        "ec2:CreateTags"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+```
