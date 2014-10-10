@@ -31,3 +31,4 @@ Feel free to use the plugin and get in contact with us in case you have question
 * Miel Donkers
 * Andreas Houben
 * Marcel Birkner
+* Christian Langmann 
