@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
-import org.mortbay.jetty.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,7 @@ public class NexusConnector implements RepositoryInterface {
 	final ClientResponse response = restResource.accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
 
 	int status = response.getStatus();
-	if (status == HttpStatus.ORDINAL_200_OK) {
+	if (status == httpStatusOk) {
 	    return true;
 	}
 	LOGGER.warn("Could not connect to {}. ResponseCode: {}", repositoryURI, status);

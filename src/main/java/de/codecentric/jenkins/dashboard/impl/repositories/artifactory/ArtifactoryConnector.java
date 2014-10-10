@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import org.jfrog.artifactory.client.Artifactory;
 import org.jfrog.artifactory.client.ArtifactoryClient;
 import org.jfrog.artifactory.client.model.RepoPath;
-import org.mortbay.jetty.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ public class ArtifactoryConnector implements RepositoryInterface {
 
 	ClientResponse response = getResponse();
 	int status = response.getStatus();
-	if (status == HttpStatus.ORDINAL_200_OK) {
+	if (status == httpStatusOk) {
 	    return true;
 	}
 
