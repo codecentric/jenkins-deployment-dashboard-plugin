@@ -20,7 +20,10 @@ public class ServerEnvironment {
     private String environmentTag;
     private String instanceType;
     private String version;
+
     private String publicIpAddress;
+    private String urlPrefix;
+    private String urlPostfix;
 
     private Date launchTime;
     private InstanceState state;
@@ -34,7 +37,7 @@ public class ServerEnvironment {
     public ServerEnvironment(String instanceId, String instanceType) {
 	this.instanceId = instanceId;
 	this.instanceType = instanceType;
-	this.setType(ENVIRONMENT_TYPES.TEST);
+	this.type = ENVIRONMENT_TYPES.TEST;
     }
 
     public String getEnvironmentTag() {
@@ -108,8 +111,38 @@ public class ServerEnvironment {
 	return Messages.ServerEnvironment_serverNotRunning();
     }
 
+    public String getWebAppLink() {
+	if (state.getName().equalsIgnoreCase("running")) {
+	    return urlPrefix + publicIpAddress + urlPostfix;
+	}
+	return Messages.ServerEnvironment_serverNotRunning();
+    }
+
+    public String displayWebAppLink() {
+	if (state.getName().equalsIgnoreCase("running")) {
+	    return "true";
+	}
+	return "false";
+    }
+
     public void setPublicIpAddress(String publicIpAddress) {
 	this.publicIpAddress = publicIpAddress;
+    }
+
+    public String getUrlPrefix() {
+	return urlPrefix;
+    }
+
+    public void setUrlPrefix(String urlPrefix) {
+	this.urlPrefix = urlPrefix;
+    }
+
+    public String getUrlPostfix() {
+	return urlPostfix;
+    }
+
+    public void setUrlPostfix(String urlPostfix) {
+	this.urlPostfix = urlPostfix;
     }
 
     @Override

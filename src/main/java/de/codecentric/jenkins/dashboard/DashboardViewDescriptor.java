@@ -30,7 +30,6 @@ import de.codecentric.jenkins.dashboard.impl.repositories.artifactory.Artifactor
 
 /**
  * Descriptor for the Dashboard View. This descriptor object contains the metadata about the Dashboard View.
- *
  */
 public final class DashboardViewDescriptor extends ViewDescriptor {
 
@@ -55,7 +54,7 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
 	return Messages.DashboardView_DisplayName();
     }
 
-    public List<Environment.EnvironmentDescriptor> getEnvironmentDescriptors() {
+    public List<EnvironmentDescriptor> getEnvironmentDescriptors() {
 	return Jenkins.getInstance().getDescriptorList(Environment.class);
     }
 
@@ -106,7 +105,6 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
 
     public FormValidation doTestRepositoryConnection(@QueryParameter("repositoryRestUri") final String repositoryRestUri,
 	    @QueryParameter("username") final String username, @QueryParameter("password") final String password) {
-
 	LOGGER.info("Verify Repository connection for URI " + repositoryRestUri);
 
 	FormValidation validationResult;
@@ -136,8 +134,9 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
 	try {
 	    final AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
 	    final EC2Connector conn = new EC2Connector(awsCredentials);
-	    validationResult = conn.areAwsCredentialsValid() ? FormValidation.ok(Messages.DashboardView_awsConnectionSuccessful()) : FormValidation
-		    .warning(Messages.DashboardView_awsConnectionFailed());
+	    FormValidation okMessage = FormValidation.ok(Messages.DashboardView_awsConnectionSuccessful());
+	    FormValidation warningMessage = FormValidation.warning(Messages.DashboardView_awsConnectionFailed());
+	    validationResult = conn.areAwsCredentialsValid() ? okMessage : warningMessage;
 
 	} catch (Exception e) {
 	    LOGGER.severe(e.getMessage());

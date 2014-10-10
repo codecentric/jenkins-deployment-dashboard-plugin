@@ -85,9 +85,10 @@ public class EC2Connector implements EnvironmentInterface {
 
     public List<ServerEnvironment> getEnvironmentsByTag(Region region, String searchTag) {
 	LOGGER.info("getEnvironmentsByTag " + region + " tag: " + searchTag);
-	List<ServerEnvironment> environments = new ArrayList<ServerEnvironment>();
 
+	List<ServerEnvironment> environments = new ArrayList<ServerEnvironment>();
 	ec2.setRegion(region);
+
 	DescribeInstancesResult instances = ec2.describeInstances();
 	for (Reservation reservation : instances.getReservations()) {
 	    for (Instance instance : reservation.getInstances()) {
@@ -98,6 +99,7 @@ public class EC2Connector implements EnvironmentInterface {
 		}
 	    }
 	}
+
 	return environments;
     }
 
@@ -106,7 +108,8 @@ public class EC2Connector implements EnvironmentInterface {
 
 	List<de.codecentric.jenkins.dashboard.api.environments.Tag> tags = new ArrayList<de.codecentric.jenkins.dashboard.api.environments.Tag>();
 	for (Tag tag : instance.getTags()) {
-	    de.codecentric.jenkins.dashboard.api.environments.Tag envTag = new de.codecentric.jenkins.dashboard.api.environments.Tag(tag.getKey(), tag.getValue());
+	    de.codecentric.jenkins.dashboard.api.environments.Tag envTag = new de.codecentric.jenkins.dashboard.api.environments.Tag(tag.getKey(),
+		    tag.getValue());
 	    tags.add(envTag);
 	    if (tag.getKey().equalsIgnoreCase(DEFAULT_INSTANCE_NAME_TAG)) {
 		env.setEnvironmentTag(tag.getValue());

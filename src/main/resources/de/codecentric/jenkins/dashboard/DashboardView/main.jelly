@@ -3,13 +3,6 @@
 
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/superagent/0.15.7/superagent.min.js" />
 
-  <st:documentation>
-    Creates a table of builds.
-    <st:attribute name="builds" use="required">
-      A collection of builds to be displayed.
-    </st:attribute>
-  </st:documentation>
-
 	<!-- Custom Styles for table -->
 	<style type="text/css">
 		.TEST {
@@ -101,7 +94,14 @@
 			<tr class="${environment.type}">
 	        	<td>${environment.type}</td>
 	        	<td><b>${environment.state.name}</b><br/>${%main.view.server.last.started} ${environment.launchTime}</td>
-        		<td>${environment.publicIpAddress}</td>
+        		<td>
+        		  <j:if test="${environment.state.name == 'running'}">
+        			<a href="${environment.webAppLink}">${environment.webAppLink}</a>
+				  </j:if>
+				  <j:if test="${environment.state.name != 'running'}">
+        			${environment.webAppLink}
+				  </j:if>
+        		</td>
 	        	<td>${environment.version}</td>
 	        	<td>${environment.environmentTag}</td>
 	        	<td>Instance Id: ${environment.instanceId}<br/>${%main.view.server.instance.type} ${environment.instanceType}</td>

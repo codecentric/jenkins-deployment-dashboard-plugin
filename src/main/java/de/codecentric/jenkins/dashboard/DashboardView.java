@@ -231,8 +231,7 @@ public class DashboardView extends View {
 	    return new ArrayList<Artifact>();
 	}
 
-	List<Artifact> versions = repository.getArtefactList(groupId, artefactId);
-	return versions;
+	return repository.getArtefactList(groupId, artefactId);
     }
 
     private RepositoryInterface createRepository() throws URISyntaxException {
@@ -257,12 +256,20 @@ public class DashboardView extends View {
 	}
 
 	final List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
-	for (Environment envTag : environments) {
-	    List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.fromName(DESCRIPTOR.getAwsRegion())),
-		    envTag.getAwsInstance());
-	    list.addAll(foundEnvironment);
+	for (Environment environment : environments) {
+	    Region region = Region.getRegion(Regions.fromName(DESCRIPTOR.getAwsRegion()));
+	    List<ServerEnvironment> foundEnvironments = env.getEnvironmentsByTag(region, environment.getAwsInstance());
+	    updateEnvironmentsWithUrlPrePostFix(foundEnvironments, environment);
+	    list.addAll(foundEnvironments);
 	}
 	return list;
+    }
+
+    private void updateEnvironmentsWithUrlPrePostFix(List<ServerEnvironment> foundEnvironments, Environment environment) {
+	for (ServerEnvironment serverEnvironment : foundEnvironments) {
+	    serverEnvironment.setUrlPrefix(environment.getUrlPrefix());
+	    serverEnvironment.setUrlPostfix(environment.getUrlPostfix());
+	}
     }
 
     public List<Environment> getEnvironments() {
