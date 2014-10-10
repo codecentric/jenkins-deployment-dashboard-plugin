@@ -1,5 +1,6 @@
 package de.codecentric.jenkins.dashboard.impl.environments.ec2;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.joda.time.DateTime;
 
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
@@ -8,11 +9,16 @@ import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
  *
  * @author Andreas Houben
  */
+@XStreamAlias("instance")
 public class ServerInstance {
 
+    @XStreamAlias("version")
     private String version;
+    @XStreamAlias("environment")
     private String environment;
+    @XStreamAlias("user")
     private String user;
+    @XStreamAlias("timestamp")
     private DateTime timeStamp;
 
     public ServerInstance(DeployJobVariables deployJobVariables, String user) {

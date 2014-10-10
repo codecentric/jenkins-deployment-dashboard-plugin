@@ -31,6 +31,7 @@ import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariablesBuilder;
 import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
 import de.codecentric.jenkins.dashboard.impl.environments.ec2.ServerInstance;
 import de.codecentric.jenkins.dashboard.persistence.XStreamHelper;
+import de.codecentric.jenkins.dashboard.persistence.xmlwrapper.ServerInstances;
 
 /**
  * This {@link Builder} tags the specified environment with a given version
@@ -104,9 +105,11 @@ public class EnvironmentTagBuilder extends Builder {
 	    LOGGER.severe(failedMessage);
 	}
 
+        XStreamHelper helper = XStreamHelper.getInstance();
 	ServerInstance instance = new ServerInstance(jobVariables, Jenkins.getAuthentication().getName());
-	XStreamHelper xstream = XStreamHelper.getInstance();
-	xstream.toXML(instance);
+	ServerInstances instances = helper.serverInstancesfromXML();
+        instances.add(instance);
+	helper.toXML(instances);
 	listener.getLogger().println("Test: writing data to file");
 
 	return taggingSuccessful;

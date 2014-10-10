@@ -1,9 +1,12 @@
 package de.codecentric.jenkins.dashboard.persistence;
 
-import hudson.util.XStream2;
+import com.thoughtworks.xstream.XStream;
+import de.codecentric.jenkins.dashboard.DashboardView;
+import de.codecentric.jenkins.dashboard.persistence.converter.DateTimeConverter;
+import de.codecentric.jenkins.dashboard.persistence.xmlwrapper.ServerInstances;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -17,34 +20,30 @@ import jenkins.model.Jenkins;
  */
 public class XStreamHelper {
     
-    private final static Logger LOGGER = Logger.getLogger(XStreamHelper.class.getName());
+private final static Logger LOGGER = Logger.getLogger(DashboardView.class.getName());
     
     private static XStreamHelper instance;
-    private XStream2 xStream2;
-    private FileOutputStream fileOutputStream;
+    private final File f;
+    private final String filename = "deploymentdashboard.xml";
+    private XStream xStream;    
     private String filePath;
-    private String filename = "deploymentdashboard.xml";
     
-
+    
     
     private XStreamHelper(){
         String jenkinsHome = Jenkins.getInstance().getRootDir().getAbsolutePath();
-        filePath = jenkinsHome + "/" + filename;
-       
-        try {
-            File f = new File(filePath);
-            if (!f.exists()){
-                try {
-                    f.createNewFile();
-                } catch (IOException ex) {
-                    LOGGER.log(Level.SEVERE, "Could not create file {} for configuration.", f.getPath());
-                }
+        filePath = jenkinsHome + "/plugins/jenkins-deployment-dashboard";        
+        filePath = filePath + "/" + filename;
+
+        f = new File(filePath);
+        if (!f.exists()){
+            try {
+                f.getParentFile().mkdirs();
+                f.createNewFile();                    
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "Could not create file {} for configuration.", f.getPath());
             }
-            fileOutputStream = new FileOutputStream(f);
-        } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, "File not found: {0}", filePath.toString());
-        }
-        xStream2 = new XStream2();
+        }       
     }
     
     public static XStreamHelper getInstance(){
@@ -54,12 +53,46 @@ public class XStreamHelper {
         return instance;
     }
     
-    public void toXML(Object o){
+    private void writeXML(Object o) {
         try {
-            xStream2.toXMLUTF8(o, fileOutputStream);
+            FileOutputStream fos = new FileOutputStream(f);
+            xStream.toXML(o, fos);
+            fos.close();
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Could not write object to configuration file.");
         }
     }
+    
+    private Object readXML() {
+        Object o = null;
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            o = xStream.fromXML(fis);        
+            fis.close();
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Could not read object from configuration file.");
+        } 
+        return o;
+    }
+    
+    
+    //methods for ServerInstances    
+    private void prepareXStreamForServerInstances() {
+        xStream = new XStream();
+        xStream.registerConverter(new DateTimeConverter());
+        xStream.processAnnotations(new Class[] {ServerInstances.class, ServerInstances.class});
+    }
+    
+    public void toXML(ServerInstances instances){
+        prepareXStreamForServerInstances();
+        writeXML(instances);
+    }
+
+    public ServerInstances serverInstancesfromXML() {
+        prepareXStreamForServerInstances();        
+        return (ServerInstances)readXML();        
+    }
+
+    
     
 }
