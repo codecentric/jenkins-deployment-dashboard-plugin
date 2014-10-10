@@ -33,83 +33,88 @@ import de.codecentric.jenkins.dashboard.api.repositories.RepositoryInterface;
  */
 public class ArtifactoryConnector implements RepositoryInterface {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(ArtifactoryConnector.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ArtifactoryConnector.class);
 
-	private String username;
-	private String password;
-	private URI repositoryURI;
+    private String username;
+    private String password;
+    private URI repositoryURI;
 
-	public ArtifactoryConnector(String username, String password, URI repositoryURI) {
-		this.username = username;
-		this.password = password;
-		this.repositoryURI = repositoryURI;
+    public ArtifactoryConnector(String username, String password, URI repositoryURI) {
+	this.username = username;
+	this.password = password;
+	this.repositoryURI = repositoryURI;
+    }
+
+    public boolean canConnect() {
+	LOGGER.info("Checking Artifactory connection");
+	ClientResponse response = getResponse();
+	int status = response.getStatus();
+	if (status == 200) {
+	    return true;
+	}
+	LOGGER.warn("Could not connect to {}. ResponseCode: {}", repositoryURI, status);
+	return false;
+    }
+
+    public List<Artifact> getArtefactList(String artifactId) {
+	return getArtefactList("", artifactId);
+    }
+
+    public List<Artifact> getArtefactList(String groupId, String artifactId) {
+	LOGGER.info("Getting Artefact List from Server [" + repositoryURI + "] for " + groupId + " and " + artifactId);
+	List<Artifact> artifactList = new ArrayList<Artifact>();
+	if (!org.springframework.util.StringUtils.hasText(artifactId)) {
+	    LOGGER.warn("artifactId is empty. Cannot search for artifacts.");
+	    return artifactList;
+	}
+	if (!canConnect()) {
+	    LOGGER.warn("Please validate your repository connection configuration under the global config.");
+	    return artifactList;
 	}
 
-	public boolean canConnect() {
-		LOGGER.info("Checking Artifactory connection");
-		ClientResponse response = getResponse();
-		int status = response.getStatus();
-		if (status == 200) {
-			return true;
-		}
-		LOGGER.warn("Could not connect to {}. ResponseCode: {}", repositoryURI, status);
-		return false;
+	List<String> versions = new ArrayList<String>();
+	Set<String> versionsSet = new TreeSet<String>();
+	Artifactory artifactory = ArtifactoryClient.create(repositoryURI.toString(), username, password);
+	List<RepoPath> results = artifactory.searches().artifactsByName(artifactId).doSearch();
+
+	for (RepoPath item : results) {
+	    String itemPath = item.getItemPath();
+	    String[] split = itemPath.split(artifactId);
+	    String itemVersion = split[1].replaceAll("/", "");
+	    String itemGroupId = org.apache.commons.lang.StringUtils.removeEnd(split[0], "/").replace("/", ".");
+	    if (org.springframework.util.StringUtils.hasText(itemGroupId) && itemGroupId.equalsIgnoreCase(groupId)) {
+		versionsSet.add(itemVersion);
+	    } else {
+		versionsSet.add(itemVersion);
+	    }
 	}
 
-	public List<Artifact> getArtefactList(String artifactId) {
-		return getArtefactList("", artifactId);
+	versions.addAll(versionsSet);
+	Collections.sort(versions);
+	Collections.reverse(versions);
+
+	for (String version : versions) {
+	    artifactList.add(new Artifact(artifactId, version, ""));
 	}
 
-	public List<Artifact> getArtefactList(String groupId, String artifactId) {
-		List<Artifact> artifactList = new ArrayList<Artifact>();
-		if( !org.springframework.util.StringUtils.hasText(artifactId) ) {
-			LOGGER.warn("artifactId is empty. Cannot search for artifacts.");
-			return artifactList;
-		}
-		
-		List<String> versions = new ArrayList<String>();
-		Set<String> versionsSet = new TreeSet<String>();
-		Artifactory artifactory = ArtifactoryClient.create(repositoryURI.toString(), username, password);
-		List<RepoPath> results = artifactory.searches().artifactsByName(artifactId).doSearch();
-		
-		for (RepoPath item : results) {
-			String itemPath = item.getItemPath();
-			String[] split = itemPath.split(artifactId);
-			String itemVersion = split[1].replaceAll("/", "");
-			String itemGroupId = org.apache.commons.lang.StringUtils.removeEnd(split[0], "/").replace("/", ".");
-			if( org.springframework.util.StringUtils.hasText(itemGroupId) && itemGroupId.equalsIgnoreCase(groupId)) {
-				versionsSet.add(itemVersion);
-			} else {
-				versionsSet.add(itemVersion);
-			}
-		}
-		
-		versions.addAll(versionsSet);
-		Collections.sort(versions);
-		Collections.reverse(versions);
+	return artifactList;
+    }
 
-		for (String version : versions) {
-			artifactList.add(new Artifact(artifactId, version, ""));
-		}
+    private ClientResponse getResponse() {
+	final Client client = buildClient();
+	final WebResource restResource = client.resource(repositoryURI);
+	final ClientResponse response = restResource.accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+	return response;
+    }
 
-		return artifactList;
-	}
+    private Client buildClient() {
+	DefaultApacheHttpClientConfig config = new DefaultApacheHttpClientConfig();
+	config.getState().setCredentials(null, null, -1, username, password);
+	config.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+	Client restClient = ApacheHttpClient.create(config);
+	restClient.setFollowRedirects(true);
 
-	private ClientResponse getResponse() {
-		final Client client = buildClient();
-        final WebResource restResource = client.resource(repositoryURI);
-        final ClientResponse response = restResource.accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
-        return response;
-	}
-
-	private Client buildClient() {
-        DefaultApacheHttpClientConfig config = new DefaultApacheHttpClientConfig();
-        config.getState().setCredentials(null, null, -1, username, password);
-        config.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-        Client restClient = ApacheHttpClient.create(config);
-        restClient.setFollowRedirects(true);
-
-		return restClient;
-	}
+	return restClient;
+    }
 
 }
