@@ -14,18 +14,6 @@
         <f:textbox field="artefactId"/>
     </f:entry>
 
-    <f:entry title="${%aws.access.key.title}" description="${%aws.access.key.description}">
-        <f:textbox field="awsAccessKey"/>
-    </f:entry>
-    
-    <f:entry title="${%aws.secret.key.title}" description="${%aws.secret.key.description}">
-        <f:password field="awsSecretKey"/>
-    </f:entry>
-    
-    <f:entry field="awsRegion" title="${%aws.region.title}" description="${%aws.region.description}">
-        <f:select />
-    </f:entry>
-
     <f:entry title="${%environments.add.title}" description="${%environments.add.description}">
         <f:hetero-list name="environments" hasHeader="true"
            addCaption="${%environments.add.action}"

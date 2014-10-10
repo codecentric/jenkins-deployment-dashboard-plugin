@@ -3,6 +3,13 @@
 
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/superagent/0.15.7/superagent.min.js" />
 
+  <st:documentation>
+    Creates a table of builds.
+    <st:attribute name="builds" use="required">
+      A collection of builds to be displayed.
+    </st:attribute>
+  </st:documentation>
+
 	<!-- Custom Styles for table -->
 	<style type="text/css">
 		.TEST {
@@ -26,6 +33,7 @@
 	    var app = <st:bind value="${it}"/>
 	    var version = document.getElementById('versionId').value;
 	    var environment = document.getElementById('environmentId').value;
+	    document.getElementById('msg').innerHTML = "Deploying VERSION [" + version + "] to ENVIRONMENT [" + environment + "]. Please wait ...";
 	    app.deploy(version, environment, function(t) {
 	      document.getElementById('msg').innerHTML = t.responseObject();
 	    })
@@ -34,7 +42,7 @@
 	
     <h2 style='${it.displayDeployField}'>${%main.view.artefact.versions}</h2>
 
-    <table border='0' cellpadding='10' style='background-color:lightgreen;${it.displayDeployField}' width='100%'>
+    <table class="pane bigtable" style='background-color:lightgreen;${it.displayDeployField}'>
         <tr>
           <td>
               <div align='center'>
@@ -79,7 +87,7 @@
         
     <h2>${%main.view.server.title}</h2>
 
-    <table cellpadding='10' style='background-color:#FFFFFF' width='100%'>
+    <table class="pane bigtable">
 		<tr style="background-color: lightgrey">
 			<th>${%main.view.server.name}</th>
 			<th>${%main.view.server.state}</th>

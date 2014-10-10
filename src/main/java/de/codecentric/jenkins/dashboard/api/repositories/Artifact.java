@@ -1,9 +1,9 @@
-package de.codecentric.jenkins.dashboard.api.repository;
+package de.codecentric.jenkins.dashboard.api.repositories;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Information of artifact in artifact repository.
+ * Artifact information in artifact repository.
  * 
  * @author marcel.birkner
  *

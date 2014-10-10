@@ -2,27 +2,42 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
     <f:section title="${%section.title}" name="deployment-dashboard">
-    
-        <f:entry title="${%section.repository.type}" field="repositoryType">
-            <f:select />
-        </f:entry>
+        <f:block>
+            <f:entry title="${%section.repository.type}" field="repositoryType">
+                <f:select/>
+            </f:entry>
 
-        <f:entry title="${%repository.rest.uri.title}" description="${%repository.rest.uri.description}">
-            <f:textbox field="repositoryRestUri"/>
-        </f:entry>
+            <f:entry title="${%repository.rest.uri.title}" description="${%repository.rest.uri.description}">
+                <f:textbox field="repositoryRestUri"/>
+            </f:entry>
 
-        <f:entry title="${%repository.rest.username.title}" description="${%repository.rest.username.description}">
-            <f:textbox field="username"/>
-        </f:entry>
+            <f:entry title="${%repository.rest.username.title}" description="${%repository.rest.username.description}">
+                <f:textbox field="username"/>
+            </f:entry>
 
-        <f:entry title="${%repository.rest.password.title}" description="${%repository.rest.password.description}">
-            <f:password field="password"/>
-        </f:entry>
+            <f:entry title="${%repository.rest.password.title}" description="${%repository.rest.password.description}">
+                <f:password field="password"/>
+            </f:entry>
 
-        <f:validateButton
-                title="${%repository.connection.test.title}" progress="${%repository.connection.test.progress}"
-                method="testRepositoryConnection" with="repositoryRestUri,username,password,applicationName"/>
-    
+            <f:validateButton
+                    title="${%repository.connection.test.title}" progress="${%repository.connection.test.progress}"
+                    method="testRepositoryConnection" with="repositoryRestUri,username,password,applicationName"/>
+        </f:block>
+        <f:block>
+            <f:entry title="${%aws.access.key.title}" description="${%aws.access.key.description}">
+                <f:textbox field="awsAccessKey"/>
+            </f:entry>
+            <f:entry title="${%aws.secret.key.title}" description="${%aws.secret.key.description}">
+                <f:password field="awsSecretKey"/>
+            </f:entry>
+            <f:entry field="awsRegion" title="${%aws.region.title}" description="${%aws.region.description}">
+                <f:select/>
+            </f:entry>
+            
+            <f:validateButton
+                    title="${%aws.connection.test.title}" progress="${%aws.connection.test.progress}"
+                    method="testAwsConnection" with="awsAccessKey,awsSecretKey,awsRegion,applicationName"/>
+        </f:block>
     </f:section>
 
 </j:jelly>

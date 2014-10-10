@@ -1,6 +1,9 @@
-package de.codecentric.jenkins.dashboard.artifactrepositories.nexus;
+package de.codecentric.jenkins.dashboard.impl.repositories.nexus;
 
-
+/**
+ * Nexus artifact repository model. Used for JSON un-/marshalling.
+ * 
+ */
 @javax.xml.bind.annotation.XmlType(name = "nexusArtifact")
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 public class NexusArtifact implements java.io.Serializable {
