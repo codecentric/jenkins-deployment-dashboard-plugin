@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.artifactrepositories;
+package de.codecentric.jenkins.dashboard.impl.repositories.artifactory;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -15,7 +15,6 @@ import org.jfrog.artifactory.client.model.RepoPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -23,8 +22,8 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.client.apache.ApacheHttpClient;
 import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
 
-import de.codecentric.jenkins.dashboard.api.repository.Artifact;
-import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
+import de.codecentric.jenkins.dashboard.api.repositories.Artifact;
+import de.codecentric.jenkins.dashboard.api.repositories.RepositoryInterface;
 
 /**
  * Implementation of Artifactory repository integration

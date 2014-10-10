@@ -25,8 +25,11 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
-import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
-import de.codecentric.jenkins.dashboard.ec2.ServerInstance;
+import de.codecentric.jenkins.dashboard.Messages;
+import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
+import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariablesBuilder;
+import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
+import de.codecentric.jenkins.dashboard.impl.environments.ec2.ServerInstance;
 import de.codecentric.jenkins.dashboard.persistence.XStreamHelper;
 
 /**

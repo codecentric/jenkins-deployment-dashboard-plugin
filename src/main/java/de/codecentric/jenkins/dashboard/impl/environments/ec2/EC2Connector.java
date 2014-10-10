@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.ec2;
+package de.codecentric.jenkins.dashboard.impl.environments.ec2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,10 @@ import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.Tag;
 
-import de.codecentric.jenkins.dashboard.DeployJobVariables;
-import de.codecentric.jenkins.dashboard.api.environment.EnvironmentInterface;
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment.ENVIRONMENT_TYPES;
+import de.codecentric.jenkins.dashboard.api.environments.EnvironmentInterface;
+import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
+import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment.ENVIRONMENT_TYPES;
+import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 
 /**
  * Implementation of EC2 environment integration
@@ -104,9 +104,9 @@ public class EC2Connector implements EnvironmentInterface {
     private ServerEnvironment getEnvironmentFromInstance(Instance instance) {
 	ServerEnvironment env = new ServerEnvironment(instance.getInstanceId(), instance.getInstanceType());
 
-	List<de.codecentric.jenkins.dashboard.api.environment.Tag> tags = new ArrayList<de.codecentric.jenkins.dashboard.api.environment.Tag>();
+	List<de.codecentric.jenkins.dashboard.api.environments.Tag> tags = new ArrayList<de.codecentric.jenkins.dashboard.api.environments.Tag>();
 	for (Tag tag : instance.getTags()) {
-	    de.codecentric.jenkins.dashboard.api.environment.Tag envTag = new de.codecentric.jenkins.dashboard.api.environment.Tag(tag.getKey(), tag.getValue());
+	    de.codecentric.jenkins.dashboard.api.environments.Tag envTag = new de.codecentric.jenkins.dashboard.api.environments.Tag(tag.getKey(), tag.getValue());
 	    tags.add(envTag);
 	    if (tag.getKey().equalsIgnoreCase(DEFAULT_INSTANCE_NAME_TAG)) {
 		env.setEnvironmentTag(tag.getValue());

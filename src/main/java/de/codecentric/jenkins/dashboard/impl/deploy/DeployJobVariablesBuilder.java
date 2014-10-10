@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard;
+package de.codecentric.jenkins.dashboard.impl.deploy;
 
 public class DeployJobVariablesBuilder {
 

@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.ec2;
+package de.codecentric.jenkins.dashboard.impl.environments.ec2;
 
 /**
  * Amazon EC2 Region enum. Constants for all available regions.

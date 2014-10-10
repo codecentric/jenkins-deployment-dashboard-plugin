@@ -1,10 +1,10 @@
-package de.codecentric.jenkins.dashboard.api.environment;
+package de.codecentric.jenkins.dashboard.api.environments;
 
 import java.util.List;
 
 import com.amazonaws.regions.Region;
 
-import de.codecentric.jenkins.dashboard.DeployJobVariables;
+import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 
 /**
  * Interface for accessing environment information. EC2 instances can be

@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.artifactrepositories.nexus;
+package de.codecentric.jenkins.dashboard.impl.repositories.nexus;
 
 import org.sonatype.nexus.rest.model.NexusNGArtifactLink;
 

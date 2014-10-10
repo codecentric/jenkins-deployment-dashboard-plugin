@@ -41,17 +41,17 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
-import de.codecentric.jenkins.dashboard.api.repository.Artifact;
-import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
-import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
-import de.codecentric.jenkins.dashboard.artifactrepositories.NexusConnector;
-import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
+import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
+import de.codecentric.jenkins.dashboard.api.repositories.Artifact;
+import de.codecentric.jenkins.dashboard.api.repositories.RepositoryInterface;
+import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
+import de.codecentric.jenkins.dashboard.impl.repositories.RepositoryTypes;
+import de.codecentric.jenkins.dashboard.impl.repositories.artifactory.ArtifactoryConnector;
+import de.codecentric.jenkins.dashboard.impl.repositories.nexus.NexusConnector;
 
 /**
- * Central class for the dashboard view. When adding a new view to Jenkins page,
- * this DashboardView will appear. Each time this view is loaded, this class
- * will be called.
+ * Central class for the dashboard view. When adding a new view to Jenkins page, this DashboardView will appear. Each time this view is loaded, this class will
+ * be called.
  * 
  */
 public class DashboardView extends View {
@@ -150,7 +150,7 @@ public class DashboardView extends View {
 	    LOGGER.severe("Error while waiting for build " + scheduledBuild.toString() + ".");
 	    LOGGER.severe(e.getMessage());
 	    LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
-	    return String.format(Messages.DashboardView_buildJobSchedulingFailed(), buildJob.getName());
+	    return String.format(Messages.DashboardView_buildJobFailed(), buildJob.getName());
 	}
 	if (result == Result.SUCCESS) {
 	    return String.format(Messages.DashboardView_buildJobScheduledSuccessfully(), buildJob.getName());
@@ -168,17 +168,15 @@ public class DashboardView extends View {
     @Override
     protected synchronized void submit(final StaplerRequest req) throws IOException, ServletException, Descriptor.FormException {
 	LOGGER.info("DashboardView submit configuration");
-	// Mapping the JSON directly should work
-	req.bindJSON(this, req.getSubmittedForm());
+	req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly should work
     }
 
     /**
      * Creates a new {@link hudson.model.Item} in this collection.
      * <p/>
      * <p/>
-     * This method should call
-     * {@link ModifiableItemGroup#doCreateItem(org.kohsuke.stapler.StaplerRequest, org.kohsuke.stapler.StaplerResponse)}
-     * and then add the newly created item to this view.
+     * This method should call {@link ModifiableItemGroup#doCreateItem(org.kohsuke.stapler.StaplerRequest, org.kohsuke.stapler.StaplerResponse)} and then add
+     * the newly created item to this view.
      *
      * @param req
      * @param rsp
@@ -220,8 +218,7 @@ public class DashboardView extends View {
     public List<Artifact> getArtifacts() {
 	LOGGER.info("Getting artifacts for " + DESCRIPTOR.getRepositoryType());
 
-	// User needs to configure an artifact repository on the global config
-	// page
+	// User needs to configure an artifact repository on the global config page
 	if (DESCRIPTOR.getRepositoryType() == null) {
 	    return new ArrayList<Artifact>();
 	}
@@ -242,9 +239,7 @@ public class DashboardView extends View {
 	URI repositoryURI = new URI(DESCRIPTOR.getRepositoryRestUri());
 	RepositoryInterface repository;
 
-	System.out.println(DESCRIPTOR.getRepositoryType());
-
-	if (DESCRIPTOR.getRepositoryType().equalsIgnoreCase(RepositoryType.ARTIFACTORY.getid())) {
+	if (DESCRIPTOR.getRepositoryType().equalsIgnoreCase(RepositoryTypes.ARTIFACTORY.getid())) {
 	    repository = new ArtifactoryConnector(DESCRIPTOR.getUsername(), DESCRIPTOR.getPassword(), repositoryURI);
 	} else {
 	    repository = new NexusConnector(DESCRIPTOR.getUsername(), DESCRIPTOR.getPassword(), repositoryURI);
@@ -257,7 +252,7 @@ public class DashboardView extends View {
 	final EC2Connector env = new EC2Connector(awsCredentials);
 
 	if (!env.areAwsCredentialsValid()) {
-	    System.out.println("AWS Credentials are invalid");
+	    LOGGER.info("AWS Credentials are invalid");
 	    return new ArrayList<ServerEnvironment>();
 	}
 

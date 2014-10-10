@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.api.repository;
+package de.codecentric.jenkins.dashboard.api.repositories;
 
 import java.util.List;
 

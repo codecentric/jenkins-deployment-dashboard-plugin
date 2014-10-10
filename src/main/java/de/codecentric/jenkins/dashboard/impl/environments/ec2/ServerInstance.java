@@ -1,8 +1,8 @@
-package de.codecentric.jenkins.dashboard.ec2;
+package de.codecentric.jenkins.dashboard.impl.environments.ec2;
 
 import org.joda.time.DateTime;
 
-import de.codecentric.jenkins.dashboard.DeployJobVariables;
+import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 
 /**
  *

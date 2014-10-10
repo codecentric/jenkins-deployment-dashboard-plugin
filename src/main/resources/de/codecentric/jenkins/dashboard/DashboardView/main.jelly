@@ -26,6 +26,7 @@
 	    var app = <st:bind value="${it}"/>
 	    var version = document.getElementById('versionId').value;
 	    var environment = document.getElementById('environmentId').value;
+	    document.getElementById('msg').innerHTML = "Deploying VERSION [" + version + "] to ENVIRONMENT [" + environment + "]. Please wait ...";
 	    app.deploy(version, environment, function(t) {
 	      document.getElementById('msg').innerHTML = t.responseObject();
 	    })

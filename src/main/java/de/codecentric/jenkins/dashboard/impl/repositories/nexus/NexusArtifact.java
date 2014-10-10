@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.artifactrepositories.nexus;
+package de.codecentric.jenkins.dashboard.impl.repositories.nexus;
 
 /**
  * Nexus artifact repository model. Used for JSON un-/marshalling.

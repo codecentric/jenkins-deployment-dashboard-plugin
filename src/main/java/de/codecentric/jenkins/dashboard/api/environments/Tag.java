@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.api.environment;
+package de.codecentric.jenkins.dashboard.api.environments;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
