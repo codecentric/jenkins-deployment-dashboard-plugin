@@ -25,7 +25,7 @@ To build the plugin yourself follow these steps:
  * Create a new parameterized Job that we will use later for the deployment
   * Add a **Text Parameter** VERSION
   * Add a **Text Parameter** ENVIRONMENT
-  * Add a **Build Step** and select **EC2 Environment** -> configure your AWS Credentials, see <a href="documentation/README.md">How to create your AWS Credentials</a>
+  * Add a **Build Step** and select **EC2 Environment** -> configure your AWS Credentials, see <a href="documentation/README.md">"How to create your AWS Credentials"</a>
  * Create a new View and select **Deployment Dashboard** under http://localhost:8080/jenkins/newView
  * Configure the View
   * Set the checkbox if you want to deploy artifacts using the dashboard view
@@ -35,7 +35,7 @@ To build the plugin yourself follow these steps:
   * Save the configuration
 
 Now you should be able to see the status of your EC2 instances, the versions tags and other details. On top of the dashboard you can select the available versions  
-of the artifact and the environments you want to deploy to. When you click the *Deploy App* Button the deploy job will be triggered with two parameters:
+of the artifact and the environments you want to deploy to. When you click the **Deploy App** Button the deploy job will be triggered with two parameters:
 
 * VERSION
 * ENVIRONMENT
