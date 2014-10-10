@@ -8,6 +8,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import de.codecentric.jenkins.dashboard.impl.environments.EnvironmentType;
 
+/**
+ * Describes the environment configuration.
+ */
 public class Environment extends AbstractDescribableImpl<Environment> {
 
     @Extension

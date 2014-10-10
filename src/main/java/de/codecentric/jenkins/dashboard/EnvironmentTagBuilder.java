@@ -29,12 +29,17 @@ import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
  * This {@link Builder} tags the specified environment with a given version number.
  *
  * <p>
- * When the user configures the project and enable this builder, {@link DescriptorImpl#newInstance(StaplerRequest)} is invoked and a new
- * {@link EnvironmentTagBuilder} is created. The created instance is persisted to the project configuration XML by using XStream, so this allows you to use
- * instance fields (like {@link #awsAccessKey}) to remember the configuration.
+ * When the user configures the project and enable this builder,
+ * {@link DescriptorImpl#newInstance(StaplerRequest)} is invoked and a new
+ * {@link EnvironmentTagBuilder} is created. The created instance is persisted to the project
+ * configuration XML by using XStream, so this allows you to use instance fields (like
+ * {@link #awsAccessKey}) to remember the configuration.
+ * </p>
  * 
  * <p>
- * When a build is performed, the {@link #perform(Build, Launcher, BuildListener)} method will be invoked.
+ * When a build is performed, the {@link #perform(Build, Launcher, BuildListener)} method will be
+ * invoked.
+ * </p>
  * 
  * @author marcel.birkner
  *
@@ -45,7 +50,8 @@ public class EnvironmentTagBuilder extends Builder {
     private String awsSecretKey;
 
     /**
-     * This annotation tells Hudson to call this constructor, with values from the configuration form page with matching parameter names.
+     * This annotation tells Hudson to call this constructor, with values from the configuration
+     * form page with matching parameter names.
      */
     @DataBoundConstructor
     public EnvironmentTagBuilder(final String awsAccessKey, final String awsSecretKey) {
@@ -83,8 +89,8 @@ public class EnvironmentTagBuilder extends Builder {
     }
 
     private DeployJobVariables extractDeployJobVariables(AbstractBuild build) {
-	String environment = "undefined";
-	String version = "undefined";
+	String environment = DeployJobVariablesBuilder.UNDEFINED;
+	String version = DeployJobVariablesBuilder.UNDEFINED;
 	List<ParametersAction> actionList = Util.filter(build.getAllActions(), ParametersAction.class);
 	for (ParametersAction parametersAction : actionList) {
 	    List<ParameterValue> params = parametersAction.getParameters();
@@ -101,10 +107,11 @@ public class EnvironmentTagBuilder extends Builder {
     }
 
     /**
-     * Hudson defines a method {@link Builder#getDescriptor()}, which returns the corresponding {@link Descriptor} object.
+     * Hudson defines a method {@link Builder#getDescriptor()}, which returns the corresponding
+     * {@link Descriptor} object.
      *
-     * Since we know that it's actually {@link DescriptorImpl}, override the method and give a better return type, so that we can access {@link DescriptorImpl}
-     * methods more easily.
+     * Since we know that it's actually {@link DescriptorImpl}, override the method and give a
+     * better return type, so that we can access {@link DescriptorImpl} methods more easily.
      *
      * This is not necessary, but just a coding style preference.
      */
@@ -114,8 +121,10 @@ public class EnvironmentTagBuilder extends Builder {
     }
 
     /**
-     * Descriptor for {@link EnvironmentTagBuilder}. The class is marked as public so that it can be accessed from views. See
-     * <tt>de/codecentric/jenkins/dashboard/EnvironmentTagBuilder/*.jelly</tt> for the actual HTML fragment for the configuration screen.
+     * Descriptor for {@link EnvironmentTagBuilder}. The class is marked as public so that it can be
+     * accessed from views. See
+     * <tt>de/codecentric/jenkins/dashboard/EnvironmentTagBuilder/*.jelly</tt> for the actual HTML
+     * fragment for the configuration screen.
      */
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
@@ -145,4 +154,5 @@ public class EnvironmentTagBuilder extends Builder {
 	    return true;
 	}
     }
+
 }

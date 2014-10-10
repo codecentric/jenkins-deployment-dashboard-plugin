@@ -10,9 +10,10 @@ import com.amazonaws.services.ec2.model.InstanceState;
 import de.codecentric.jenkins.dashboard.Messages;
 
 /**
- * Detailed server environment information.
+ * Detailed server environment information. These information are displayed on the dashboard view.
  * 
  * @author marcel.birkner
+ * 
  */
 public class ServerEnvironment {
 
@@ -27,7 +28,7 @@ public class ServerEnvironment {
 
     private Date launchTime;
     private InstanceState state;
-    private List<Tag> tags;
+    private List<EnvironmentTag> tags;
     private ENVIRONMENT_TYPES type;
 
     public enum ENVIRONMENT_TYPES {
@@ -64,11 +65,11 @@ public class ServerEnvironment {
 	this.version = version;
     }
 
-    public List<Tag> getTags() {
+    public List<EnvironmentTag> getTags() {
 	return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<EnvironmentTag> tags) {
 	this.tags = tags;
     }
 

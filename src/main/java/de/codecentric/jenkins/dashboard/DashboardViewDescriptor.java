@@ -29,7 +29,8 @@ import de.codecentric.jenkins.dashboard.impl.repositories.RepositoryTypes;
 import de.codecentric.jenkins.dashboard.impl.repositories.artifactory.ArtifactoryConnector;
 
 /**
- * Descriptor for the Dashboard View. This descriptor object contains the metadata about the Dashboard View.
+ * Descriptor for the Dashboard View. This descriptor object contains the metadata about the
+ * Dashboard View.
  */
 public final class DashboardViewDescriptor extends ViewDescriptor {
 
@@ -45,7 +46,8 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
     private String awsRegion = "";
 
     public DashboardViewDescriptor() {
-	super(DashboardView.class); // Have to provide the original class because there is no enclosing class
+	super(DashboardView.class); // Have to provide the original class because there is no
+				    // enclosing class
 	load();
     }
 
@@ -127,7 +129,6 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
     }
 
     public FormValidation doTestAwsConnection(@QueryParameter("awsAccessKey") final String accessKey, @QueryParameter("awsSecretKey") final String secretKey) {
-
 	LOGGER.info("Verify AWS connection key " + accessKey);
 
 	FormValidation validationResult;

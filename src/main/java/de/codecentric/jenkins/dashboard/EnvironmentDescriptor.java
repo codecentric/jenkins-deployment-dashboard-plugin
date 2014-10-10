@@ -10,10 +10,15 @@ import jenkins.model.Jenkins;
 import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.impl.environments.EnvironmentType;
 
+/**
+ * Descriptor for the Environment. This descriptor object contains the metadata about the
+ * Environment configuration.
+ */
 public final class EnvironmentDescriptor extends Descriptor<Environment> {
 
     public EnvironmentDescriptor() {
-	super(Environment.class); // Have to provide the original class because there is no enclosing class
+	super(Environment.class); // Have to provide the original class because there is no
+				  // enclosing class
 	load();
     }
 

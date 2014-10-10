@@ -1,5 +1,12 @@
 package de.codecentric.jenkins.dashboard.impl.deploy;
 
+/**
+ * These variables are used when running the deploy job. The parameters are passed to the deploy job
+ * and necessary when tagging the server instances.
+ * 
+ * @author marcel.birkner
+ *
+ */
 public class DeployJobVariables {
 
     private String version;

@@ -1,11 +1,13 @@
-package de.codecentric.jenkins.dashboard.impl.environments.ec2;
+package de.codecentric.jenkins.dashboard.persistence;
+
+import org.joda.time.DateTime;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.joda.time.DateTime;
 
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 
 /**
+ * 
  *
  * @author Andreas Houben
  */
@@ -14,10 +16,13 @@ public class ServerInstance {
 
     @XStreamAlias("version")
     private String version;
+
     @XStreamAlias("environment")
     private String environment;
+
     @XStreamAlias("user")
     private String user;
+
     @XStreamAlias("timestamp")
     private DateTime timeStamp;
 

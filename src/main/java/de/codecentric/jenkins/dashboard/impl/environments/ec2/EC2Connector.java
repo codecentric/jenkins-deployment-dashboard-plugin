@@ -15,12 +15,14 @@ import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.Tag;
 
 import de.codecentric.jenkins.dashboard.api.environments.EnvironmentInterface;
+import de.codecentric.jenkins.dashboard.api.environments.EnvironmentTag;
 import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment.ENVIRONMENT_TYPES;
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
+import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariablesBuilder;
 
 /**
- * Implementation of EC2 environment integration
+ * Implementation of Amazon EC2 environment integration.
  * 
  * @author marcel.birkner
  *
@@ -30,7 +32,6 @@ public class EC2Connector implements EnvironmentInterface {
     private final static Logger LOGGER = Logger.getLogger(EC2Connector.class.getName());
 
     private static final String DEFAULT_INSTANCE_NAME_TAG = "Name";
-
     private AmazonEC2 ec2;
 
     public EC2Connector(AWSCredentials awsCredentials) {
@@ -38,7 +39,15 @@ public class EC2Connector implements EnvironmentInterface {
     }
 
     public boolean tagEnvironmentWithVersion(Region region, DeployJobVariables jobVariables) {
-	LOGGER.info("tagEnvironmentWithVersion: Region=" + region + " Environment=" + jobVariables.getEnvironment() + " Version=" + jobVariables.getVersion());
+	String message = "Region=" + region + " Environment=" + jobVariables.getEnvironment() + " Version=" + jobVariables.getVersion();
+	LOGGER.info("Tag environment with version: " + message);
+
+	// Precondition
+	if (jobVariables.getEnvironment().equalsIgnoreCase(DeployJobVariablesBuilder.UNDEFINED)
+		|| jobVariables.getVersion().equalsIgnoreCase(DeployJobVariablesBuilder.UNDEFINED)) {
+	    LOGGER.warning("Parameters ENVIRONMENT and/or VERSION are not valid.");
+	    return false;
+	}
 
 	boolean environmentSuccessfulTagged = false;
 	ec2.setRegion(region);
@@ -46,15 +55,20 @@ public class EC2Connector implements EnvironmentInterface {
 	for (Reservation reservation : instances.getReservations()) {
 	    for (Instance instance : reservation.getInstances()) {
 		for (Tag tag : instance.getTags()) {
-		    if (tag.getValue().equalsIgnoreCase(jobVariables.getEnvironment())) {
-			CreateTagsRequest createTagsRequest = new CreateTagsRequest();
-			createTagsRequest.withResources(instance.getInstanceId()).withTags(new Tag("Version", jobVariables.getVersion()));
-			LOGGER.info("Create Tag " + jobVariables.getVersion() + " for instance " + instance.getInstanceId());
-			ec2.createTags(createTagsRequest);
-			environmentSuccessfulTagged = true;
-		    }
+		    environmentSuccessfulTagged = createTag(jobVariables, environmentSuccessfulTagged, instance, tag);
 		}
 	    }
+	}
+	return environmentSuccessfulTagged;
+    }
+
+    private boolean createTag(DeployJobVariables jobVariables, boolean environmentSuccessfulTagged, Instance instance, Tag tag) {
+	if (tag.getValue().equalsIgnoreCase(jobVariables.getEnvironment())) {
+	CreateTagsRequest createTagsRequest = new CreateTagsRequest();
+	createTagsRequest.withResources(instance.getInstanceId()).withTags(new Tag("Version", jobVariables.getVersion()));
+	LOGGER.info("Create Tag " + jobVariables.getVersion() + " for instance " + instance.getInstanceId());
+	ec2.createTags(createTagsRequest);
+	environmentSuccessfulTagged = true;
 	}
 	return environmentSuccessfulTagged;
     }
@@ -64,7 +78,7 @@ public class EC2Connector implements EnvironmentInterface {
 	    ec2.describeInstances();
 	    return true;
 	} catch (Exception e) {
-	    LOGGER.info("AWS is Invalid: " + e.getMessage());
+	    LOGGER.severe("AWS is Invalid: " + e.getMessage());
 	    return false;
 	}
     }
@@ -106,10 +120,9 @@ public class EC2Connector implements EnvironmentInterface {
     private ServerEnvironment getEnvironmentFromInstance(Instance instance) {
 	ServerEnvironment env = new ServerEnvironment(instance.getInstanceId(), instance.getInstanceType());
 
-	List<de.codecentric.jenkins.dashboard.api.environments.Tag> tags = new ArrayList<de.codecentric.jenkins.dashboard.api.environments.Tag>();
+	List<EnvironmentTag> tags = new ArrayList<EnvironmentTag>();
 	for (Tag tag : instance.getTags()) {
-	    de.codecentric.jenkins.dashboard.api.environments.Tag envTag = new de.codecentric.jenkins.dashboard.api.environments.Tag(tag.getKey(),
-		    tag.getValue());
+	    EnvironmentTag envTag = new EnvironmentTag(tag.getKey(), tag.getValue());
 	    tags.add(envTag);
 	    if (tag.getKey().equalsIgnoreCase(DEFAULT_INSTANCE_NAME_TAG)) {
 		env.setEnvironmentTag(tag.getValue());

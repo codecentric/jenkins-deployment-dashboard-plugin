@@ -50,8 +50,8 @@ import de.codecentric.jenkins.dashboard.impl.repositories.artifactory.Artifactor
 import de.codecentric.jenkins.dashboard.impl.repositories.nexus.NexusConnector;
 
 /**
- * Central class for the dashboard view. When adding a new view to Jenkins page, this DashboardView will appear. Each time this view is loaded, this class will
- * be called.
+ * Central class for the dashboard view. When adding a new view to Jenkins page, this DashboardView
+ * will appear. Each time this view is loaded, this class will be called.
  * 
  */
 public class DashboardView extends View {
@@ -173,10 +173,10 @@ public class DashboardView extends View {
 
     /**
      * Creates a new {@link hudson.model.Item} in this collection.
-     * <p/>
-     * <p/>
-     * This method should call {@link ModifiableItemGroup#doCreateItem(org.kohsuke.stapler.StaplerRequest, org.kohsuke.stapler.StaplerResponse)} and then add
-     * the newly created item to this view.
+     * 
+     * This method should call
+     * {@link ModifiableItemGroup#doCreateItem(org.kohsuke.stapler.StaplerRequest, org.kohsuke.stapler.StaplerResponse)}
+     * and then add the newly created item to this view.
      *
      * @param req
      * @param rsp
