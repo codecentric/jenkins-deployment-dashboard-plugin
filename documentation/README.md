@@ -44,9 +44,9 @@ Please follow these steps to configure the necessary AWS Credentials:
 * Open https://console.aws.amazon.com/iam/home?#users
 * Create new IAM User
 * Attach User Policy -> Custom Policy -> Select -> Set Policy Name -> Paste Policy statement from below
-** allow User to create tags
-** allow User to delete tags
-** allow User to describe instances
+ * allow User to create tags
+ * allow User to delete tags
+ * allow User to describe instances
 
 Policy Statement: 
 
