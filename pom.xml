@@ -76,6 +76,7 @@
 		<jersey.client.version>1.17.1</jersey.client.version>
 		<joda.time.version>2.4</joda.time.version>
 		<org.slf4j.version>1.7.7</org.slf4j.version>
+		<powermock.version>1.5.6</powermock.version>
 
 		<aws.java.sdk.version>1.8.7</aws.java.sdk.version>
 		<artifactory.client.version>0.15</artifactory.client.version>
@@ -149,12 +150,6 @@
 			<artifactId>slf4j-simple</artifactId>
 			<version>${org.slf4j.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.xebialabs.restito</groupId>
-			<artifactId>restito</artifactId>
-			<version>0.4-beta-3</version>
-            <scope>test</scope>
-		</dependency>
 
 		<!-- Used for AWS Integration -->
 		<dependency>
@@ -193,6 +188,28 @@
 			<version>${artifactory.client.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.cloudbees.jenkins.plugins</groupId>
+			<artifactId>cloudbees-credentials</artifactId>
+			<version>3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>credentials</artifactId>
+			<version>1.16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<!-- Added Repositories to be able to build project on TravisCI -->

@@ -48,7 +48,12 @@ public class ArtifactoryConnector implements RepositoryInterface {
 
 	public boolean canConnect() {
 		LOGGER.info("Checking Artifactory connection");
-		ClientResponse response = getResponse();
+		final Client client = buildClient();
+		final ClientResponse response = getResponse(client);
+		return canConnect(response);
+	}
+
+	protected boolean canConnect(ClientResponse response) {
 		int status = response.getStatus();
 		if (status == 200) {
 			return true;
@@ -96,8 +101,7 @@ public class ArtifactoryConnector implements RepositoryInterface {
 		return artifactList;
 	}
 
-	private ClientResponse getResponse() {
-		final Client client = buildClient();
+	private ClientResponse getResponse(final Client client) {
         final WebResource restResource = client.resource(repositoryURI);
         final ClientResponse response = restResource.accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         return response;
