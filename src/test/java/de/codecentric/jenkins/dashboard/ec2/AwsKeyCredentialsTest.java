@@ -2,6 +2,7 @@ package de.codecentric.jenkins.dashboard.ec2;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import hudson.util.Secret;
 
@@ -17,6 +18,8 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import com.amazonaws.auth.AWSCredentials;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 
+import de.codecentric.jenkins.dashboard.ec2.AwsKeyCredentials.AwsKeyCredentialsDescriptor;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Secret.class)
 public class AwsKeyCredentialsTest {
@@ -27,6 +30,9 @@ public class AwsKeyCredentialsTest {
 	final private static String SECRET_VALUE = "mySecret";
 	final private static Secret SECRET = mock(Secret.class);
 
+	final static private AwsKeyCredentials CREDENTIALS = new AwsKeyCredentials(CredentialsScope.GLOBAL, null, DESC, ACCESS, SECRET); 
+	final static private AwsKeyCredentialsDescriptor descriptor = new AwsKeyCredentialsDescriptor();
+	
 	@BeforeClass
 	static public void setup() {
 		Mockito.when(SECRET.getPlainText()).thenReturn(SECRET_VALUE);
@@ -59,4 +65,33 @@ public class AwsKeyCredentialsTest {
 		assertThat(awsAuthCredentials.getAWSSecretKey(), is(SECRET_VALUE));
 	}
 
+	@Test
+	public void testCreateCredentialsAccessSecret() {
+		
+		AWSCredentials credentials = descriptor.createCredentials(ACCESS, SECRET_VALUE);
+		assertThat(credentials, notNullValue());
+		assertThat(credentials.getAWSAccessKeyId(), is(ACCESS));
+		assertThat(credentials.getAWSSecretKey(), is(SECRET_VALUE));
+	}
+
+	@Test
+	public void testCreateCredentialsMissingData() {
+		AWSCredentials credentials = descriptor.createCredentials(null, null);
+		assertThat(credentials, nullValue());
+	}
+
+	@Test
+	public void testCreateCredentialsMissingSecret() {
+		
+		AWSCredentials credentials = descriptor.createCredentials(ACCESS, "");
+		assertThat(credentials, nullValue());
+	}
+	
+	@Test
+	public void testCreateCredentialsMissingAccess() {
+		
+		AWSCredentials credentials = descriptor.createCredentials(" ", SECRET_VALUE);
+		assertThat(credentials, nullValue());
+	}
+	
 }

@@ -1,34 +1,28 @@
 package de.codecentric.jenkins.dashboard;
 
+import hudson.model.Descriptor;
+import hudson.model.ViewDescriptor;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
+
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.springframework.util.StringUtils;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
-
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
-import de.codecentric.jenkins.dashboard.ec2.AwsRegion;
-import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
-import hudson.model.Descriptor;
-import hudson.model.ViewDescriptor;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 
 /**
  * Descriptor for the Dashboard View. This descriptor object contains the metadata about the Dashboard View.
  *
+ * The descriptor contains access to a repository and credentials to access an AWS/EC2 environment. This can be either explicit
+ * key/secret or globally defined AwsKeyCredentials.
  */
 public final class DashboardViewDescriptor extends ViewDescriptor {
 
@@ -38,10 +32,6 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
     private String repositoryRestUri = "";
     private String username = "";
     private String password = "";
-
-    private String awsAccessKey = "";
-    private String awsSecretKey = "";
-    private String awsRegion = "";
 
     public DashboardViewDescriptor() {
         super(DashboardView.class); // Have to provide the original class because there is no enclosing class
@@ -67,16 +57,6 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
 
         for (RepositoryType value : RepositoryType.values()) {
             model.add(value.getDescription(), value.getid());
-        }
-
-        return model;
-    }
-
-    public ListBoxModel doFillAwsRegionItems() {
-        final ListBoxModel model = new ListBoxModel();
-
-        for (AwsRegion value : AwsRegion.values()) {
-            model.add(value.getName(), value.getIdentifier());
         }
 
         return model;
@@ -127,44 +107,12 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
 
         return validationResult;
     }
-
-    public FormValidation doTestAwsConnection(
-            @QueryParameter("awsAccessKey") final String accessKey,
-            @QueryParameter("awsSecretKey") final String secretKey) {
-
-        LOGGER.info("Verify AWS connection key " + accessKey);
-
-        FormValidation validationResult;
-        try {
-	    	final AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-	        final EC2Connector conn = new EC2Connector(awsCredentials);
-	        validationResult = conn.areAwsCredentialsValid() ? FormValidation.ok(Messages.DashboardView_awsConnectionSuccessful())
-	            				            				 : FormValidation.warning(Messages.DashboardView_awsConnectionFailed());
-
-        } catch (Exception e) {
-            LOGGER.severe(e.getMessage());
-            validationResult = FormValidation.error(Messages.DashboardView_awsConnectionCritical() + e.getMessage());        	
-        }
-        return validationResult;
-    }
-    
+        
     @Override
     public boolean configure(StaplerRequest req, JSONObject json) throws Descriptor.FormException {
         req.bindJSON(this, json.getJSONObject("deployment-dashboard"));
         save();
         return true;
-    }
-
-    public List<ServerEnvironment> getAllEC2Environments() {
-        final AWSCredentials awsCredentials = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
-        final EC2Connector env = new EC2Connector(awsCredentials);
-
-        if (! env.areAwsCredentialsValid()) {
-            System.out.println("AWS Credentials are invalid");
-            return new ArrayList<ServerEnvironment>();
-        }
-
-        return env.getEnvironments(Region.getRegion(Regions.fromName(getAwsRegion())));
     }
 
     public String getRepositoryType() {
@@ -198,29 +146,4 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
     public void setPassword(final String password) {
         this.password = password;
     }
-
-    public String getAwsAccessKey() {
-        return awsAccessKey;
-    }
-
-    public void setAwsAccessKey(String awsAccessKey) {
-        this.awsAccessKey = awsAccessKey;
-    }
-
-    public String getAwsSecretKey() {
-        return awsSecretKey;
-    }
-
-    public void setAwsSecretKey(String awsSecretKey) {
-        this.awsSecretKey = awsSecretKey;
-    }
-
-    public String getAwsRegion() {
-        return awsRegion;
-    }
-
-    public void setAwsRegion(final String awsRegion) {
-        this.awsRegion = awsRegion;
-    }
-
 }

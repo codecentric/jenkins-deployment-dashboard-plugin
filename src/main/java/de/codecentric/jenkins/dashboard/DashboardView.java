@@ -1,5 +1,18 @@
 package de.codecentric.jenkins.dashboard;
 
+import hudson.Extension;
+import hudson.model.Item;
+import hudson.model.TopLevelItem;
+import hudson.model.ViewGroup;
+import hudson.model.AbstractProject;
+import hudson.model.Cause;
+import hudson.model.Descriptor;
+import hudson.model.ModifiableItemGroup;
+import hudson.model.ParametersAction;
+import hudson.model.StringParameterValue;
+import hudson.model.View;
+import hudson.model.ViewDescriptor;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,11 +24,12 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
+import jenkins.model.Jenkins;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
-
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -28,19 +42,6 @@ import de.codecentric.jenkins.dashboard.api.repository.RepositoryInterface;
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 import de.codecentric.jenkins.dashboard.artifactrepositories.NexusConnector;
 import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
-import hudson.Extension;
-import hudson.model.AbstractProject;
-import hudson.model.Cause;
-import hudson.model.Descriptor;
-import hudson.model.Item;
-import hudson.model.ModifiableItemGroup;
-import hudson.model.ParametersAction;
-import hudson.model.StringParameterValue;
-import hudson.model.TopLevelItem;
-import hudson.model.View;
-import hudson.model.ViewDescriptor;
-import hudson.model.ViewGroup;
-import jenkins.model.Jenkins;
 
 /**
  * Central class for the dashboard view. When adding a new view to Jenkins page, 
@@ -231,7 +232,7 @@ public class DashboardView extends View {
 		}
 		return repository;
 	}
-
+/*
 	public List<ServerEnvironment> getMatchingEC2Environments() {
 		final AWSCredentials awsCredentials = new BasicAWSCredentials(DESCRIPTOR.getAwsAccessKey(), DESCRIPTOR.getAwsSecretKey());
 		final EC2Connector env = new EC2Connector(awsCredentials);
@@ -249,7 +250,7 @@ public class DashboardView extends View {
 		}
 		return list;
 	}
-
+*/
 	public List<Environment> getEnvironments() {
 		return Collections.unmodifiableList(environments);
 	}

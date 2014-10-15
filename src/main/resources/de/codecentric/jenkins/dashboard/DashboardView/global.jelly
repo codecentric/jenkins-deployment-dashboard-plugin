@@ -23,21 +23,6 @@
                     title="${%repository.connection.test.title}" progress="${%repository.connection.test.progress}"
                     method="testRepositoryConnection" with="repositoryRestUri,username,password,applicationName"/>
         </f:block>
-        <f:block>
-            <f:entry title="${%aws.access.key.title}" description="${%aws.access.key.description}">
-                <f:textbox field="awsAccessKey"/>
-            </f:entry>
-            <f:entry title="${%aws.secret.key.title}" description="${%aws.secret.key.description}">
-                <f:password field="awsSecretKey"/>
-            </f:entry>
-            <f:entry field="awsRegion" title="${%aws.region.title}" description="${%aws.region.description}">
-                <f:select/>
-            </f:entry>
-            
-            <f:validateButton
-                    title="${%aws.connection.test.title}" progress="${%aws.connection.test.progress}"
-                    method="testAwsConnection" with="awsAccessKey,awsSecretKey,awsRegion,applicationName"/>
-        </f:block>
     </f:section>
 
 </j:jelly>

@@ -5,6 +5,14 @@
         <f:textbox field="name"/>
     </f:entry>
 
+	<f:entry field="credentials" title="${%aws.credentials}" description="${%aws.credentials.description}">
+		<f:select />
+	</f:entry>
+
+    <f:entry field="region" title="${%aws.region}" description="${%aws.region.description}">
+        <f:select />
+    </f:entry>
+	
     <f:entry field="awsInstance" title="${%aws.instance.title}" description="${%aws.instance.description}">
         <f:select />
     </f:entry>

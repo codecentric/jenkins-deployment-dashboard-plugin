@@ -15,6 +15,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.ec2.AmazonEC2Client;
 
 import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
 import de.codecentric.jenkins.dashboard.ec2.ServerInstance;
@@ -70,7 +71,7 @@ public class EnvironmentTagBuilder extends Builder {
         listener.getLogger().println("Tagging ENVIRONMENT [" + environment + "] with Version [" + version + "]");
 
         AWSCredentials awsCredentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
-        EC2Connector connector = new EC2Connector(awsCredentials);
+        EC2Connector connector = new EC2Connector(new AmazonEC2Client(awsCredentials));
         boolean taggingSuccessful = connector.tagEnvironmentWithVersion(Region.getRegion(Regions.EU_WEST_1), environment, version);
         if( ! taggingSuccessful ) {
         	listener.getLogger().println("ERROR: Could not tag ENVIRONMENT [" + environment + "] with Version [" + version + "]");
