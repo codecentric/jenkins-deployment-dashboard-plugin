@@ -73,25 +73,25 @@ public class DashboardView extends View {
     private List<Environment> environments;
 
     public DashboardView(final String name) {
-	super(name);
+    	super(name);
     }
 
     public DashboardView(final String name, final ViewGroup owner) {
-	super(name, owner);
+    	super(name, owner);
     }
 
     @DataBoundConstructor
     public DashboardView(final String name, final boolean showDeployField, final String groupId, final String artefactId, final List<Environment> environments) {
-	this(name);
-	setShowDeployField(showDeployField);
-	setGroupId(groupId);
-	setArtefactId(artefactId);
-	setEnvironments(environments);
+		this(name);
+		setShowDeployField(showDeployField);
+		setGroupId(groupId);
+		setArtefactId(artefactId);
+		setEnvironments(environments);
     }
 
     @Override
     public ViewDescriptor getDescriptor() {
-	return DESCRIPTOR;
+    	return DESCRIPTOR;
     }
 
     /**

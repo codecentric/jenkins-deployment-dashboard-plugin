@@ -37,9 +37,6 @@ public class Environment extends AbstractDescribableImpl<Environment> {
 
     private final static Logger LOGGER = Logger.getLogger(Environment.class.getName());
 
-    @Extension
-    public static final EnvironmentDescriptor DESCRIPTOR = new EnvironmentDescriptor();
-
     private String name;
     private String urlPrefix;
     private String urlPostfix;
@@ -100,12 +97,6 @@ public class Environment extends AbstractDescribableImpl<Environment> {
 
     public void setCredentials(final String credentials) {
         this.credentials = credentials;
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-    public Descriptor getDescriptor() {
-    	return DESCRIPTOR;
     }
 
     public String getBuildJob() {
