@@ -21,8 +21,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 
@@ -152,13 +150,9 @@ public class Environment extends AbstractDescribableImpl<Environment> {
         }
 
         private List<ServerEnvironment> getEC2Instances(String region, String credentialsId) {
-        	final DomainRequirement domain = new DomainRequirement();
-        	final AwsKeyCredentials credentials = CredentialsMatchers.firstOrNull(CredentialsProvider.lookupCredentials(AwsKeyCredentials.class, Jenkins.getInstance(), null, domain), CredentialsMatchers.withId(credentialsId));
-        	if (credentials == null) {
-        		LOGGER.warning("No credentials found for ID='" + credentialsId + "'");
+        	final EC2Connector ec2 = EC2Connector.getEC2Connector(credentialsId);
+        	if (ec2 == null)
         		return Collections.<ServerEnvironment>emptyList();
-        	}
-        	final EC2Connector ec2 = new EC2Connector(new AmazonEC2Client(credentials.getAwsAuthCredentials()));
         	return ec2.getEnvironments(Region.getRegion(Regions.fromName(region)));
 		}
 

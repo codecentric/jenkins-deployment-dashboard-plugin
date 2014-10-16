@@ -35,6 +35,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.ec2.AmazonEC2Client;
 
 import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.api.repository.Artifact;
@@ -232,25 +233,22 @@ public class DashboardView extends View {
 		}
 		return repository;
 	}
-/*
+
 	public List<ServerEnvironment> getMatchingEC2Environments() {
-		final AWSCredentials awsCredentials = new BasicAWSCredentials(DESCRIPTOR.getAwsAccessKey(), DESCRIPTOR.getAwsSecretKey());
-		final EC2Connector env = new EC2Connector(awsCredentials);
-
-		if (! env.areAwsCredentialsValid()) {
-			System.out.println("AWS Credentials are invalid");
-			return new ArrayList<ServerEnvironment>();
-		}
-
 		final List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
-		for (Environment envTag : environments) {
-			List<ServerEnvironment> foundEnvironment = env.getEnvironmentsByTag(Region.getRegion(Regions.fromName(DESCRIPTOR.getAwsRegion())),
-                    envTag.getAwsInstance());
+		for (Environment env : environments) {
+			final EC2Connector envConn = EC2Connector.getEC2Connector(env.getCredentials());
+			if (envConn == null || !envConn.areAwsCredentialsValid()) {
+				LOGGER.info("Invalid credentials in environment '" + env.getName() + "'");
+				continue;
+			}
+			List<ServerEnvironment> foundEnvironment = envConn.getEnvironmentsByTag(Region.getRegion(Regions.fromName(env.getRegion())),
+                    env.getAwsInstance());
 			list.addAll(foundEnvironment);
 		}
 		return list;
 	}
-*/
+
 	public List<Environment> getEnvironments() {
 		return Collections.unmodifiableList(environments);
 	}

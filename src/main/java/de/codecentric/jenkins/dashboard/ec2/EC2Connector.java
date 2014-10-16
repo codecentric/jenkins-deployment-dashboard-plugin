@@ -1,16 +1,23 @@
 package de.codecentric.jenkins.dashboard.ec2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import jenkins.model.Jenkins;
+
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.CreateTagsRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.Tag;
+import com.cloudbees.plugins.credentials.CredentialsMatchers;
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 
 import de.codecentric.jenkins.dashboard.api.environment.EnvironmentInterface;
 import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
@@ -35,6 +42,21 @@ public class EC2Connector implements EnvironmentInterface {
 	private final static Logger LOGGER = Logger.getLogger(EC2Connector.class.getName());
 
 	private AmazonEC2 ec2;
+	
+	/** Helper method to create a EC2Connector when only the credentialsId is known.
+	 * 
+	 * @param credentialsId the credentialsId used to access Amazon AWS
+	 * @return either a connector to access AWS/EC2 or null if the credentials are not known.
+	 */
+	static public EC2Connector getEC2Connector(final String credentialsId) {
+    	final DomainRequirement domain = new DomainRequirement();
+    	final AwsKeyCredentials credentials = CredentialsMatchers.firstOrNull(CredentialsProvider.lookupCredentials(AwsKeyCredentials.class, Jenkins.getInstance(), null, domain), CredentialsMatchers.withId(credentialsId));
+    	if (credentials == null) {
+    		LOGGER.warning("No credentials found for ID='" + credentialsId + "'");
+    		return null;
+    	}
+    	return new EC2Connector(new AmazonEC2Client(credentials.getAwsAuthCredentials()));
+	}
 	
 	public EC2Connector(final AmazonEC2 ec2) {
 		this.ec2 = ec2; // new AmazonEC2Client(awsCredentials);
@@ -96,7 +118,7 @@ public class EC2Connector implements EnvironmentInterface {
 		for (Reservation reservation : instances.getReservations()) {
 			for (Instance instance :  reservation.getInstances()) {
 				for (Tag tag : instance.getTags()) {
-					if( tag.getValue().equalsIgnoreCase(searchTag)) {
+					if (tag.getValue().equalsIgnoreCase(searchTag)) {
 						environments.add( getEnvironmentFromInstance(instance) );
 					}
 				}

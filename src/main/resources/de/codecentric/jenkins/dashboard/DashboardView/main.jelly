@@ -88,15 +88,15 @@
 			<th>${%main.view.server.tag}</th>
 			<th>${%main.view.server.details}</th>
 		</tr>
-		<j:set var="environments" value="${it.getMatchingEC2Environments()}"/>
-		<j:forEach var="environment" items="${environments}">
-			<tr class="${environment.type}">
-	        	<td>${environment.type}</td>
-	        	<td><b>${environment.state.name}</b><br/>${%main.view.server.last.started} ${environment.launchTime}</td>
-        		<td>${environment.publicIpAddress}</td>
-	        	<td>${environment.version}</td>
-	        	<td>${environment.environmentTag}</td>
-	        	<td>Instance Id: ${environment.instanceId}<br/>${%main.view.server.instance.type} ${environment.instanceType}</td>
+		<j:set var="awsEnvironments" value="${it.getMatchingEC2Environments()}"/>
+		<j:forEach var="ec2Instance" items="${awsEnvironments}">
+			<tr class="${ec2Instance.type}">
+	        	<td>${ec2Instance.type}</td>
+	        	<td><b>${ec2Instance.state.name}</b><br/>${%main.view.server.last.started} ${ec2Instance.launchTime}</td>
+        		<td>${ec2Instance.publicIpAddress}</td>
+	        	<td>${ec2Instance.version}</td>
+	        	<td>${ec2Instance.environmentTag}</td>
+	        	<td>Instance Id: ${ec2Instance.instanceId}<br/>${%main.view.server.instance.type} ${ec2Instance.instanceType}</td>
 			</tr>
 		</j:forEach>
 	</table>
