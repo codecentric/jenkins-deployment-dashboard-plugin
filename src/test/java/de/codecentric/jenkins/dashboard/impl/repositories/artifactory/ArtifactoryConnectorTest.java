@@ -1,15 +1,18 @@
-package de.codecentric.jenkins.dashboard.artifactrepositories;
+package de.codecentric.jenkins.dashboard.impl.repositories.artifactory;
  
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.MatcherAssert.*;
+
 import java.net.URI;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.powermock.reflect.Whitebox;
 
 import com.sun.jersey.api.client.ClientResponse;
+
 import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 
 public class ArtifactoryConnectorTest {
@@ -35,7 +38,8 @@ public class ArtifactoryConnectorTest {
 	public void testCanConnectTrue() throws Exception {
 		ClientResponse mockedResponse = Mockito.mock(ClientResponse.class);
 		Mockito.when(mockedResponse.getStatus()).thenReturn(200);
-		assertTrue(repositoryInterface.canConnect(mockedResponse));
+		boolean canConnect = Whitebox.<Boolean>invokeMethod(repositoryInterface, "canConnect", mockedResponse);
+		assertThat(canConnect, is(true));
 	}
 
 
@@ -43,6 +47,7 @@ public class ArtifactoryConnectorTest {
 	public void testCanConnectFalse() throws Exception {
 		ClientResponse mockedResponse = Mockito.mock(ClientResponse.class);
 		Mockito.when(mockedResponse.getStatus()).thenReturn(500);
-		assertFalse(repositoryInterface.canConnect(mockedResponse));
+		boolean canConnect = Whitebox.<Boolean>invokeMethod(repositoryInterface, "canConnect", mockedResponse);
+		assertThat(canConnect, is(false));
 	}
 }

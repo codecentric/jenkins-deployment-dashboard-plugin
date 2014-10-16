@@ -24,11 +24,15 @@ import com.amazonaws.regions.Regions;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
+import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.ec2.AwsKeyCredentials;
-import de.codecentric.jenkins.dashboard.ec2.AwsRegion;
-import de.codecentric.jenkins.dashboard.ec2.EC2Connector;
+import de.codecentric.jenkins.dashboard.impl.environments.EnvironmentType;
+import de.codecentric.jenkins.dashboard.impl.environments.ec2.AwsRegion;
+import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
 
+/**
+ * Describes the environment configuration.
+ */
 public class Environment extends AbstractDescribableImpl<Environment> {
 
     private final static Logger LOGGER = Logger.getLogger(Environment.class.getName());
@@ -37,14 +41,16 @@ public class Environment extends AbstractDescribableImpl<Environment> {
     public static final EnvironmentDescriptor DESCRIPTOR = new EnvironmentDescriptor();
 
     private String name;
+    private String urlPrefix;
+    private String urlPostfix;
     private EnvironmentType environmentType;
-    private String buildJob;
     private String awsInstance;
     private String region;
     private String credentials;
+    private String buildJob;
 
     @DataBoundConstructor
-    public Environment(@Nonnull final String name, @Nonnull final String credentials, @Nonnull final String region, @Nonnull final String environmentType, final String awsInstance, final String buildJob) {
+    public Environment(@Nonnull final String name, final String urlPrefix, final String urlPostfix, @Nonnull final String credentials, @Nonnull final String region, @Nonnull final String environmentType, final String awsInstance, final String buildJob) {
         LOGGER.info("New environment created: " + credentials + ", " + region);
     	setName(name);
         setCredentials(credentials);
@@ -52,30 +58,32 @@ public class Environment extends AbstractDescribableImpl<Environment> {
         setEnvironmentType(environmentType);
         setAwsInstance(awsInstance);
         setBuildJob(buildJob);
+    	setUrlPostfix(urlPostfix);
+    	setUrlPrefix(urlPrefix);
     }
 
     public String getName() {
-        return name;
+    	return name;
     }
 
     public void setName(final String name) {
-        this.name = name;
+    	this.name = name;
     }
 
     public String getEnvironmentType() {
-        return environmentType.name();
+    	return environmentType.name();
     }
 
     public void setEnvironmentType(final String environmentType) {
-        this.environmentType = EnvironmentType.valueOf(environmentType);
+    	this.environmentType = EnvironmentType.valueOf(environmentType);
     }
 
     public String getAwsInstance() {
-        return awsInstance;
+    	return awsInstance;
     }
 
     public void setAwsInstance(final String awsInstance) {
-        this.awsInstance = awsInstance;
+    	this.awsInstance = awsInstance;
     }
 
     public String getRegion() {
@@ -97,15 +105,15 @@ public class Environment extends AbstractDescribableImpl<Environment> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public Descriptor getDescriptor() {
-        return DESCRIPTOR;
+    	return DESCRIPTOR;
     }
 
     public String getBuildJob() {
-        return buildJob;
+    	return buildJob;
     }
 
     public void setBuildJob(final String buildJob) {
-        this.buildJob = buildJob;
+    	this.buildJob = buildJob;
     }
 
     @Extension
@@ -168,13 +176,29 @@ public class Environment extends AbstractDescribableImpl<Environment> {
                
         public ComboBoxModel doFillBuildJobItems() {
             ComboBoxModel model = new ComboBoxModel();
-
+            
             for (String jobName : Jenkins.getInstance().getJobNames()) {
                 model.add(jobName);
             }
 
             return model;
         }
-
     }
+
+    public String getUrlPrefix() {
+    	return urlPrefix;
+    }
+
+    public void setUrlPrefix(String urlPrefix) {
+	this.urlPrefix = urlPrefix;
+    }
+
+    public String getUrlPostfix() {
+	return urlPostfix;
+    }
+
+    public void setUrlPostfix(String urlPostfix) {
+	this.urlPostfix = urlPostfix;
+    }
+
 }

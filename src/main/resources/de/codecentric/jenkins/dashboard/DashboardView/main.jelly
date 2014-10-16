@@ -26,6 +26,7 @@
 	    var app = <st:bind value="${it}"/>
 	    var version = document.getElementById('versionId').value;
 	    var environment = document.getElementById('environmentId').value;
+	    document.getElementById('msg').innerHTML = "Deploying VERSION [" + version + "] to ENVIRONMENT [" + environment + "]. Please wait ...";
 	    app.deploy(version, environment, function(t) {
 	      document.getElementById('msg').innerHTML = t.responseObject();
 	    })
@@ -34,7 +35,7 @@
 	
     <h2 style='${it.displayDeployField}'>${%main.view.artefact.versions}</h2>
 
-    <table border='0' cellpadding='10' style='background-color:lightgreen;${it.displayDeployField}' width='100%'>
+    <table class="pane bigtable" style='background-color:lightgreen;${it.displayDeployField}'>
         <tr>
           <td>
               <div align='center'>
@@ -79,7 +80,7 @@
         
     <h2>${%main.view.server.title}</h2>
 
-    <table cellpadding='10' style='background-color:#FFFFFF' width='100%'>
+    <table class="pane bigtable">
 		<tr style="background-color: lightgrey">
 			<th>${%main.view.server.name}</th>
 			<th>${%main.view.server.state}</th>
@@ -88,12 +89,19 @@
 			<th>${%main.view.server.tag}</th>
 			<th>${%main.view.server.details}</th>
 		</tr>
-		<j:set var="awsEnvironments" value="${it.getMatchingEC2Environments()}"/>
-		<j:forEach var="ec2Instance" items="${awsEnvironments}">
+		<j:set var="ec2Environments" value="${it.getMatchingEC2Environments()}"/>
+		<j:forEach var="ec2Instance" items="${ec2Environments}">
 			<tr class="${ec2Instance.type}">
 	        	<td>${ec2Instance.type}</td>
 	        	<td><b>${ec2Instance.state.name}</b><br/>${%main.view.server.last.started} ${ec2Instance.launchTime}</td>
-        		<td>${ec2Instance.publicIpAddress}</td>
+        		<td>
+        		  <j:if test="${ec2Instance.state.name == 'running'}">
+        			<a href="${ec2Instance.webAppLink}">${ec2Instance.webAppLink}</a>
+				  </j:if>
+				  <j:if test="${ec2Instance.state.name != 'running'}">
+        			${ec2Instance.webAppLink}
+				  </j:if>
+        		</td>
 	        	<td>${ec2Instance.version}</td>
 	        	<td>${ec2Instance.environmentTag}</td>
 	        	<td>Instance Id: ${ec2Instance.instanceId}<br/>${%main.view.server.instance.type} ${ec2Instance.instanceType}</td>

@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.ec2;
+package de.codecentric.jenkins.dashboard.impl.environments.ec2;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -26,8 +26,8 @@ import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.Tag;
 
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment.ENVIRONMENT_TYPES;
+import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
+import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment.ENVIRONMENT_TYPES;
 
 /**
  * Add your AWS credentials to run these integration tests 

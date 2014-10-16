@@ -25,6 +25,7 @@ import com.cloudbees.plugins.credentials.NameWith;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import de.codecentric.jenkins.dashboard.DashboardViewDescriptor;
 import de.codecentric.jenkins.dashboard.Messages;
+import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
 
 @NameWith(value = StandardCredentials.NameProvider.class, priority = -16)
 public class AwsKeyCredentials extends BaseStandardCredentials {

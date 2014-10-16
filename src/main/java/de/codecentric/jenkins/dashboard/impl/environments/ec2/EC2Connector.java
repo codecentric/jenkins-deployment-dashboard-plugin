@@ -1,4 +1,4 @@
-package de.codecentric.jenkins.dashboard.ec2;
+package de.codecentric.jenkins.dashboard.impl.environments.ec2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,9 +19,12 @@ import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 
-import de.codecentric.jenkins.dashboard.api.environment.EnvironmentInterface;
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment;
-import de.codecentric.jenkins.dashboard.api.environment.ServerEnvironment.ENVIRONMENT_TYPES;
+import de.codecentric.jenkins.dashboard.api.environments.EnvironmentInterface;
+import de.codecentric.jenkins.dashboard.api.environments.EnvironmentTag;
+import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
+import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment.ENVIRONMENT_TYPES;
+import de.codecentric.jenkins.dashboard.ec2.AwsKeyCredentials;
+import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 
 /**
  * Implementation of EC2 environment integration
@@ -59,7 +62,7 @@ public class EC2Connector implements EnvironmentInterface {
 	}
 	
 	public EC2Connector(final AmazonEC2 ec2) {
-		this.ec2 = ec2; // new AmazonEC2Client(awsCredentials);
+		this.ec2 = ec2; 
 	}
 
 	public boolean tagEnvironmentWithVersion(Region region, String searchTag, String version) {
@@ -130,9 +133,9 @@ public class EC2Connector implements EnvironmentInterface {
 	private ServerEnvironment getEnvironmentFromInstance(Instance instance) {
 		ServerEnvironment env = new ServerEnvironment(instance.getInstanceId(), instance.getInstanceType());
 		
-		List<de.codecentric.jenkins.dashboard.api.environment.Tag> tags = new ArrayList<de.codecentric.jenkins.dashboard.api.environment.Tag>();
+		List<EnvironmentTag> tags = new ArrayList<EnvironmentTag>();
 		for (Tag tag : instance.getTags()) {
-			de.codecentric.jenkins.dashboard.api.environment.Tag envTag = new de.codecentric.jenkins.dashboard.api.environment.Tag(tag.getKey(), tag.getValue());
+			EnvironmentTag envTag = new EnvironmentTag(tag.getKey(), tag.getValue());
 			tags.add(envTag);
 			if( tag.getKey().equalsIgnoreCase(DEFAULT_INSTANCE_NAME_TAG)) {
 				env.setEnvironmentTag(tag.getValue());
@@ -153,6 +156,13 @@ public class EC2Connector implements EnvironmentInterface {
 		env.setPublicIpAddress(instance.getPublicIpAddress());
 		env.setTags(tags);
 		return env;
+	}
+
+	@Override
+	public boolean tagEnvironmentWithVersion(Region region,
+			DeployJobVariables jobVariables) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
