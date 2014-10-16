@@ -5,11 +5,11 @@
         <f:textbox field="name"/>
     </f:entry>
 
-	<f:entry field="credentials" title="${%aws.credentials}" description="${%aws.credentials.description}">
+	<f:entry field="credentials" title="${%aws.credentials}">
 		<f:select />
 	</f:entry>
 
-    <f:entry field="region" title="${%aws.region}" description="${%aws.region.description}">
+    <f:entry field="region" title="${%aws.region}">
         <f:select />
     </f:entry>
 	
