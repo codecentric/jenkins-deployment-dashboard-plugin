@@ -29,12 +29,6 @@ import com.amazonaws.services.ec2.model.Tag;
 import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment.ENVIRONMENT_TYPES;
 
-/**
- * Add your AWS credentials to run these integration tests 
- * 
- * @author marcel.birkner
- * 
- */
 public class EC2ConnectorTest {
 
 	static final private AmazonEC2 amazonEC2 = mock(AmazonEC2Client.class);

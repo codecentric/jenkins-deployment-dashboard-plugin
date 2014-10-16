@@ -30,7 +30,6 @@ public class AwsKeyCredentialsTest {
 	final private static String SECRET_VALUE = "mySecret";
 	final private static Secret SECRET = mock(Secret.class);
 
-	final static private AwsKeyCredentials CREDENTIALS = new AwsKeyCredentials(CredentialsScope.GLOBAL, null, DESC, ACCESS, SECRET); 
 	final static private AwsKeyCredentialsDescriptor descriptor = new AwsKeyCredentialsDescriptor();
 	
 	@BeforeClass
