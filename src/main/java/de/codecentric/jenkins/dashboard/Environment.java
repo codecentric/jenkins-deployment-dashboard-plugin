@@ -142,7 +142,7 @@ public class Environment extends AbstractDescribableImpl<Environment> {
             	return model;
             }
             for (ServerEnvironment env : getEC2Instances(region, credentials)) {
-                model.add(env.getInstanceId());
+                model.add(env.getEnvironmentTag());
             }
 
             return model;
