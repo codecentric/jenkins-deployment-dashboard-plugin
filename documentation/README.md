@@ -15,7 +15,9 @@ For now you need to build it yourself.
 * Check out the repository
 * Run **mvn hpi:run**. This will start Jenkins with the plugin already installed and ready to use.
 * Open jenkins http://localhost:8080/jenkins
- * Configure your artifact repository and your AWS Credentials under http://localhost:8080/jenkins/manage
+ * Visit http://localhost:8080/jenkins/manage. From there go to
+  * _Configure System_ to set your artifact parameters (there's a subregion called _Deployment Dashboard)
+  * _Manage Credentials_ to set your AWS credentials
  * Create a new parameterized Job that we will use later for the deployment
   * Add a **Text Parameter** VERSION
   * Add a **Text Parameter** ENVIRONMENT
