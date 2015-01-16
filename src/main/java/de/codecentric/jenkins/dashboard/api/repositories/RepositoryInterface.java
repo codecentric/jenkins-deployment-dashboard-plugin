@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface RepositoryInterface {
 
+    int httpStatusOk = 200;
+
     public boolean canConnect();
 
     public List<Artifact> getArtefactList(String artifactId);

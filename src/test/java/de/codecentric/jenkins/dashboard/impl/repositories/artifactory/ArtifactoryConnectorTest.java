@@ -1,56 +1,53 @@
 package de.codecentric.jenkins.dashboard.impl.repositories.artifactory;
-
-import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
-import static com.xebialabs.restito.semantics.Action.status;
-import static com.xebialabs.restito.semantics.Condition.get;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+ 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.MatcherAssert.*;
 
 import java.net.URI;
 
-import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.powermock.reflect.Whitebox;
 
-import com.xebialabs.restito.server.StubServer;
+import com.sun.jersey.api.client.ClientResponse;
 
-import de.codecentric.jenkins.dashboard.api.repositories.RepositoryInterface;
+import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 
 public class ArtifactoryConnectorTest {
+	
+	private static final String USER = "jenkins";
+	private static final String PASS = "c0d3c3ntr1c";
+	private URI repositoryURI;
+	private static final int PORT = 99;
+	
+	private ArtifactoryConnector repositoryInterface;
+		
+	@Before
+	public void setUp() throws Exception {
+		repositoryURI = new URI("http://localhost:" + PORT + "/test");
+		repositoryInterface = new ArtifactoryConnector(USER, PASS, repositoryURI);
+	}
 
-    private static final String USER = "jenkins";
-    private static final String PASS = "c0d3c3ntr1c";
-    private URI repositoryURI;
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    private RepositoryInterface repositoryInterface;
+	@Test
+	public void testCanConnectTrue() throws Exception {
+		ClientResponse mockedResponse = Mockito.mock(ClientResponse.class);
+		Mockito.when(mockedResponse.getStatus()).thenReturn(200);
+		boolean canConnect = Whitebox.<Boolean>invokeMethod(repositoryInterface, "canConnect", mockedResponse);
+		assertThat(canConnect, is(true));
+	}
 
-    private StubServer server;
 
-    @Before
-    public void setUp() throws Exception {
-	server = new StubServer().run();
-	int port = server.getPort();
-	repositoryURI = new URI("http://localhost:" + port + "/test");
-	repositoryInterface = new ArtifactoryConnector(USER, PASS, repositoryURI);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-	server.stop();
-	server = null;
-	repositoryURI = null;
-	repositoryInterface = null;
-    }
-
-    @Test
-    public void testCanConnect() throws Exception {
-	whenHttp(server).match(get("/test")).then(status(HttpStatus.OK_200));
-	assertTrue(repositoryInterface.canConnect());
-    }
-
-    @Test
-    public void testCantConnect() throws Exception {
-	assertFalse(repositoryInterface.canConnect());
-    }
+	@Test
+	public void testCanConnectFalse() throws Exception {
+		ClientResponse mockedResponse = Mockito.mock(ClientResponse.class);
+		Mockito.when(mockedResponse.getStatus()).thenReturn(500);
+		boolean canConnect = Whitebox.<Boolean>invokeMethod(repositoryInterface, "canConnect", mockedResponse);
+		assertThat(canConnect, is(false));
+	}
 }

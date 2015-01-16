@@ -10,9 +10,10 @@ import com.amazonaws.services.ec2.model.InstanceState;
 import de.codecentric.jenkins.dashboard.Messages;
 
 /**
- * Detailed server environment information.
+ * Detailed server environment information. These information are displayed on the dashboard view.
  * 
  * @author marcel.birkner
+ * 
  */
 public class ServerEnvironment {
 
@@ -20,11 +21,14 @@ public class ServerEnvironment {
     private String environmentTag;
     private String instanceType;
     private String version;
+
     private String publicIpAddress;
+    private String urlPrefix;
+    private String urlPostfix;
 
     private Date launchTime;
     private InstanceState state;
-    private List<Tag> tags;
+    private List<EnvironmentTag> tags;
     private ENVIRONMENT_TYPES type;
 
     public enum ENVIRONMENT_TYPES {
@@ -34,7 +38,7 @@ public class ServerEnvironment {
     public ServerEnvironment(String instanceId, String instanceType) {
 	this.instanceId = instanceId;
 	this.instanceType = instanceType;
-	this.setType(ENVIRONMENT_TYPES.TEST);
+	this.type = ENVIRONMENT_TYPES.TEST;
     }
 
     public String getEnvironmentTag() {
@@ -61,11 +65,11 @@ public class ServerEnvironment {
 	this.version = version;
     }
 
-    public List<Tag> getTags() {
+    public List<EnvironmentTag> getTags() {
 	return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<EnvironmentTag> tags) {
 	this.tags = tags;
     }
 
@@ -108,8 +112,38 @@ public class ServerEnvironment {
 	return Messages.ServerEnvironment_serverNotRunning();
     }
 
+    public String getWebAppLink() {
+	if (state.getName().equalsIgnoreCase("running")) {
+	    return urlPrefix + publicIpAddress + urlPostfix;
+	}
+	return Messages.ServerEnvironment_serverNotRunning();
+    }
+
+    public String displayWebAppLink() {
+	if (state.getName().equalsIgnoreCase("running")) {
+	    return "true";
+	}
+	return "false";
+    }
+
     public void setPublicIpAddress(String publicIpAddress) {
 	this.publicIpAddress = publicIpAddress;
+    }
+
+    public String getUrlPrefix() {
+	return urlPrefix;
+    }
+
+    public void setUrlPrefix(String urlPrefix) {
+	this.urlPrefix = urlPrefix;
+    }
+
+    public String getUrlPostfix() {
+	return urlPostfix;
+    }
+
+    public void setUrlPostfix(String urlPostfix) {
+	this.urlPostfix = urlPostfix;
     }
 
     @Override

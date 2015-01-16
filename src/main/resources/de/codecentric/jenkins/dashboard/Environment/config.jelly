@@ -5,8 +5,24 @@
         <f:textbox field="name"/>
     </f:entry>
 
+	<f:entry field="credentials" title="${%aws.credentials}">
+		<f:select />
+	</f:entry>
+
+    <f:entry field="region" title="${%aws.region}">
+        <f:select />
+    </f:entry>
+	
     <f:entry field="awsInstance" title="${%aws.instance.title}" description="${%aws.instance.description}">
         <f:select />
+    </f:entry>
+
+    <f:entry title="${%aws.url.prefix.title}" description="${%aws.url.prefix.description}">
+    	<f:textbox field="urlPrefix"/>
+    </f:entry>
+
+    <f:entry title="${%aws.url.postfix.title}" description="${%aws.url.postfix.description}">
+        <f:textbox field="urlPostfix"/>
     </f:entry>
 
     <f:entry field="environmentType" title="${%environment.type.title}" description="${%environment.type.description}">

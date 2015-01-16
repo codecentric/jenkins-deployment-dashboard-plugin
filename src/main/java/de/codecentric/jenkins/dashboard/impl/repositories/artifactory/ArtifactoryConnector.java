@@ -47,11 +47,13 @@ public class ArtifactoryConnector implements RepositoryInterface {
 
     public boolean canConnect() {
 	LOGGER.info("Checking Artifactory connection");
+
 	ClientResponse response = getResponse();
 	int status = response.getStatus();
-	if (status == 200) {
+	if (status == httpStatusOk) {
 	    return true;
 	}
+
 	LOGGER.warn("Could not connect to {}. ResponseCode: {}", repositoryURI, status);
 	return false;
     }
@@ -62,6 +64,7 @@ public class ArtifactoryConnector implements RepositoryInterface {
 
     public List<Artifact> getArtefactList(String groupId, String artifactId) {
 	LOGGER.info("Getting Artefact List from Server [" + repositoryURI + "] for " + groupId + " and " + artifactId);
+
 	List<Artifact> artifactList = new ArrayList<Artifact>();
 	if (!org.springframework.util.StringUtils.hasText(artifactId)) {
 	    LOGGER.warn("artifactId is empty. Cannot search for artifacts.");

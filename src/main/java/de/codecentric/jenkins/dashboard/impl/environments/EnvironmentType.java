@@ -5,7 +5,8 @@ import org.jvnet.localizer.Localizable;
 import de.codecentric.jenkins.dashboard.Messages;
 
 /**
- * Enum for all available Environment Types that can be configured on the Dashboard View config page.
+ * Enum for all available Environment Types that can be configured on the Dashboard View
+ * configuration page.
  */
 public enum EnvironmentType {
 

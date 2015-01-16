@@ -27,12 +27,12 @@
 		<!-- which version of Jenkins is this plugin built against? -->
 	</parent>
 
-	<artifactId>jenkins-deployment-dashboard</artifactId>
-	<version>0.0.1</version>
+	<artifactId>ec2-deployment-dashboard</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
 	<name>Deployment Dashboard Plugin for Jenkins</name>
-	<url>http://wiki.jenkins-ci.org/display/JENKINS/TODO/</url>
+	<url>http://wiki.jenkins-ci.org/display/JENKINS/EC2+Deployment+Dashboard+Plugin</url>
 
 	<licenses>
 		<license>
@@ -61,9 +61,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:ssh://github.com/codecentric/jenkins-deployment-dashboard-plugin.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/codecentric/jenkins-deployment-dashboard-plugin.git</developerConnection>
-		<url>https://github.com/codecentric/jenkins-deployment-dashboard-plugin</url>
+		<connection>scm:git:ssh://github.com/jenkinsci/ec2-deployment-dashboard.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/ec2-deployment-dashboard.git</developerConnection>
+		<url>https://github.com/jenkinsci/ec2-deployment-dashboard</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -76,6 +76,7 @@
 		<jersey.client.version>1.17.1</jersey.client.version>
 		<joda.time.version>2.4</joda.time.version>
 		<org.slf4j.version>1.7.7</org.slf4j.version>
+		<powermock.version>1.5.6</powermock.version>
 
 		<aws.java.sdk.version>1.8.7</aws.java.sdk.version>
 		<artifactory.client.version>0.15</artifactory.client.version>
@@ -158,12 +159,6 @@
 			<artifactId>slf4j-simple</artifactId>
 			<version>${org.slf4j.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.xebialabs.restito</groupId>
-			<artifactId>restito</artifactId>
-			<version>0.4-beta-3</version>
-            <scope>test</scope>
-		</dependency>
 
 		<!-- Used for AWS Integration -->
 		<dependency>
@@ -202,6 +197,28 @@
 			<version>${artifactory.client.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.cloudbees.jenkins.plugins</groupId>
+			<artifactId>cloudbees-credentials</artifactId>
+			<version>3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>credentials</artifactId>
+			<version>1.16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<!-- Added Repositories to be able to build project on TravisCI -->
