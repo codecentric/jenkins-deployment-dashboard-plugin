@@ -31,102 +31,93 @@ import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment.ENVIR
 
 public class EC2ConnectorTest {
 
-	static final private AmazonEC2 amazonEC2 = mock(AmazonEC2Client.class);
-	static final private DescribeInstancesResult instanceResult = mock(DescribeInstancesResult.class);
-	static final private EC2Connector env = new EC2Connector(amazonEC2);
-	
-	static private Instance instance1 = new Instance().withTags(new Tag("1", "tag"), new Tag("2", "tag2"));
-	static private Instance instance2 = new Instance().withTags(new Tag("7", "TAG"), new Tag("8", "TAG3"));
-	static private Instance instance3 = new Instance();
-	static private Reservation reservations[] = { new Reservation().withInstances(instance1, instance2, instance3) };
-	
-	@BeforeClass
-	public static void setup() {
-		when(amazonEC2.describeInstances()).thenReturn(instanceResult);
-		when(instanceResult.getReservations()).thenReturn(Arrays.asList(reservations));
-	}
-	
-	@Test
-	public void testGetEnvironments() {
-		EC2Connector env = new EC2Connector(amazonEC2);
-		Region region = Region.getRegion(Regions.EU_WEST_1);
-		List<ServerEnvironment> list = env.getEnvironments(region);
-		assertThat(list.size(), is(3));
-	}
+    static final private AmazonEC2 amazonEC2 = mock(AmazonEC2Client.class);
+    static final private DescribeInstancesResult instanceResult = mock(DescribeInstancesResult.class);
+    static final private EC2Connector env = new EC2Connector(amazonEC2);
 
-	@Test
-	public void testGetEnvironmentsByTag() {
-		final EC2Connector env = new EC2Connector(amazonEC2);
-		final Region region = Region.getRegion(Regions.EU_WEST_1);
-		final List<ServerEnvironment> list = env.getEnvironmentsByTag(region, "tag");
-		assertThat(list.size(), is(2));
-	}
+    static private Instance instance1 = new Instance().withTags(new Tag("1", "tag"), new Tag("2", "tag2"));
+    static private Instance instance2 = new Instance().withTags(new Tag("7", "TAG"), new Tag("8", "TAG3"));
+    static private Instance instance3 = new Instance();
+    static private Reservation reservations[] = { new Reservation().withInstances(instance1, instance2, instance3) };
 
-	@Test
-	public void testGetEnvironmentFromInstance() throws Exception {
-		final Date launchTime = new Date();
-		final Instance instance = new Instance()
-			.withInstanceId("instance")
-			.withInstanceType(InstanceType.C1Xlarge)
-			.withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, "unknown"))
-			.withState(new InstanceState().withName(InstanceStateName.Running))
-			.withLaunchTime(launchTime)
-			.withPublicIpAddress("127.0.0.1");
-		ServerEnvironment serverEnv = Whitebox.<ServerEnvironment>invokeMethod(env, "getEnvironmentFromInstance", instance);
-		assertThat(serverEnv, notNullValue());
-		assertThat(serverEnv.getInstanceId(), is("instance"));
-		assertThat(serverEnv.getInstanceType(), is(InstanceType.C1Xlarge.toString()));
-		assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.TEST));
-		assertThat(serverEnv.getEnvironmentTag(), is("unknown"));
-		assertThat(serverEnv.getState().getName(), is(InstanceStateName.Running.toString()));
-		assertThat(serverEnv.getLaunchTime(), is(launchTime));
-		assertThat(serverEnv.getPublicIpAddress(), is("127.0.0.1"));
-	}
+    @BeforeClass
+    public static void setup() {
+        when(amazonEC2.describeInstances()).thenReturn(instanceResult);
+        when(instanceResult.getReservations()).thenReturn(Arrays.asList(reservations));
+    }
 
-	@Test
-	public void testGetEnvironmentFromInstanceProd() throws Exception {
-		final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge)
-				.withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, EC2Connector.PROD_VALUE));
-		ServerEnvironment serverEnv = Whitebox.<ServerEnvironment>invokeMethod(env, "getEnvironmentFromInstance", instance);
-		assertThat(serverEnv, notNullValue());
-		assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.PRODUCTION));		
-	}
+    @Test
+    public void testGetEnvironments() {
+        EC2Connector env = new EC2Connector(amazonEC2);
+        Region region = Region.getRegion(Regions.EU_WEST_1);
+        List<ServerEnvironment> list = env.getEnvironments(region);
+        assertThat(list.size(), is(3));
+    }
 
-	@Test
-	public void testGetEnvironmentFromInstanceStage() throws Exception {
-		final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge)
-				.withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, EC2Connector.STAGING_VALUE));
-		ServerEnvironment serverEnv = Whitebox.<ServerEnvironment>invokeMethod(env, "getEnvironmentFromInstance", instance);
-		assertThat(serverEnv, notNullValue());
-		assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.STAGING));		
-	}
+    @Test
+    public void testGetEnvironmentsByTag() {
+        final EC2Connector env = new EC2Connector(amazonEC2);
+        final Region region = Region.getRegion(Regions.EU_WEST_1);
+        final List<ServerEnvironment> list = env.getEnvironmentsByTag(region, "tag");
+        assertThat(list.size(), is(2));
+    }
 
-	@Test
-	public void testGetEnvironmentFromInstanceJenkins() throws Exception {
-		final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge)
-				.withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, EC2Connector.JENKINS_VALUE));
-		ServerEnvironment serverEnv = Whitebox.<ServerEnvironment>invokeMethod(env, "getEnvironmentFromInstance", instance);
-		assertThat(serverEnv, notNullValue());
-		assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.JENKINS));		
-	}
+    @Test
+    public void testGetEnvironmentFromInstance() throws Exception {
+        final Date launchTime = new Date();
+        final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge).withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, "unknown"))
+                .withState(new InstanceState().withName(InstanceStateName.Running)).withLaunchTime(launchTime).withPublicIpAddress("127.0.0.1");
+        ServerEnvironment serverEnv = Whitebox.<ServerEnvironment> invokeMethod(env, "getEnvironmentFromInstance", instance);
+        assertThat(serverEnv, notNullValue());
+        assertThat(serverEnv.getInstanceId(), is("instance"));
+        assertThat(serverEnv.getInstanceType(), is(InstanceType.C1Xlarge.toString()));
+        assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.TEST));
+        assertThat(serverEnv.getEnvironmentTag(), is("unknown"));
+        assertThat(serverEnv.getState().getName(), is(InstanceStateName.Running.toString()));
+        assertThat(serverEnv.getLaunchTime(), is(launchTime));
+        assertThat(serverEnv.getPublicIpAddress(), is("127.0.0.1"));
+    }
 
-	@Test
-	public void testGetEnvironmentFromInstanceTest() throws Exception {
-		final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge)
-				.withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, EC2Connector.TEST_VALUE));
-		ServerEnvironment serverEnv = Whitebox.<ServerEnvironment>invokeMethod(env, "getEnvironmentFromInstance", instance);
-		assertThat(serverEnv, notNullValue());
-		assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.TEST));		
-	}
+    @Test
+    public void testGetEnvironmentFromInstanceProd() throws Exception {
+        final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge).withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, EC2Connector.PROD_VALUE));
+        ServerEnvironment serverEnv = Whitebox.<ServerEnvironment> invokeMethod(env, "getEnvironmentFromInstance", instance);
+        assertThat(serverEnv, notNullValue());
+        assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.PRODUCTION));
+    }
 
+    @Test
+    public void testGetEnvironmentFromInstanceStage() throws Exception {
+        final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge)
+                .withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, EC2Connector.STAGING_VALUE));
+        ServerEnvironment serverEnv = Whitebox.<ServerEnvironment> invokeMethod(env, "getEnvironmentFromInstance", instance);
+        assertThat(serverEnv, notNullValue());
+        assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.STAGING));
+    }
 
-	@Test
-	public void testGetEnvironmentFromInstanceVersion() throws Exception {
-		final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge)
-				.withTags(new Tag(EC2Connector.VERSION_TAG, "1.2.3"));
-		ServerEnvironment serverEnv = Whitebox.<ServerEnvironment>invokeMethod(env, "getEnvironmentFromInstance", instance);
-		assertThat(serverEnv, notNullValue());
-		assertThat(serverEnv.getVersion(), is("1.2.3"));		
-	}
+    @Test
+    public void testGetEnvironmentFromInstanceJenkins() throws Exception {
+        final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge)
+                .withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, EC2Connector.JENKINS_VALUE));
+        ServerEnvironment serverEnv = Whitebox.<ServerEnvironment> invokeMethod(env, "getEnvironmentFromInstance", instance);
+        assertThat(serverEnv, notNullValue());
+        assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.JENKINS));
+    }
+
+    @Test
+    public void testGetEnvironmentFromInstanceTest() throws Exception {
+        final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge).withTags(new Tag(EC2Connector.DEFAULT_INSTANCE_NAME_TAG, EC2Connector.TEST_VALUE));
+        ServerEnvironment serverEnv = Whitebox.<ServerEnvironment> invokeMethod(env, "getEnvironmentFromInstance", instance);
+        assertThat(serverEnv, notNullValue());
+        assertThat(serverEnv.getType(), is(ENVIRONMENT_TYPES.TEST));
+    }
+
+    @Test
+    public void testGetEnvironmentFromInstanceVersion() throws Exception {
+        final Instance instance = new Instance().withInstanceId("instance").withInstanceType(InstanceType.C1Xlarge).withTags(new Tag(EC2Connector.VERSION_TAG, "1.2.3"));
+        ServerEnvironment serverEnv = Whitebox.<ServerEnvironment> invokeMethod(env, "getEnvironmentFromInstance", instance);
+        assertThat(serverEnv, notNullValue());
+        assertThat(serverEnv.getVersion(), is("1.2.3"));
+    }
 
 }
