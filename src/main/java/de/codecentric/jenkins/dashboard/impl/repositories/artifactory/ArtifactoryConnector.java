@@ -40,6 +40,8 @@ public class ArtifactoryConnector implements RepositoryInterface {
     private URI repositoryURI;
 
     public ArtifactoryConnector(String username, String password, URI repositoryURI) {
+	LOGGER.info("ArtifactoryConnector");
+
 	this.username = username;
 	this.password = password;
 	this.repositoryURI = repositoryURI;
@@ -51,10 +53,11 @@ public class ArtifactoryConnector implements RepositoryInterface {
 	ClientResponse response = getResponse();
 	int status = response.getStatus();
 	if (status == httpStatusOk) {
+	    LOGGER.info("Connection ok");
 	    return true;
 	}
 
-	LOGGER.warn("Could not connect to {}. ResponseCode: {}", repositoryURI, status);
+	LOGGER.error("Could not connect to {}. ResponseCode: {}", repositoryURI, status);
 	return false;
     }
 

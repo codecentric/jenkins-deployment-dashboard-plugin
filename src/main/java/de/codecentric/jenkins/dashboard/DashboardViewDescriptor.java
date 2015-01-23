@@ -16,8 +16,8 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.springframework.util.StringUtils;
 
-import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 import de.codecentric.jenkins.dashboard.impl.repositories.RepositoryTypes;
+import de.codecentric.jenkins.dashboard.impl.repositories.artifactory.ArtifactoryConnector;
 
 /**
  * Descriptor for the Dashboard View. This descriptor object contains the metadata about the
@@ -33,81 +33,81 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
     private String password = "";
 
     public DashboardViewDescriptor() {
-		super(DashboardView.class); // Have to provide the original class because there is no
-					    // enclosing class
-		load();
+	super(DashboardView.class); // Have to provide the original class because there is no
+				    // enclosing class
+	load();
     }
 
     @Override
     public String getDisplayName() {
-    	return Messages.DashboardView_DisplayName();
+	return Messages.DashboardView_DisplayName();
     }
-    
+
     public List<Environment.EnvironmentDescriptor> getEnvironmentDescriptors() {
-    	return Jenkins.getInstance().getDescriptorList(Environment.class);
+	return Jenkins.getInstance().getDescriptorList(Environment.class);
     }
 
     @Override
     public String getHelpFile() {
-    	return "/plugin/jenkins-deployment-dashboard-plugin/help.html";
+	return "/plugin/jenkins-deployment-dashboard-plugin/help.html";
     }
 
     public ListBoxModel doFillRepositoryTypeItems() {
-		final ListBoxModel model = new ListBoxModel();
-	
-		for (RepositoryTypes value : RepositoryTypes.values()) {
-		    model.add(value.getDescription(), value.getid());
-		}
-	
-		return model;
+	final ListBoxModel model = new ListBoxModel();
+
+	for (RepositoryTypes value : RepositoryTypes.values()) {
+	    model.add(value.getDescription(), value.getid());
+	}
+
+	return model;
     }
 
     public FormValidation doCheckArtifactoryRestUri(@QueryParameter final String artifactoryRestUri) {
-    	return FormValidation.ok();
+	return FormValidation.ok();
     }
 
-    public FormValidation doCheckUsername(@QueryParameter final String username) {	
-		if (StringUtils.hasText(username)) {
-		    return FormValidation.ok();
-		}
-		return FormValidation.warning(Messages.DashboardView_artifactoryUsername());
+    public FormValidation doCheckUsername(@QueryParameter final String username) {
+	if (StringUtils.hasText(username)) {
+	    return FormValidation.ok();
+	}
+	return FormValidation.warning(Messages.DashboardView_artifactoryUsername());
     }
 
     public FormValidation doCheckPassword(@QueryParameter final String password) {
-		if (StringUtils.hasText(password)) {
-		    return FormValidation.ok();
-		}
-		return FormValidation.warning(Messages.DashboardView_artifactoryPassword());
+	if (StringUtils.hasText(password)) {
+	    return FormValidation.ok();
+	}
+	return FormValidation.warning(Messages.DashboardView_artifactoryPassword());
     }
 
     public FormValidation doTestRepositoryConnection(@QueryParameter("repositoryRestUri") final String repositoryRestUri,
 	    @QueryParameter("username") final String username, @QueryParameter("password") final String password) {
-		LOGGER.info("Verify Repository connection for URI " + repositoryRestUri);
-	
-		FormValidation validationResult;
-		try {
-		    URI repositoryURI = new URI(repositoryRestUri);
-		    ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
-		    LOGGER.info("Artifactory config valid? " + repository.canConnect());
-		    if (repository.canConnect()) {
-			validationResult = FormValidation.ok(Messages.DashboardView_artifactoryConnectionSuccessful());
-		    } else {
-			validationResult = FormValidation.warning(Messages.DashboardView_artifactoryConnectionFailed() + repositoryRestUri);
-		    }
-	
-		} catch (Exception e) {
-		    LOGGER.severe(e.getMessage());
-		    validationResult = FormValidation.error(Messages.DashboardView_artifactoryConnectionCritical() + e.getMessage());
-		}
-	
-		return validationResult;
+	LOGGER.info("Verify Repository connection for URI " + repositoryRestUri);
+
+	FormValidation validationResult;
+	try {
+	    URI repositoryURI = new URI(repositoryRestUri);
+	    ArtifactoryConnector repository = new ArtifactoryConnector(username, password, repositoryURI);
+	    LOGGER.info("Artifactory config valid? " + repository.canConnect());
+	    if (repository.canConnect()) {
+		validationResult = FormValidation.ok(Messages.DashboardView_artifactoryConnectionSuccessful());
+	    } else {
+		validationResult = FormValidation.warning(Messages.DashboardView_artifactoryConnectionFailed() + repositoryRestUri);
+	    }
+
+	} catch (Exception e) {
+	    LOGGER.severe(e.getMessage());
+	    validationResult = FormValidation.error(Messages.DashboardView_artifactoryConnectionCritical() + e.getMessage());
+	}
+
+	return validationResult;
     }
 
     @Override
     public boolean configure(StaplerRequest req, JSONObject json) throws Descriptor.FormException {
-		req.bindJSON(this, json.getJSONObject("deployment-dashboard"));
-		save();
-		return true;
+	req.bindJSON(this, json.getJSONObject("deployment-dashboard"));
+	save();
+	return true;
     }
 
     public String getRepositoryType() {

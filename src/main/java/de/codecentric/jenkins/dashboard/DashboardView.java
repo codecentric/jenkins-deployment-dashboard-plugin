@@ -2,9 +2,9 @@ package de.codecentric.jenkins.dashboard;
 
 import hudson.Extension;
 import hudson.model.Item;
+import hudson.model.Result;
 import hudson.model.TopLevelItem;
 import hudson.model.ViewGroup;
-import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
@@ -36,18 +36,15 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.ec2.AmazonEC2Client;
 
-import de.codecentric.jenkins.dashboard.artifactrepositories.ArtifactoryConnector;
 import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment;
 import de.codecentric.jenkins.dashboard.api.repositories.Artifact;
 import de.codecentric.jenkins.dashboard.api.repositories.RepositoryInterface;
 import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
 import de.codecentric.jenkins.dashboard.impl.repositories.RepositoryTypes;
+import de.codecentric.jenkins.dashboard.impl.repositories.artifactory.ArtifactoryConnector;
 import de.codecentric.jenkins.dashboard.impl.repositories.nexus.NexusConnector;
 
 /**
@@ -73,25 +70,25 @@ public class DashboardView extends View {
     private List<Environment> environments;
 
     public DashboardView(final String name) {
-    	super(name);
+	super(name);
     }
 
     public DashboardView(final String name, final ViewGroup owner) {
-    	super(name, owner);
+	super(name, owner);
     }
 
     @DataBoundConstructor
     public DashboardView(final String name, final boolean showDeployField, final String groupId, final String artefactId, final List<Environment> environments) {
-		this(name);
-		setShowDeployField(showDeployField);
-		setGroupId(groupId);
-		setArtefactId(artefactId);
-		setEnvironments(environments);
+	this(name);
+	setShowDeployField(showDeployField);
+	setGroupId(groupId);
+	setArtefactId(artefactId);
+	setEnvironments(environments);
     }
 
     @Override
     public ViewDescriptor getDescriptor() {
-    	return DESCRIPTOR;
+	return DESCRIPTOR;
     }
 
     /**
@@ -109,54 +106,54 @@ public class DashboardView extends View {
      */
     @Override
     public boolean contains(final TopLevelItem item) {
-    	return false;
+	return false;
     }
 
     @JavaScriptMethod
     public String deploy(String version, String environment) {
-		LOGGER.info("Deploy version " + version + " to environment " + environment);
-	
-		// Get the environment with corresponding build-job
-		Environment buildEnvironment = null;
-		for (Environment env : environments) {
-		    if (env.getAwsInstance().equals(environment)) {
-			buildEnvironment = env;
-			break;
-		    }
-		}
-	
-		final AbstractProject buildJob = Jenkins.getInstance().getItemByFullName(buildEnvironment.getBuildJob(), AbstractProject.class);
-		LOGGER.info("Executing job: " + buildJob);
-	
-		if (buildJob == null) {
-		    return String.format(Messages.DashboardView_buildJobNotFound(), buildEnvironment.getName());
-		}
-	
-		if ((!buildJob.isBuildable()) || (!buildJob.isParameterized())) {
-		    return Messages.DashboardView_deploymentCannotBeExecuted();
-		}
-	
-		final ParametersAction versionParam = new ParametersAction(new StringParameterValue(PARAM_VERSION, version));
-		final ParametersAction environmentParam = new ParametersAction(new StringParameterValue(PARAM_ENVIRONMENT, environment));
-	
-		List<ParametersAction> actions = Arrays.asList(versionParam, environmentParam);
-		QueueTaskFuture<AbstractBuild> scheduledBuild = buildJob.scheduleBuild2(2, new Cause.UserIdCause(), actions);
-	
-		Result result = Result.FAILURE;
-		try {
-		    AbstractBuild finishedBuild = scheduledBuild.get();
-		    result = finishedBuild.getResult();
-		    LOGGER.info("Build finished with result: " + result + " completed in: " + finishedBuild.getDurationString() + ". ");
-		} catch (Exception e) {
-		    LOGGER.severe("Error while waiting for build " + scheduledBuild.toString() + ".");
-		    LOGGER.severe(e.getMessage());
-		    LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
-		    return String.format(Messages.DashboardView_buildJobFailed(), buildJob.getName());
-		}
-		if (result == Result.SUCCESS) {
-		    return String.format(Messages.DashboardView_buildJobScheduledSuccessfully(), buildJob.getName());
-		}
-		return String.format(Messages.DashboardView_buildJobSchedulingFailed(), buildJob.getName());
+	LOGGER.info("Deploy version " + version + " to environment " + environment);
+
+	// Get the environment with corresponding build-job
+	Environment buildEnvironment = null;
+	for (Environment env : environments) {
+	    if (env.getAwsInstance().equals(environment)) {
+		buildEnvironment = env;
+		break;
+	    }
+	}
+
+	final AbstractProject buildJob = Jenkins.getInstance().getItemByFullName(buildEnvironment.getBuildJob(), AbstractProject.class);
+	LOGGER.info("Executing job: " + buildJob);
+
+	if (buildJob == null) {
+	    return String.format(Messages.DashboardView_buildJobNotFound(), buildEnvironment.getName());
+	}
+
+	if ((!buildJob.isBuildable()) || (!buildJob.isParameterized())) {
+	    return Messages.DashboardView_deploymentCannotBeExecuted();
+	}
+
+	final ParametersAction versionParam = new ParametersAction(new StringParameterValue(PARAM_VERSION, version));
+	final ParametersAction environmentParam = new ParametersAction(new StringParameterValue(PARAM_ENVIRONMENT, environment));
+
+	List<ParametersAction> actions = Arrays.asList(versionParam, environmentParam);
+	QueueTaskFuture<AbstractBuild> scheduledBuild = buildJob.scheduleBuild2(2, new Cause.UserIdCause(), actions);
+
+	Result result = Result.FAILURE;
+	try {
+	    AbstractBuild finishedBuild = scheduledBuild.get();
+	    result = finishedBuild.getResult();
+	    LOGGER.info("Build finished with result: " + result + " completed in: " + finishedBuild.getDurationString() + ". ");
+	} catch (Exception e) {
+	    LOGGER.severe("Error while waiting for build " + scheduledBuild.toString() + ".");
+	    LOGGER.severe(e.getMessage());
+	    LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
+	    return String.format(Messages.DashboardView_buildJobFailed(), buildJob.getName());
+	}
+	if (result == Result.SUCCESS) {
+	    return String.format(Messages.DashboardView_buildJobScheduledSuccessfully(), buildJob.getName());
+	}
+	return String.format(Messages.DashboardView_buildJobSchedulingFailed(), buildJob.getName());
     }
 
     /**
@@ -247,34 +244,33 @@ public class DashboardView extends View {
 	return repository;
     }
 
-	public List<ServerEnvironment> getMatchingEC2Environments() {
-		final List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
-		for (Environment env : environments) {
-			final EC2Connector envConn = EC2Connector.getEC2Connector(env.getCredentials());
-			if (envConn == null || !envConn.areAwsCredentialsValid()) {
-				LOGGER.info("Invalid credentials in environment '" + env.getName() + "'");
-				continue;
-			}
-			List<ServerEnvironment> foundEnvironment = envConn.getEnvironmentsByTag(Region.getRegion(Regions.fromName(env.getRegion())),
-                    env.getAwsInstance());
-			list.addAll(foundEnvironment);
-		}
-		return list;
+    public List<ServerEnvironment> getMatchingEC2Environments() {
+	final List<ServerEnvironment> list = new ArrayList<ServerEnvironment>();
+	for (Environment env : environments) {
+	    final EC2Connector envConn = EC2Connector.getEC2Connector(env.getCredentials());
+	    if (envConn == null || !envConn.areAwsCredentialsValid()) {
+		LOGGER.info("Invalid credentials in environment '" + env.getName() + "'");
+		continue;
+	    }
+	    List<ServerEnvironment> foundEnvironment = envConn.getEnvironmentsByTag(Region.getRegion(Regions.fromName(env.getRegion())), env.getAwsInstance());
+	    list.addAll(foundEnvironment);
 	}
+	return list;
+    }
 
     private void updateEnvironmentsWithUrlPrePostFix(List<ServerEnvironment> foundEnvironments, Environment environment) {
-		for (ServerEnvironment serverEnvironment : foundEnvironments) {
-		    serverEnvironment.setUrlPrefix(environment.getUrlPrefix());
-		    serverEnvironment.setUrlPostfix(environment.getUrlPostfix());
-		}
+	for (ServerEnvironment serverEnvironment : foundEnvironments) {
+	    serverEnvironment.setUrlPrefix(environment.getUrlPrefix());
+	    serverEnvironment.setUrlPostfix(environment.getUrlPostfix());
+	}
     }
 
     public List<Environment> getEnvironments() {
-    	return Collections.unmodifiableList(environments);
+	return Collections.unmodifiableList(environments);
     }
 
     public void setEnvironments(final List<Environment> environmentsList) {
-    	this.environments = environmentsList == null ? new ArrayList<Environment>() : new ArrayList<Environment>(environmentsList);
+	this.environments = environmentsList == null ? new ArrayList<Environment>() : new ArrayList<Environment>(environmentsList);
     }
 
 }
