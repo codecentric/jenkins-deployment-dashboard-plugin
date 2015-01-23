@@ -20,24 +20,24 @@ public class DateTimeConverter implements Converter {
 
     @Override
     public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext mc) {
-	DateTime dateTime = (DateTime) o;
-	writer.setValue(dateTime.toString());
+        DateTime dateTime = (DateTime) o;
+        writer.setValue(dateTime.toString());
     }
 
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext uc) {
-	DateTime dateTime = DateTime.now();
-	try {
-	    dateTime = DateTime.parse(reader.getValue());
-	} catch (IllegalArgumentException e) {
-	    LOGGER.log(Level.SEVERE, "Could not parse DateTime value {0}. Returning DateTime.now().", reader.getValue());
-	}
-	return dateTime;
+        DateTime dateTime = DateTime.now();
+        try {
+            dateTime = DateTime.parse(reader.getValue());
+        } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.SEVERE, "Could not parse DateTime value {0}. Returning DateTime.now().", reader.getValue());
+        }
+        return dateTime;
     }
 
     @Override
-    public boolean canConvert(Class clazz) {
-	return DateTime.class.isAssignableFrom(clazz);
+    public boolean canConvert(@SuppressWarnings("rawtypes") Class clazz) {
+        return DateTime.class.isAssignableFrom(clazz);
     }
 
 }

@@ -1,11 +1,11 @@
 package de.codecentric.jenkins.dashboard.impl.deploy;
 
 /**
- * These variables are used when running the deploy job. The parameters are passed to the deploy job
- * and necessary when tagging the server instances.
+ * These variables are used when running the deploy job. The parameters are
+ * passed to the deploy job and used to tag the server instances.
  * 
  * @author marcel.birkner
- *
+ * 
  */
 public class DeployJobVariables {
 
@@ -17,24 +17,24 @@ public class DeployJobVariables {
     };
 
     public DeployJobVariables(String version, String environment) {
-	this.version = version;
-	this.environment = environment;
+        setVersion(version);
+        setEnvironment(environment);
     }
 
     public String getVersion() {
-	return version;
+        return version;
     }
 
     public void setVersion(String version) {
-	this.version = version;
+        this.version = version;
     }
 
     public String getEnvironment() {
-	return environment;
+        return environment;
     }
 
     public void setEnvironment(String environment) {
-	this.environment = environment;
+        this.environment = environment;
     }
 
 }

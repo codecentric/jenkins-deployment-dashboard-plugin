@@ -6,7 +6,7 @@ import java.util.List;
  * Interface for accessing artifact repository information.
  * 
  * @author marcel.birkner
- *
+ * 
  */
 public interface RepositoryInterface {
 

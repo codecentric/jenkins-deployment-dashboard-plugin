@@ -3,8 +3,8 @@ package de.codecentric.jenkins.dashboard.api.repositories;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Artifact information in artifact repository. These information are used in the deployment section
- * of the dashboard view in the dropdown list.
+ * Artifact information in artifact repository. These information are used in
+ * the deployment section of the dashboard view in the dropdown list.
  * 
  * @author marcel.birkner
  * 
@@ -16,38 +16,38 @@ public class Artifact {
     private String uri;
 
     public Artifact(String name, String version, String uri) {
-	this.name = name;
-	this.version = version;
-	this.uri = uri;
+        this.name = name;
+        this.version = version;
+        this.uri = uri;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public String getUri() {
-	return uri;
+        return uri;
     }
 
     public void setUri(String uri) {
-	this.uri = uri;
+        this.uri = uri;
     }
 
     public String getVersion() {
-	return version;
+        return version;
     }
 
     public void setVersion(String version) {
-	this.version = version;
+        this.version = version;
     }
 
     @Override
     public String toString() {
-	return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

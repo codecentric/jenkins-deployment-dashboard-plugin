@@ -1,10 +1,9 @@
 package de.codecentric.jenkins.dashboard.impl.environments.ec2;
 
 /**
- * Amazon EC2 Region enum. Constants for all available regions. Access keys are configured on a per
- * region basis. Therefore we need to be able to select the region that matches the configured
- * access keys.
- *
+ * Amazon EC2 Region enum. Constants for all available regions. Access keys are
+ * configured on a per region basis. Therefore we need to be able to select the
+ * region that matches the configured access keys.
  */
 public enum AwsRegion {
 
@@ -21,16 +20,16 @@ public enum AwsRegion {
     private final String name;
 
     private AwsRegion(final String identifier, final String name) {
-	this.identifier = identifier;
-	this.name = name;
+        this.identifier = identifier;
+        this.name = name;
     }
 
     public String getIdentifier() {
-	return identifier;
+        return identifier;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
 }

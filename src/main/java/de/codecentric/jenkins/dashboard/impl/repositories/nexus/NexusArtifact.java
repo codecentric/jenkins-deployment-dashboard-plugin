@@ -54,78 +54,78 @@ public class NexusArtifact implements java.io.Serializable {
     private java.util.List<NexusArtifactHit> artifactHits;
 
     public java.util.List<NexusArtifactHit> getArtifactHits() {
-	if (this.artifactHits == null) {
-	    this.artifactHits = new java.util.ArrayList<NexusArtifactHit>();
-	}
-	return this.artifactHits;
+        if (this.artifactHits == null) {
+            this.artifactHits = new java.util.ArrayList<NexusArtifactHit>();
+        }
+        return this.artifactHits;
     }
 
     public String getArtifactId() {
-	return this.artifactId;
+        return this.artifactId;
     }
 
     public String getGroupId() {
-	return this.groupId;
+        return this.groupId;
     }
 
     public String getHighlightedFragment() {
-	return this.highlightedFragment;
+        return this.highlightedFragment;
     }
 
     public String getLatestRelease() {
-	return this.latestRelease;
+        return this.latestRelease;
     }
 
     public String getLatestReleaseRepositoryId() {
-	return this.latestReleaseRepositoryId;
+        return this.latestReleaseRepositoryId;
     }
 
     public String getLatestSnapshot() {
-	return this.latestSnapshot;
+        return this.latestSnapshot;
     }
 
     public String getLatestSnapshotRepositoryId() {
-	return this.latestSnapshotRepositoryId;
+        return this.latestSnapshotRepositoryId;
     }
 
     public String getVersion() {
-	return this.version;
+        return this.version;
     }
 
     public void setArtifactHits(java.util.List<NexusArtifactHit> artifactHits) {
-	this.artifactHits = artifactHits;
+        this.artifactHits = artifactHits;
     }
 
     public void setArtifactId(String artifactId) {
-	this.artifactId = artifactId;
+        this.artifactId = artifactId;
     }
 
     public void setGroupId(String groupId) {
-	this.groupId = groupId;
+        this.groupId = groupId;
     }
 
     public void setHighlightedFragment(String highlightedFragment) {
-	this.highlightedFragment = highlightedFragment;
+        this.highlightedFragment = highlightedFragment;
     }
 
     public void setLatestRelease(String latestRelease) {
-	this.latestRelease = latestRelease;
+        this.latestRelease = latestRelease;
     }
 
     public void setLatestReleaseRepositoryId(String latestReleaseRepositoryId) {
-	this.latestReleaseRepositoryId = latestReleaseRepositoryId;
+        this.latestReleaseRepositoryId = latestReleaseRepositoryId;
     }
 
     public void setLatestSnapshot(String latestSnapshot) {
-	this.latestSnapshot = latestSnapshot;
+        this.latestSnapshot = latestSnapshot;
     }
 
     public void setLatestSnapshotRepositoryId(String latestSnapshotRepositoryId) {
-	this.latestSnapshotRepositoryId = latestSnapshotRepositoryId;
+        this.latestSnapshotRepositoryId = latestSnapshotRepositoryId;
     }
 
     public void setVersion(String version) {
-	this.version = version;
+        this.version = version;
     }
 
 }

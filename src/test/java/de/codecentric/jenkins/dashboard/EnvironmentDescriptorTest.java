@@ -26,12 +26,12 @@ import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
 @PrepareForTest(EC2Connector.class)
 public class EnvironmentDescriptorTest {
 
-    final static private String REGION_NAME = "eu-west-1";
-    final static private String CREDENTIAL_NAME = "credential";
-    final static private EC2Connector ec2 = PowerMockito.mock(EC2Connector.class);
-    final static private Region REGION = Region.getRegion(Regions.fromName(REGION_NAME));
-    final static private String SERVER_TAG = "ABC";
-    final static private ServerEnvironment server1 = new ServerEnvironment("id", "type");
+    private static final String REGION_NAME = "eu-west-1";
+    private static final String CREDENTIAL_NAME = "credential";
+    private static final EC2Connector ec2 = PowerMockito.mock(EC2Connector.class);
+    private static final Region REGION = Region.getRegion(Regions.fromName(REGION_NAME));
+    private static final String SERVER_TAG = "ABC";
+    private static final ServerEnvironment server1 = new ServerEnvironment("id", "type");
 
     @BeforeClass
     public static void setup() {

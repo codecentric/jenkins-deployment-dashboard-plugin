@@ -47,40 +47,41 @@ public class Environment extends AbstractDescribableImpl<Environment> {
     private String buildJob;
 
     @DataBoundConstructor
-    public Environment(@Nonnull final String name, final String urlPrefix, final String urlPostfix, @Nonnull final String credentials, @Nonnull final String region, @Nonnull final String environmentType, final String awsInstance, final String buildJob) {
+    public Environment(@Nonnull final String name, final String urlPrefix, final String urlPostfix, @Nonnull final String credentials, @Nonnull final String region,
+            @Nonnull final String environmentType, final String awsInstance, final String buildJob) {
         LOGGER.info("New environment created: " + credentials + ", " + region);
-    	setName(name);
+        setName(name);
         setCredentials(credentials);
         setRegion(region);
         setEnvironmentType(environmentType);
         setAwsInstance(awsInstance);
         setBuildJob(buildJob);
-    	setUrlPostfix(urlPostfix);
-    	setUrlPrefix(urlPrefix);
+        setUrlPostfix(urlPostfix);
+        setUrlPrefix(urlPrefix);
     }
 
     public String getName() {
-    	return name;
+        return name;
     }
 
     public void setName(final String name) {
-    	this.name = name;
+        this.name = name;
     }
 
     public String getEnvironmentType() {
-    	return environmentType.name();
+        return environmentType.name();
     }
 
     public void setEnvironmentType(final String environmentType) {
-    	this.environmentType = EnvironmentType.valueOf(environmentType);
+        this.environmentType = EnvironmentType.valueOf(environmentType);
     }
 
     public String getAwsInstance() {
-    	return awsInstance;
+        return awsInstance;
     }
 
     public void setAwsInstance(final String awsInstance) {
-    	this.awsInstance = awsInstance;
+        this.awsInstance = awsInstance;
     }
 
     public String getRegion() {
@@ -100,11 +101,11 @@ public class Environment extends AbstractDescribableImpl<Environment> {
     }
 
     public String getBuildJob() {
-    	return buildJob;
+        return buildJob;
     }
 
     public void setBuildJob(final String buildJob) {
-    	this.buildJob = buildJob;
+        this.buildJob = buildJob;
     }
 
     @Extension
@@ -124,22 +125,22 @@ public class Environment extends AbstractDescribableImpl<Environment> {
         }
 
         public ListBoxModel doFillCredentialsItems() {
-        	final ListBoxModel model = new ListBoxModel();
-        	
-        	DomainRequirement domain = new DomainRequirement();
-        	for (AwsKeyCredentials credentials : CredentialsProvider.lookupCredentials(AwsKeyCredentials.class, Jenkins.getInstance(), ACL.SYSTEM, domain)) {
-        		model.add(credentials.getId());
-        	}
-        	return model;
+            final ListBoxModel model = new ListBoxModel();
+
+            DomainRequirement domain = new DomainRequirement();
+            for (AwsKeyCredentials credentials : CredentialsProvider.lookupCredentials(AwsKeyCredentials.class, Jenkins.getInstance(), ACL.SYSTEM, domain)) {
+                model.add(credentials.getId());
+            }
+            return model;
         }
-        
+
         public ListBoxModel doFillAwsInstanceItems(@QueryParameter String region, @QueryParameter String credentials) {
             final ListBoxModel model = new ListBoxModel();
 
             LOGGER.info("Looking for instances in " + region);
             if (StringUtils.isBlank(region)) {
-            	LOGGER.info("Region is empty");
-            	return model;
+                LOGGER.info("Region is empty");
+                return model;
             }
             for (ServerEnvironment env : getEC2Instances(region, credentials)) {
                 model.add(env.getEnvironmentTag());
@@ -149,14 +150,14 @@ public class Environment extends AbstractDescribableImpl<Environment> {
         }
 
         private List<ServerEnvironment> getEC2Instances(String region, String credentialsId) {
-        	final EC2Connector ec2 = EC2Connector.getEC2Connector(credentialsId);
-        	if (ec2 == null)
-        		return Collections.<ServerEnvironment>emptyList();
-        	return ec2.getEnvironments(Region.getRegion(Regions.fromName(region)));
-		}
+            final EC2Connector ec2 = EC2Connector.getEC2Connector(credentialsId);
+            if (ec2 == null)
+                return Collections.<ServerEnvironment> emptyList();
+            return ec2.getEnvironments(Region.getRegion(Regions.fromName(region)));
+        }
 
-		public ListBoxModel doFillRegionItems() {
-           final ListBoxModel model = new ListBoxModel();
+        public ListBoxModel doFillRegionItems() {
+            final ListBoxModel model = new ListBoxModel();
 
             for (AwsRegion value : AwsRegion.values()) {
                 model.add(value.getName(), value.getIdentifier());
@@ -164,10 +165,10 @@ public class Environment extends AbstractDescribableImpl<Environment> {
 
             return model;
         }
-               
+
         public ComboBoxModel doFillBuildJobItems() {
             ComboBoxModel model = new ComboBoxModel();
-            
+
             for (String jobName : Jenkins.getInstance().getJobNames()) {
                 model.add(jobName);
             }
@@ -177,19 +178,19 @@ public class Environment extends AbstractDescribableImpl<Environment> {
     }
 
     public String getUrlPrefix() {
-    	return urlPrefix;
+        return urlPrefix;
     }
 
     public void setUrlPrefix(String urlPrefix) {
-	this.urlPrefix = urlPrefix;
+        this.urlPrefix = urlPrefix;
     }
 
     public String getUrlPostfix() {
-	return urlPostfix;
+        return urlPostfix;
     }
 
     public void setUrlPostfix(String urlPostfix) {
-	this.urlPostfix = urlPostfix;
+        this.urlPostfix = urlPostfix;
     }
 
 }

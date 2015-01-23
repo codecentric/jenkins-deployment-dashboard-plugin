@@ -31,14 +31,14 @@ import de.codecentric.jenkins.dashboard.api.environments.ServerEnvironment.ENVIR
 
 public class EC2ConnectorTest {
 
-    static final private AmazonEC2 amazonEC2 = mock(AmazonEC2Client.class);
-    static final private DescribeInstancesResult instanceResult = mock(DescribeInstancesResult.class);
-    static final private EC2Connector env = new EC2Connector(amazonEC2);
+    private static final AmazonEC2 amazonEC2 = mock(AmazonEC2Client.class);
+    private static final DescribeInstancesResult instanceResult = mock(DescribeInstancesResult.class);
+    private static final EC2Connector env = new EC2Connector(amazonEC2);
 
-    static private Instance instance1 = new Instance().withTags(new Tag("1", "tag"), new Tag("2", "tag2"));
-    static private Instance instance2 = new Instance().withTags(new Tag("7", "TAG"), new Tag("8", "TAG3"));
-    static private Instance instance3 = new Instance();
-    static private Reservation reservations[] = { new Reservation().withInstances(instance1, instance2, instance3) };
+    private static Instance instance1 = new Instance().withTags(new Tag("1", "tag"), new Tag("2", "tag2"));
+    private static Instance instance2 = new Instance().withTags(new Tag("7", "TAG"), new Tag("8", "TAG3"));
+    private static Instance instance3 = new Instance();
+    private static Reservation reservations[] = { new Reservation().withInstances(instance1, instance2, instance3) };
 
     @BeforeClass
     public static void setup() {

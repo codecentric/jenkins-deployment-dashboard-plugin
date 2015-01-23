@@ -53,7 +53,7 @@ public class ArtifactoryConnector implements RepositoryInterface {
         ClientResponse response = getResponse();
         return canConnect(response);
     }
-    
+
     protected boolean canConnect(ClientResponse response) {
         int status = response.getStatus();
         if (status == httpStatusOk) {

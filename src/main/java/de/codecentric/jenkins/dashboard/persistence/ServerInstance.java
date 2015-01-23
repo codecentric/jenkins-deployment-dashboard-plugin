@@ -7,8 +7,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 
 /**
- * 
- *
  * @author Andreas Houben
  */
 @XStreamAlias("instance")
@@ -27,42 +25,42 @@ public class ServerInstance {
     private DateTime timeStamp;
 
     public ServerInstance(DeployJobVariables deployJobVariables, String user) {
-	this.version = deployJobVariables.getVersion();
-	this.environment = deployJobVariables.getEnvironment();
-	this.user = user;
-	this.timeStamp = new DateTime();
+        this.version = deployJobVariables.getVersion();
+        this.environment = deployJobVariables.getEnvironment();
+        this.user = user;
+        this.timeStamp = new DateTime();
     }
 
     public String getVersion() {
-	return version;
+        return version;
     }
 
     public void setVersion(String version) {
-	this.version = version;
+        this.version = version;
     }
 
     public String getEnvironment() {
-	return environment;
+        return environment;
     }
 
     public void setEnvironment(String environment) {
-	this.environment = environment;
+        this.environment = environment;
     }
 
     public String getUser() {
-	return user;
+        return user;
     }
 
     public void setUser(String user) {
-	this.user = user;
+        this.user = user;
     }
 
     public DateTime getTimeStamp() {
-	return timeStamp;
+        return timeStamp;
     }
 
     public void setTimeStamp(DateTime timeStamp) {
-	this.timeStamp = timeStamp;
+        this.timeStamp = timeStamp;
     }
 
 }
