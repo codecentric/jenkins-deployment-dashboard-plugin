@@ -9,11 +9,6 @@ You need the following setup to use the plugin:
 
 ## Plugin Usage
 
-Once the plugin is released under http://jenkins-ci.org you can use the packaged plugin.
-For now you need to build it yourself.
-
-* Check out the repository
-* Run **mvn hpi:run**. This will start Jenkins with the plugin already installed and ready to use.
 * Open jenkins http://localhost:8080/jenkins
  * Visit http://localhost:8080/jenkins/manage and go to:
    * **Configure System** to configure your artifact repository (there's a subsection called **Deployment Dashboard**)
