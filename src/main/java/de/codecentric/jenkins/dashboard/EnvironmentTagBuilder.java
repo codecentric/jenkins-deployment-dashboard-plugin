@@ -8,20 +8,24 @@ import hudson.model.ParameterValue;
 import hudson.model.AbstractBuild;
 import hudson.model.Descriptor;
 import hudson.model.ParametersAction;
+import hudson.security.ACL;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import hudson.util.ListBoxModel;
 
 import java.util.List;
+
+import jenkins.model.Jenkins;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 
+import de.codecentric.jenkins.dashboard.ec2.AwsKeyCredentials;
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariablesBuilder;
 import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
@@ -48,29 +52,28 @@ import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
  */
 public class EnvironmentTagBuilder extends Builder {
 
-    private String awsAccessKey;
-    private String awsSecretKey;
-
+    private String credentials;
+    
     /**
      * This annotation tells Hudson to call this constructor, with values from
      * the configuration form page with matching parameter names.
      */
     @DataBoundConstructor
-    public EnvironmentTagBuilder(final String awsAccessKey, final String awsSecretKey) {
-        this.awsAccessKey = awsAccessKey;
-        this.awsSecretKey = awsSecretKey;
+    public EnvironmentTagBuilder(final String credentials) {
+        this.setCredentials(credentials);
+    }
+
+    public String getCredentials() {
+        return credentials;
+    }
+
+    public void setCredentials(String credentials) {
+        this.credentials = credentials;
     }
 
     /**
      * We'll use this from the <tt>config.jelly</tt>.
      */
-    public String getAwsAccessKey() {
-        return awsAccessKey;
-    }
-
-    public String getAwsSecretKey() {
-        return awsSecretKey;
-    }
 
     @Override
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
@@ -79,8 +82,7 @@ public class EnvironmentTagBuilder extends Builder {
         String message = "Tagging ENVIRONMENT [" + jobVariables.getEnvironment() + "] with VERSION [" + jobVariables.getVersion() + "]";
         listener.getLogger().println(message);
 
-        AWSCredentials awsCredentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
-        EC2Connector connector = new EC2Connector(new AmazonEC2Client(awsCredentials));
+        EC2Connector connector = EC2Connector.getEC2Connector(getCredentials());
         boolean taggingSuccessful = connector.tagEnvironmentWithVersion(Region.getRegion(Regions.EU_WEST_1), jobVariables);
         if (!taggingSuccessful) {
             String failedMessage = "ERROR: Could not tag ENVIRONMENT [" + jobVariables.getEnvironment() + "] with VERSION [" + jobVariables.getVersion() + "]";
@@ -142,6 +144,16 @@ public class EnvironmentTagBuilder extends Builder {
             load();
         }
 
+        public ListBoxModel doFillCredentialsItems() {
+            final ListBoxModel model = new ListBoxModel();
+
+            DomainRequirement domain = new DomainRequirement();
+            for (AwsKeyCredentials credentials : CredentialsProvider.lookupCredentials(AwsKeyCredentials.class, Jenkins.getInstance(), ACL.SYSTEM, domain)) {
+                model.add(credentials.getId());
+            }
+            return model;
+        }
+        
         /**
          * This human readable name is used in the configuration screen.
          */

@@ -54,7 +54,7 @@ public class EC2Connector implements EnvironmentInterface {
      * @return either a connector to access AWS/EC2 or null if the credentials
      *         are not known.
      */
-    static public EC2Connector getEC2Connector(final String credentialsId) {
+    public static EC2Connector getEC2Connector(final String credentialsId) {
         final DomainRequirement domain = new DomainRequirement();
         final AwsKeyCredentials credentials = CredentialsMatchers.firstOrNull(CredentialsProvider.lookupCredentials(AwsKeyCredentials.class, Jenkins.getInstance(), null, domain),
                 CredentialsMatchers.withId(credentialsId));
@@ -67,28 +67,6 @@ public class EC2Connector implements EnvironmentInterface {
 
     public EC2Connector(final AmazonEC2 ec2) {
         this.ec2 = ec2;
-    }
-
-    public boolean tagEnvironmentWithVersion(Region region, String searchTag, String version) {
-        LOGGER.info("tagEnvironmentWithVersion " + region + " Tag " + searchTag + " version " + version);
-
-        boolean environmentSuccessfulTagged = false;
-        ec2.setRegion(region);
-        DescribeInstancesResult instances = ec2.describeInstances();
-        for (Reservation reservation : instances.getReservations()) {
-            for (Instance instance : reservation.getInstances()) {
-                for (Tag tag : instance.getTags()) {
-                    if (tag.getValue().equalsIgnoreCase(searchTag)) {
-                        CreateTagsRequest createTagsRequest = new CreateTagsRequest();
-                        createTagsRequest.withResources(instance.getInstanceId()).withTags(new Tag(VERSION_TAG, version));
-                        LOGGER.info("Create Tag " + version + " for instance " + instance.getInstanceId());
-                        ec2.createTags(createTagsRequest);
-                        environmentSuccessfulTagged = true;
-                    }
-                }
-            }
-        }
-        return environmentSuccessfulTagged;
     }
 
     public boolean areAwsCredentialsValid() {
@@ -163,8 +141,27 @@ public class EC2Connector implements EnvironmentInterface {
 
     @Override
     public boolean tagEnvironmentWithVersion(Region region, DeployJobVariables jobVariables) {
-        // TODO Auto-generated method stub
-        return false;
+        String searchTag = jobVariables.getEnvironment();
+        String version = jobVariables.getVersion();
+        LOGGER.info("tagEnvironmentWithVersion " + region + " Tag " + searchTag + " version " + version);
+
+        boolean environmentSuccessfulTagged = false;
+        ec2.setRegion(region);
+        DescribeInstancesResult instances = ec2.describeInstances();
+        for (Reservation reservation : instances.getReservations()) {
+            for (Instance instance : reservation.getInstances()) {
+                for (Tag tag : instance.getTags()) {
+                    if (tag.getValue().equalsIgnoreCase(searchTag)) {
+                        CreateTagsRequest createTagsRequest = new CreateTagsRequest();
+                        createTagsRequest.withResources(instance.getInstanceId()).withTags(new Tag(VERSION_TAG, version));
+                        LOGGER.info("Create Tag " + version + " for instance " + instance.getInstanceId());
+                        ec2.createTags(createTagsRequest);
+                        environmentSuccessfulTagged = true;
+                    }
+                }
+            }
+        }
+        return environmentSuccessfulTagged;
     }
 
 }

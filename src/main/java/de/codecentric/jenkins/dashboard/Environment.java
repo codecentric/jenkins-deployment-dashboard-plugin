@@ -60,6 +60,78 @@ public class Environment extends AbstractDescribableImpl<Environment> {
         setUrlPrefix(urlPrefix);
     }
 
+    @Extension
+    public static class EnvironmentDescriptor extends Descriptor<Environment> {
+        
+        public String getDisplayName() {
+            // See: https://wiki.jenkins-ci.org/display/JENKINS/My+class+is+missing+descriptor
+            return "";
+        }
+
+        public ListBoxModel doFillEnvironmentTypeItems() {
+            ListBoxModel model = new ListBoxModel();
+
+            for (EnvironmentType value : EnvironmentType.values()) {
+                model.add(value.getDescription(), value.name());
+            }
+
+            return model;
+        }
+
+        public ListBoxModel doFillCredentialsItems() {
+            final ListBoxModel model = new ListBoxModel();
+
+            DomainRequirement domain = new DomainRequirement();
+            for (AwsKeyCredentials credentials : CredentialsProvider.lookupCredentials(AwsKeyCredentials.class, Jenkins.getInstance(), ACL.SYSTEM, domain)) {
+                model.add(credentials.getId());
+            }
+            return model;
+        }
+
+        public ListBoxModel doFillAwsInstanceItems(@QueryParameter String region, @QueryParameter String credentials) {
+            final ListBoxModel model = new ListBoxModel();
+
+            LOGGER.info("Looking for instances in " + region);
+            if (StringUtils.isBlank(region)) {
+                LOGGER.info("Region is empty");
+                return model;
+            }
+            for (ServerEnvironment env : getEC2Instances(region, credentials)) {
+                model.add(env.getEnvironmentTag());
+            }
+
+            return model;
+        }
+
+        private List<ServerEnvironment> getEC2Instances(String region, String credentialsId) {
+            final EC2Connector ec2 = EC2Connector.getEC2Connector(credentialsId);
+            if (ec2 == null) {
+                return Collections.<ServerEnvironment> emptyList();
+            }
+            return ec2.getEnvironments(Region.getRegion(Regions.fromName(region)));
+        }
+
+        public ListBoxModel doFillRegionItems() {
+            final ListBoxModel model = new ListBoxModel();
+
+            for (AwsRegion value : AwsRegion.values()) {
+                model.add(value.getName(), value.getIdentifier());
+            }
+
+            return model;
+        }
+
+        public ComboBoxModel doFillBuildJobItems() {
+            ComboBoxModel model = new ComboBoxModel();
+
+            for (String jobName : Jenkins.getInstance().getJobNames()) {
+                model.add(jobName);
+            }
+
+            return model;
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -107,76 +179,7 @@ public class Environment extends AbstractDescribableImpl<Environment> {
     public void setBuildJob(final String buildJob) {
         this.buildJob = buildJob;
     }
-
-    @Extension
-    public static class EnvironmentDescriptor extends Descriptor<Environment> {
-        public String getDisplayName() {
-            return Messages.Environment_DisplayName();
-        }
-
-        public ListBoxModel doFillEnvironmentTypeItems() {
-            ListBoxModel model = new ListBoxModel();
-
-            for (EnvironmentType value : EnvironmentType.values()) {
-                model.add(value.getDescription(), value.name());
-            }
-
-            return model;
-        }
-
-        public ListBoxModel doFillCredentialsItems() {
-            final ListBoxModel model = new ListBoxModel();
-
-            DomainRequirement domain = new DomainRequirement();
-            for (AwsKeyCredentials credentials : CredentialsProvider.lookupCredentials(AwsKeyCredentials.class, Jenkins.getInstance(), ACL.SYSTEM, domain)) {
-                model.add(credentials.getId());
-            }
-            return model;
-        }
-
-        public ListBoxModel doFillAwsInstanceItems(@QueryParameter String region, @QueryParameter String credentials) {
-            final ListBoxModel model = new ListBoxModel();
-
-            LOGGER.info("Looking for instances in " + region);
-            if (StringUtils.isBlank(region)) {
-                LOGGER.info("Region is empty");
-                return model;
-            }
-            for (ServerEnvironment env : getEC2Instances(region, credentials)) {
-                model.add(env.getEnvironmentTag());
-            }
-
-            return model;
-        }
-
-        private List<ServerEnvironment> getEC2Instances(String region, String credentialsId) {
-            final EC2Connector ec2 = EC2Connector.getEC2Connector(credentialsId);
-            if (ec2 == null)
-                return Collections.<ServerEnvironment> emptyList();
-            return ec2.getEnvironments(Region.getRegion(Regions.fromName(region)));
-        }
-
-        public ListBoxModel doFillRegionItems() {
-            final ListBoxModel model = new ListBoxModel();
-
-            for (AwsRegion value : AwsRegion.values()) {
-                model.add(value.getName(), value.getIdentifier());
-            }
-
-            return model;
-        }
-
-        public ComboBoxModel doFillBuildJobItems() {
-            ComboBoxModel model = new ComboBoxModel();
-
-            for (String jobName : Jenkins.getInstance().getJobNames()) {
-                model.add(jobName);
-            }
-
-            return model;
-        }
-    }
-
+    
     public String getUrlPrefix() {
         return urlPrefix;
     }

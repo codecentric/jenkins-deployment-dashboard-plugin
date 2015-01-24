@@ -2,11 +2,13 @@ package de.codecentric.jenkins.dashboard.api.environments;
 
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.amazonaws.services.ec2.model.InstanceState;
 
+import de.codecentric.jenkins.dashboard.DashboardView;
 import de.codecentric.jenkins.dashboard.Messages;
 
 /**
@@ -17,6 +19,8 @@ import de.codecentric.jenkins.dashboard.Messages;
  * 
  */
 public class ServerEnvironment {
+
+    private final static Logger LOGGER = Logger.getLogger(ServerEnvironment.class.getName());
 
     private String instanceId;
     private String environmentTag;
@@ -114,6 +118,7 @@ public class ServerEnvironment {
     }
 
     public String getWebAppLink() {
+        LOGGER.info("WebAppLink " + state.getName());
         if (state.getName().equalsIgnoreCase("running")) {
             return urlPrefix + publicIpAddress + urlPostfix;
         }

@@ -56,6 +56,7 @@ public class AwsKeyCredentials extends BaseStandardCredentials {
         }
 
         public AwsKeyCredentialsDescriptor() {
+            // required
         }
 
         @Override
@@ -91,8 +92,9 @@ public class AwsKeyCredentials extends BaseStandardCredentials {
          */
         protected AWSCredentials createCredentials(final String accessKey, final String secretKey) {
             AWSCredentials result = null;
-            if (StringUtils.hasText(accessKey) && StringUtils.hasText(secretKey))
+            if (StringUtils.hasText(accessKey) && StringUtils.hasText(secretKey)) {
                 result = new BasicAWSCredentials(accessKey, secretKey);
+            }
             return result;
         }
 

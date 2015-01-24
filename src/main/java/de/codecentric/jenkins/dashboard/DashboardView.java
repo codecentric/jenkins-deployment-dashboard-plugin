@@ -62,7 +62,9 @@ public class DashboardView extends View {
 
     public static final String PARAM_VERSION = "VERSION";
     public static final String PARAM_ENVIRONMENT = "ENVIRONMENT";
-
+    public static final String PARAM_EC2_REGION = "EC2_REGION";
+    public static final String PARAM_AWS_KEY= "AWS_KEY";
+    
     private boolean showDeployField;
 
     private String groupId = "";
@@ -136,8 +138,10 @@ public class DashboardView extends View {
 
         final ParametersAction versionParam = new ParametersAction(new StringParameterValue(PARAM_VERSION, version));
         final ParametersAction environmentParam = new ParametersAction(new StringParameterValue(PARAM_ENVIRONMENT, environment));
+        final ParametersAction ec2RegionParam = new ParametersAction(new StringParameterValue(PARAM_EC2_REGION, environment));
+        final ParametersAction awsKeyParam = new ParametersAction(new StringParameterValue(PARAM_AWS_KEY, environment));
 
-        List<ParametersAction> actions = Arrays.asList(versionParam, environmentParam);
+        List<ParametersAction> actions = Arrays.asList(versionParam, environmentParam, ec2RegionParam, awsKeyParam);
         QueueTaskFuture<AbstractBuild> scheduledBuild = buildJob.scheduleBuild2(2, new Cause.UserIdCause(), actions);
 
         Result result = Result.FAILURE;
@@ -167,8 +171,7 @@ public class DashboardView extends View {
     @Override
     protected synchronized void submit(final StaplerRequest req) throws IOException, ServletException, Descriptor.FormException {
         LOGGER.info("DashboardView submit configuration");
-        req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly
-                                                    // should work
+        req.bindJSON(this, req.getSubmittedForm()); // Mapping the JSON directly should work
     }
 
     /**
@@ -255,8 +258,9 @@ public class DashboardView extends View {
                 LOGGER.info("Invalid credentials in environment '" + env.getName() + "'");
                 continue;
             }
-            List<ServerEnvironment> foundEnvironment = envConn.getEnvironmentsByTag(Region.getRegion(Regions.fromName(env.getRegion())), env.getAwsInstance());
-            list.addAll(foundEnvironment);
+            List<ServerEnvironment> foundEnvironments = envConn.getEnvironmentsByTag(Region.getRegion(Regions.fromName(env.getRegion())), env.getAwsInstance());
+            updateEnvironmentsWithUrlPrePostFix(foundEnvironments, env);
+            list.addAll(foundEnvironments);
         }
         return list;
     }

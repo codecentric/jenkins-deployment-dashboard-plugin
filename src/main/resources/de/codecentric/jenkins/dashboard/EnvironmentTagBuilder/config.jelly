@@ -16,11 +16,8 @@
   -->
   
   <f:section title="${%aws.credentials.title}">
-	<f:entry title="${%aws.access.key}" field="awsAccessKey" description="${%aws.access.key.description}">
-      <f:textbox />
-    </f:entry>
-	<f:entry title="${%aws.secret.key}" field="awsSecretKey" description="${%aws.secret.key}">
-      <f:password />
+    <f:entry field="credentials" title="${%aws.credentials.id}" description="${%aws.credentials.id.description}">
+        <f:select />
     </f:entry>
   </f:section>
 

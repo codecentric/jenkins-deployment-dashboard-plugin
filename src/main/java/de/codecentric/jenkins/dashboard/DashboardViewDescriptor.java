@@ -34,8 +34,7 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
 
     public DashboardViewDescriptor() {
         super(DashboardView.class); // Have to provide the original class
-                                    // because there is no
-        // enclosing class
+                                    // because there is no enclosing class
         load();
     }
 
@@ -44,6 +43,7 @@ public final class DashboardViewDescriptor extends ViewDescriptor {
         return Messages.DashboardView_DisplayName();
     }
 
+    // All types that the user can add
     public List<Environment.EnvironmentDescriptor> getEnvironmentDescriptors() {
         return Jenkins.getInstance().getDescriptorList(Environment.class);
     }
