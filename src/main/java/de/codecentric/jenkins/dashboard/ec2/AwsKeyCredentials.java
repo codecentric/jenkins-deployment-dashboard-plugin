@@ -85,8 +85,8 @@ public class AwsKeyCredentials extends BaseStandardCredentials {
          * create AWS-credentials from either access/secret-strings or global
          * credentials Explicit strings have priority above credentials
          * 
-         * @param accessKey
-         * @param secretKey
+         * @param accessKey AWS access key
+         * @param secretKey AWS secret key
          * @return a credentials-object or null if no valid credentials where
          *         provided
          */
