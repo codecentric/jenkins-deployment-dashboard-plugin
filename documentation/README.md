@@ -19,13 +19,13 @@ For now you need to build it yourself.
    * **Configure System** to configure your artifact repository (there's a subsection called **Deployment Dashboard**)
    * Save your changes
 
-// TODO: insert screenshot here
+![Global Artifactory Configuration](0-jenkins-configuration-artifactory.png)
 
  * Next go to to http://localhost:8080/jenkins/credential-store/
     * **Manage Credentials** to set your AWS credentials
     * Test the connection
 
-// TODO: insert screenshot here
+![Global AWS Credential Configuration](0-jenkins-configuration-credentials.png)
 
  * On the startpage create a new parameterized Job that we will use later for the deployment configuration_
   * Add a **Text Parameter** named **VERSION**
