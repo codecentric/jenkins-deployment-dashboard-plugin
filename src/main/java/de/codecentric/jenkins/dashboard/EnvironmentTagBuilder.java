@@ -28,6 +28,7 @@ import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import de.codecentric.jenkins.dashboard.ec2.AwsKeyCredentials;
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariablesBuilder;
+import de.codecentric.jenkins.dashboard.impl.environments.ec2.AwsRegion;
 import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
 
 /**
@@ -53,14 +54,15 @@ import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
 public class EnvironmentTagBuilder extends Builder {
 
     private String credentials;
-    
+    private String region;
     /**
      * This annotation tells Hudson to call this constructor, with values from
      * the configuration form page with matching parameter names.
      */
     @DataBoundConstructor
-    public EnvironmentTagBuilder(final String credentials) {
+    public EnvironmentTagBuilder(final String credentials, final String region) {
         this.setCredentials(credentials);
+        this.setRegion(region);
     }
 
     public String getCredentials() {
@@ -71,6 +73,14 @@ public class EnvironmentTagBuilder extends Builder {
         this.credentials = credentials;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
     /**
      * We'll use this from the <tt>config.jelly</tt>.
      */
@@ -79,11 +89,11 @@ public class EnvironmentTagBuilder extends Builder {
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
         DeployJobVariables jobVariables = extractDeployJobVariables(build);
 
-        String message = "Tagging ENVIRONMENT [" + jobVariables.getEnvironment() + "] with VERSION [" + jobVariables.getVersion() + "]";
+        String message = region + " Tagging ENVIRONMENT [" + jobVariables.getEnvironment() + "] with VERSION [" + jobVariables.getVersion() + "]";
         listener.getLogger().println(message);
 
         EC2Connector connector = EC2Connector.getEC2Connector(getCredentials());
-        boolean taggingSuccessful = connector.tagEnvironmentWithVersion(Region.getRegion(Regions.EU_WEST_1), jobVariables);
+        boolean taggingSuccessful = connector.tagEnvironmentWithVersion(Region.getRegion(Regions.fromName(region)), jobVariables);
         if (!taggingSuccessful) {
             String failedMessage = "ERROR: Could not tag ENVIRONMENT [" + jobVariables.getEnvironment() + "] with VERSION [" + jobVariables.getVersion() + "]";
             listener.getLogger().println(failedMessage);
@@ -154,6 +164,16 @@ public class EnvironmentTagBuilder extends Builder {
             return model;
         }
         
+        public ListBoxModel doFillRegionItems() {
+            final ListBoxModel model = new ListBoxModel();
+
+            for (AwsRegion value : AwsRegion.values()) {
+                model.add(value.getName(), value.getIdentifier());
+            }
+
+            return model;
+        }
+
         /**
          * This human readable name is used in the configuration screen.
          */

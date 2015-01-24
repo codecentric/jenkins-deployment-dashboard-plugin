@@ -19,6 +19,11 @@
     <f:entry field="credentials" title="${%aws.credentials.id}" description="${%aws.credentials.id.description}">
         <f:select />
     </f:entry>
+    
+    <f:entry field="region" title="${%aws.region}" description="${aws.region.id.description}">
+        <f:select />
+    </f:entry>
+    
   </f:section>
 
 </j:jelly>

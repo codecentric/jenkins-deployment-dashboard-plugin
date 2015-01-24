@@ -104,7 +104,7 @@
         		</td>
 	        	<td>${ec2Instance.version}</td>
 	        	<td>${ec2Instance.environmentTag}</td>
-	        	<td>Instance Id: ${ec2Instance.instanceId}<br/>${%main.view.server.instance.type} ${ec2Instance.instanceType}<br/>Region: ${ec2Instance.region}</td>
+	        	<td>Instance Id: ${ec2Instance.instanceId}<br/>${%main.view.server.instance.type} ${ec2Instance.instanceType}</td>
 			</tr>
 		</j:forEach>
 	</table>
