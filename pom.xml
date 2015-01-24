@@ -27,7 +27,7 @@
 	</parent>
 
 	<artifactId>ec2-deployment-dashboard</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2</version>
 	<packaging>hpi</packaging>
 
 	<name>Deployment Dashboard Plugin for Jenkins</name>
@@ -63,7 +63,7 @@
 		<connection>scm:git:ssh://github.com/jenkinsci/ec2-deployment-dashboard.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/ec2-deployment-dashboard.git</developerConnection>
 		<url>https://github.com/jenkinsci/ec2-deployment-dashboard</url>
-		<tag>ec2-deployment-dashboard-1.0.0</tag>
+		<tag>ec2-deployment-dashboard-1.0.2</tag>
 	</scm>
 
 	<properties>
