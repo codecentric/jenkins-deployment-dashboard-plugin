@@ -30,7 +30,7 @@ For now you need to build it yourself.
  * On the startpage create a new parameterized Job that we will use later for the deployment configuration_
   * Add a **Text Parameter** named **VERSION**
   * Add a **Text Parameter** named **ENVIRONMENT**
-  * Add a **Build Step** and select **EC2 Environment** -> configure your AWS Credentials, see <a href="documentation/README.md">"How to create your AWS Credentials"</a>
+  * Add a **Build Step** and select **EC2 Environment** -> configure your AWS Credentials
  * Create a new View and select **Deployment Dashboard** under http://localhost:8080/jenkins/newView
  * Configure the View
   * Set the checkbox if you want to deploy artifacts using the dashboard view
