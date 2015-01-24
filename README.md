@@ -23,16 +23,16 @@ To build the plugin yourself follow these steps:
 
 * Check out the repository
 * Run **mvn hpi:run**. This will start Jenkins with the plugin already installed and ready to use.
-* Open jenkins http://localhost:8080/jenkins
+* Open jenkins [http://localhost:8080/jenkins](http://localhost:8080/jenkins)
 
 ## Testing the plugin
 
 For testing the integration of the plugin with Artifactory or Nexus simply use Docker to startup a container.
 
 * Artifactory **docker run -p 8082:8080 --name artifactory mattgruter/artifactory**
- * Open Artifactory: http://localhost:8082
+ * Open Artifactory: [http://localhost:8082](http://localhost:8082)
 * Nexus **docker run -d -p 8081:8081 --name nexus sonatype/nexus**
- * Open Nexus: http://localhost:8081
+ * Open Nexus: [http://localhost:8081](http://localhost:8081)
 
 ## Developers
 
