@@ -64,8 +64,7 @@ public class Environment extends AbstractDescribableImpl<Environment> {
     public static class EnvironmentDescriptor extends Descriptor<Environment> {
         
         public String getDisplayName() {
-            // See: https://wiki.jenkins-ci.org/display/JENKINS/My+class+is+missing+descriptor
-            return "";
+            return Messages.Environment_DisplayName();
         }
 
         public ListBoxModel doFillEnvironmentTypeItems() {
