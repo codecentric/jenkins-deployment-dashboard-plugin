@@ -40,7 +40,7 @@ import de.codecentric.jenkins.dashboard.impl.environments.ec2.EC2Connector;
  * {@link DescriptorImpl#newInstance(StaplerRequest)} is invoked and a new
  * {@link EnvironmentTagBuilder} is created. The created instance is persisted
  * to the project configuration XML by using XStream, so this allows you to use
- * instance fields (like {@link #awsAccessKey}) to remember the configuration.
+ * instance fields (like {@link #credentials}) to remember the configuration.
  * </p>
  * 
  * <p>
@@ -55,9 +55,13 @@ public class EnvironmentTagBuilder extends Builder {
 
     private String credentials;
     private String region;
+    
     /**
      * This annotation tells Hudson to call this constructor, with values from
      * the configuration form page with matching parameter names.
+     *
+     * @param credentials reference to Jenkins AWS credentials
+     * @param region reference to AWS region
      */
     @DataBoundConstructor
     public EnvironmentTagBuilder(final String credentials, final String region) {

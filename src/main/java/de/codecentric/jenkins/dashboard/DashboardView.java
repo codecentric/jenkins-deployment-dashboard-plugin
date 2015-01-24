@@ -104,8 +104,6 @@ public class DashboardView extends View {
 
     /**
      * Checks if the job is in this collection.
-     * 
-     * @param item
      */
     @Override
     public boolean contains(final TopLevelItem item) {
@@ -162,11 +160,7 @@ public class DashboardView extends View {
     }
 
     /**
-     * Handles the configuration submission.
-     * <p/>
-     * Load view-specific properties here.
-     * 
-     * @param req
+     * Handles the configuration submission. Load view-specific properties here.
      */
     @Override
     protected synchronized void submit(final StaplerRequest req) throws IOException, ServletException, Descriptor.FormException {
@@ -181,9 +175,7 @@ public class DashboardView extends View {
      * {@link ModifiableItemGroup#doCreateItem(org.kohsuke.stapler.StaplerRequest, org.kohsuke.stapler.StaplerResponse)}
      * and then add the newly created item to this view.
      * 
-     * @param req
-     * @param rsp
-     * @return null if fails.
+     * @return null if it fails
      */
     @Override
     public Item doCreateItem(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
