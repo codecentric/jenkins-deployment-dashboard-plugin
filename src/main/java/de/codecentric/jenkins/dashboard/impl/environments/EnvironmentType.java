@@ -5,8 +5,8 @@ import org.jvnet.localizer.Localizable;
 import de.codecentric.jenkins.dashboard.Messages;
 
 /**
- * Enum for all available Environment Types that can be configured on the Dashboard View
- * configuration page.
+ * Enum for all available Environment Types that can be configured on the
+ * Dashboard View configuration page.
  */
 public enum EnvironmentType {
 
@@ -17,11 +17,11 @@ public enum EnvironmentType {
     private Localizable localizable;
 
     private EnvironmentType(Localizable localizerId) {
-	this.localizable = localizerId;
+        this.localizable = localizerId;
     }
 
     public String getDescription() {
-	return localizable.toString();
+        return localizable.toString();
     }
 
 }

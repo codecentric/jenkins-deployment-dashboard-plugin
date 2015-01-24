@@ -3,7 +3,8 @@ package de.codecentric.jenkins.dashboard.impl.repositories;
 import de.codecentric.jenkins.dashboard.Messages;
 
 /**
- * Specify supported Repository Types. Currently we support <b>Nexus</b> and <b>Artifactory</b>
+ * Specify supported Repository Types. Currently we support <b>Nexus</b> and
+ * <b>Artifactory</b>
  */
 public enum RepositoryTypes {
 
@@ -14,16 +15,16 @@ public enum RepositoryTypes {
     private String description;
 
     private RepositoryTypes(String id, String description) {
-	this.id = id;
-	this.description = description;
+        this.id = id;
+        this.description = description;
     }
 
     public String getid() {
-	return id;
+        return id;
     }
 
     public String getDescription() {
-	return description;
+        return description;
     }
 
 }

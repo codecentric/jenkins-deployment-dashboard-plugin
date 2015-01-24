@@ -15,13 +15,22 @@ For now you need to build it yourself.
 * Check out the repository
 * Run **mvn hpi:run**. This will start Jenkins with the plugin already installed and ready to use.
 * Open jenkins http://localhost:8080/jenkins
- * Visit http://localhost:8080/jenkins/manage. From there go to
-   * _Configure System_ to set your artifact parameters (there's a subregion called _Deployment Dashboard)
-    * _Manage Credentials_ to set your AWS credentials
- * Create a new parameterized Job that we will use later for the deployment
-  * Add a **Text Parameter** VERSION
-  * Add a **Text Parameter** ENVIRONMENT
-  * Add a **Build Step** and select **EC2 Environment** -> configure your AWS Credentials, see <a href="documentation/README.md">"How to create your AWS Credentials"</a>
+ * Visit http://localhost:8080/jenkins/manage and go to:
+   * **Configure System** to configure your artifact repository (there's a subsection called **Deployment Dashboard**)
+   * Save your changes
+
+![Global Artifactory Configuration](0-jenkins-configuration-artifactory.png)
+
+ * Next go to to http://localhost:8080/jenkins/credential-store/
+    * **Manage Credentials** to set your AWS credentials
+    * Test the connection
+
+![Global AWS Credential Configuration](0-jenkins-configuration-credentials.png)
+
+ * On the startpage create a new parameterized Job that we will use later for the deployment configuration_
+  * Add a **Text Parameter** named **VERSION**
+  * Add a **Text Parameter** named **ENVIRONMENT**
+  * Add a **Build Step** and select **EC2 Environment** -> configure your AWS Credentials
  * Create a new View and select **Deployment Dashboard** under http://localhost:8080/jenkins/newView
  * Configure the View
   * Set the checkbox if you want to deploy artifacts using the dashboard view

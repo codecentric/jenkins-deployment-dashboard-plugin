@@ -62,7 +62,7 @@
                         <option value='${env.awsInstance}'>${env.name}</option>
                     </j:forEach>
                 </select>
-                
+
                 ${%main.view.deploy.app}
                 
 				<a id="deployLink" title="${%main.view.deploy.app.link}" href="" onclick="deploy(); return false;">

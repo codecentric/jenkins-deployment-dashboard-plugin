@@ -4,7 +4,8 @@ import org.sonatype.nexus.rest.model.NexusNGArtifact;
 import org.sonatype.nexus.rest.model.NexusNGRepositoryDetail;
 
 /**
- * Nexus artifact repository search response model. Used for JSON un-/marshalling.
+ * Nexus artifact repository search response model. Used for JSON
+ * un-/marshalling.
  * 
  */
 @javax.xml.bind.annotation.XmlRootElement(name = "searchResponse")
@@ -34,7 +35,8 @@ public class SearchResponse implements java.io.Serializable {
     private boolean tooManyResults = false;
 
     /**
-     * Flag that states if result set is collapsed, and shows latest versions only.
+     * Flag that states if result set is collapsed, and shows latest versions
+     * only.
      */
     private boolean collapsed = false;
 
@@ -51,73 +53,73 @@ public class SearchResponse implements java.io.Serializable {
     private java.util.List<NexusArtifact> data;
 
     public int getCount() {
-	return this.count;
+        return this.count;
     }
 
     public java.util.List<NexusArtifact> getData() {
-	if (this.data == null) {
-	    this.data = new java.util.ArrayList<NexusArtifact>();
-	}
-	return this.data;
+        if (this.data == null) {
+            this.data = new java.util.ArrayList<NexusArtifact>();
+        }
+        return this.data;
     }
 
     public int getFrom() {
-	return this.from;
+        return this.from;
     }
 
     public java.util.List<NexusNGRepositoryDetail> getRepoDetails() {
-	if (this.repositoryDetails == null) {
-	    this.repositoryDetails = new java.util.ArrayList<NexusNGRepositoryDetail>();
-	}
-	return this.repositoryDetails;
+        if (this.repositoryDetails == null) {
+            this.repositoryDetails = new java.util.ArrayList<NexusNGRepositoryDetail>();
+        }
+        return this.repositoryDetails;
     }
 
     public int getTotalCount() {
-	return this.totalCount;
+        return this.totalCount;
     }
 
     public boolean isCollapsed() {
-	return this.collapsed;
+        return this.collapsed;
     }
 
     public boolean isTooManyResults() {
-	return this.tooManyResults;
+        return this.tooManyResults;
     }
 
     public void removeData(NexusNGArtifact nexusNGArtifact) {
-	getData().remove(nexusNGArtifact);
+        getData().remove(nexusNGArtifact);
     }
 
     public void removeRepoDetail(NexusNGRepositoryDetail nexusNGRepositoryDetail) {
-	getRepoDetails().remove(nexusNGRepositoryDetail);
+        getRepoDetails().remove(nexusNGRepositoryDetail);
     }
 
     public void setCollapsed(boolean collapsed) {
-	this.collapsed = collapsed;
+        this.collapsed = collapsed;
     }
 
     public void setCount(int count) {
-	this.count = count;
+        this.count = count;
     }
 
     public void setData(java.util.List<NexusArtifact> data) {
-	this.data = data;
+        this.data = data;
     }
 
     public void setFrom(int from) {
-	this.from = from;
+        this.from = from;
     }
 
     public void setRepositoryDetail(java.util.List<NexusNGRepositoryDetail> repositoryDetails) {
-	this.repositoryDetails = repositoryDetails;
+        this.repositoryDetails = repositoryDetails;
     }
 
     public void setTooManyResults(boolean tooManyResults) {
-	this.tooManyResults = tooManyResults;
+        this.tooManyResults = tooManyResults;
     }
 
     public void setTotalCount(int totalCount) {
-	this.totalCount = totalCount;
+        this.totalCount = totalCount;
     }
 
 }

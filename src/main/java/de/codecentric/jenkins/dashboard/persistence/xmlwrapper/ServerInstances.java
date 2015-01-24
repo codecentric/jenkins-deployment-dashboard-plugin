@@ -9,29 +9,29 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import de.codecentric.jenkins.dashboard.persistence.ServerInstance;
 
 /**
- *
+ * 
  * @author Andreas Houben
  */
 @XStreamAlias("instances")
 public class ServerInstances {
 
     public ServerInstances() {
-	instances = new ArrayList<>();
+        instances = new ArrayList<>();
     }
 
     @XStreamImplicit(itemFieldName = "instance")
     private List<ServerInstance> instances;
 
     public void add(ServerInstance instance) {
-	instances.add(instance);
+        instances.add(instance);
     }
 
     public ServerInstance get(int i) {
-	return instances.get(i);
+        return instances.get(i);
     }
 
     public int size() {
-	return instances.size();
+        return instances.size();
     }
 
 }

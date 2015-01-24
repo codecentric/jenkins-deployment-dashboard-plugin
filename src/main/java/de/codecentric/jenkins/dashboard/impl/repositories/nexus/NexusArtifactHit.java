@@ -18,22 +18,22 @@ public class NexusArtifactHit implements java.io.Serializable {
     private java.util.List<NexusNGArtifactLink> artifactLinks;
 
     public java.util.List<NexusNGArtifactLink> getArtifactLinks() {
-	if (this.artifactLinks == null) {
-	    this.artifactLinks = new java.util.ArrayList<NexusNGArtifactLink>();
-	}
-	return this.artifactLinks;
+        if (this.artifactLinks == null) {
+            this.artifactLinks = new java.util.ArrayList<NexusNGArtifactLink>();
+        }
+        return this.artifactLinks;
     }
 
     public String getRepositoryId() {
-	return this.repositoryId;
+        return this.repositoryId;
     }
 
     public void setArtifactLinks(java.util.List<NexusNGArtifactLink> artifactLinks) {
-	this.artifactLinks = artifactLinks;
+        this.artifactLinks = artifactLinks;
     }
 
     public void setRepositoryId(String repositoryId) {
-	this.repositoryId = repositoryId;
+        this.repositoryId = repositoryId;
     }
 
 }

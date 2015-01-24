@@ -7,9 +7,9 @@ import com.amazonaws.regions.Region;
 import de.codecentric.jenkins.dashboard.impl.deploy.DeployJobVariables;
 
 /**
- * Interface for accessing environment information. EC2 instances can be accessed by region name.
- * Additionally we want to be able to get environment information for specific environments that
- * have a tag.
+ * Interface for accessing environment information. EC2 instances can be
+ * accessed by region name. Additionally we want to be able to get environment
+ * information for specific environments that have a tag.
  * 
  * @author marcel.birkner
  * 
