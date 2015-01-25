@@ -66,7 +66,7 @@
                 ${%main.view.deploy.app}
                 
 				<a id="deployLink" title="${%main.view.deploy.app.link}" href="" onclick="deploy(); return false;">
-					<img title="${%main.view.build.parameters}" alt="${%main.view.build.parameters}" src="/jenkins/static/624ed599/images/24x24/clock.png" border="0" />
+					<img title="${%main.view.build.parameters}" alt="${%main.view.build.parameters}" src="${rootURL}/images/24x24/clock.png" border="0" />
 				</a>
 				
 				<p>
