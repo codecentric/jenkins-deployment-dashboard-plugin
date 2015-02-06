@@ -23,7 +23,6 @@
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
 		<version>1.570</version>
-		<!-- which version of Jenkins is this plugin built against? -->
 	</parent>
 
 	<artifactId>ec2-deployment-dashboard</artifactId>
