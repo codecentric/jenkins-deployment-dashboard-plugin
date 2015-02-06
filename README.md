@@ -1,4 +1,4 @@
-# Jenkins Deployment Dashboard
+# Jenkins EC2 Deployment Dashboard
 
 [![Build Status](https://travis-ci.org/codecentric/jenkins-deployment-dashboard-plugin.svg?branch=master)](https://travis-ci.org/codecentric/jenkins-deployment-dashboard-plugin)
 
@@ -13,6 +13,7 @@ This plugin was developed to help managing the deployment of software artifacts 
 For more details on how to use the plugin see our documentation.
 
 * [Getting started & screenshots](documentation/README.md)
+* [Blog article describing the plugin](https://blog.codecentric.de/en/2015/02/jenkins-deployment-dashboard-ec2-environments/)
 
 Feel free to use the plugin and get in contact with us in case you have questions or suggestions.
 
